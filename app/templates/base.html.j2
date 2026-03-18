@@ -1,67 +1,85 @@
 {% extends 'bootstrap/base.html' %}
-{% block title %}
-    {% if title %}
-        {{ title }} - Microblog
-    {% else %}
-        {{ _('Welcome to Microblog') }}
-    {% endif %}
+
+{% block styles %}
+    {{ super() }}
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='png/favicon.ico') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/header.css') }}">
 {% endblock %}
+
 {% block navbar %}
-    <nav class="navbar navbar-default">
-        <div class="container">
-            <div class="navbar-header">
-                <button type="button"
-                        class="navbar-toggle collapsed"
-                        data-toggle="collapse"
-                        data-target="#bs-example-navbar-collapse-1"
-                        aria-expanded="false">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand" href="{{ url_for('index') }}">Microblog</a>
-            </div>
-            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                <ul class="nav navbar-nav">
-                    <li>
-                        <a href="{{ url_for('index') }}">{{ _('Home') }}</a>
-                    </li>
-                    <li>
-                        <a href="{{ url_for('explore') }}">{{ _('Explore') }}</a>
-                    </li>
-                </ul>
-                <ul class="nav navbar-nav navbar-right">
-                    {% if current_user.is_anonymous %}
-                        <li>
-                            <a href="{{ url_for('login') }}">{{ _('Login') }}</a>
-                        </li>
-                    {% else %}
-                        <li>
-                            <a href="{{ url_for('user', username=current_user.username) }}">{{ _('Profile') }}</a>
-                        </li>
-                        <li>
-                            <a href="{{ url_for('logout') }}">{{ _('Logout') }}</a>
-                        </li>
-                    {% endif %}
-                </ul>
+    <header class="micro-header">
+        <div class="header-nav-1">
+            <div class="header-nav-1-inner">
+                <span class="header-nav-1-txt">⭐ 購物滿 $399 即享免費送貨。</span>
+
+                <div class="header-nav-1-right">
+                    <a class="header-nav-1-link" href="https://apps.apple.com/hk/app/pns-%E7%B6%B2%E8%B3%BC/id840837558">下載PNS App</a>
+                    <div class="header-nav-1-sep header-nav-1-sep-wide"></div>
+
+                    <a class="header-nav-1-link" href="https://www.pns.hk/zh-hk/promo/MB_Reward_2026">易賞錢會員獎賞</a>
+                    <div class="header-nav-1-sep header-nav-1-sep-wide"></div>
+
+                    <a class="header-nav-1-link" href="https://www.pns.hk/zh-hk/store-finder">店舖一覽</a>
+                    <div class="header-nav-1-sep header-nav-1-sep-wide"></div>
+
+                    <a class="header-nav-1-link" href="#">English</a>
+                </div>
             </div>
         </div>
-    </nav>
+        
+        <div class="header-nav-2">
+            <div class="header-nav-2-logo">
+                <a class="header-nav-2-logo-link" href="{{ url_for('index') }}">
+                    <img class="header-nav-2-logo-img" src="{{ url_for('static', filename='png/desktop-logo.avif') }}" alt="Logo">
+                </a>
+            </div>
+
+            <nav class="header-nav-2-nav">
+                <a class="header-nav-2-icon-link" href="{{ url_for('login') }}" aria-label="{{ _('login') }}">
+                    <i class="fa-regular fa-user header-nav-2-icon"></i>
+                </a>
+                <a class="header-nav-2-icon-link" href="{{ url_for('explore') }}" aria-label="{{ _('Explore') }}">
+                    <i class="fa-regular fa-heart header-nav-2-icon"></i>
+                </a>
+
+                {% if current_user.is_anonymous %}
+                    <a class="header-nav-2-icon-link" href="{{ url_for('login') }}" aria-label="{{ _('Login') }}">
+                        <i class="fa-solid fa-cart-shopping header-nav-2-icon"></i>
+                    </a>
+                {% else %}
+                    <a class="header-nav-2-link" href="{{ url_for('user', username=current_user.username) }}">{{ _('Profile') }}</a>
+                    <a class="header-nav-2-link" href="{{ url_for('logout') }}">{{ _('Logout') }}</a>
+                {% endif %}
+            </nav>
+            
+        </div>
+
+        <div class="header-nav-3"></div>
+    </header>
 {% endblock %}
+
+
 {% block content %}
-    <div class="container">
+    <div style="max-width: 1100px; margin: 0 auto; padding: 0 15px;">
         {% with messages = get_flashed_messages() %}
             {% if messages %}
-                {% for message in messages %}<div class="alert alert-info" role="alert">{{ message }}</div>{% endfor %}
+                {% for message in messages %}
+                    <div role="alert" style="padding: 10px 14px; margin: 10px 0; background: #D9EDF7; color: #31708F; border-radius: 4px;">
+                        {{ message }}
+                    </div>
+                {% endfor %}
             {% endif %}
         {% endwith %}
         {# application content needs to be provided in the app_content block #}
         {% block app_content %}{% endblock %}
     </div>
+
 {% endblock %}
+
+
 {% block scripts %}
     {{ super() }}
+    <script src="https://kit.fontawesome.com/e89b1ee830.js" crossorigin="anonymous"></script>
     {{ moment.include_moment() }}
     {{ moment.lang(g.locale) }}
 {% endblock %}
