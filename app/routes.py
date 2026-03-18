@@ -20,8 +20,9 @@ def before_request():
 
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/index', methods=['GET', 'POST'])
-@login_required
 def index():
+    if current_user.is_anonymous:
+        return render_template('index.html.j2', title=_('PNS 網購'))
     form = PostForm()
     if form.validate_on_submit():
         post = Post(body=form.post.data, author=current_user)
