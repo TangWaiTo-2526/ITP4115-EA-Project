@@ -7,6 +7,9 @@
 | `user` | 用戶表 | `user_uuid`, `user_name`, `phone_number`, `mail`, `create_time` |
 | `user_address` | 用戶收貨地址 | `user_address_uuid`, `user_uuid`, `user_address`, `phone_number`, `create_time` |
 | `membership` | 會員促銷/積分 | `user_uuid`, `membership_point`, `create_time` |
+| `cart` | 購物車表 | `user_uuid`, `product_details_uuid`, `create_time` |
+| `orders` | 訂單主表 | `order_uuid`, `user_uuid`, `order_status`, `receiver_name`, `receiver_phone`, `receiver_address_snapshot`, `total_price`, `create_time` |
+| `order_items` | 訂單明細表 | `order_item_uuid`, `order_uuid`, `product_details_uuid`, `quantity`, `unit_price`, `line_total`, `create_time` |
 
 ## 約束（Constraints）
 
@@ -15,11 +18,19 @@
 - user: PK = user_uuid
 - user_address: PK = user_address_uuid
 - membership: PK = user_uuid
+- cart: PK = user_uuid, product_details_uuid
+- orders: PK = order_uuid
+- order_items: PK = order_item_uuid
 
 ### 外键（FK）
 
 - user_address.user_uuid -> user.user_uuid
 - membership.user_uuid -> user.user_uuid
+- orders.user_uuid -> user.user_uuid
+- order_items.order_uuid -> orders.order_uuid
+- order_items.product_details_uuid -> product_details.product_categories_uuid
+- cart.user_uuid -> user.user_uuid
+- cart.product_details_uuid -> product_details.product_categories_uuid
 
 ## Sample Data
 
