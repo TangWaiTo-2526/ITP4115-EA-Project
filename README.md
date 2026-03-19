@@ -56,6 +56,33 @@
 - 會員積分（`membership_point`）: `1200`
 - 建立日期（`create_time`）: `2026:01:01:11:11:11`
 
+### 購物車表（`cart`）
+
+- 用戶唯一識別符（`user_uuid`）: `55f7d0f9-fba6-4833-b113-8f55e069c5b6`
+- 商品唯一識別符（`product_details_uuid`）: `dd7660db-700d-4b1a-866a-16e1cd2ee4dd`
+- 建立日期（`create_time`）: `2026:01:03:12:00:00`
+
+### 訂單主表（`orders`）
+
+- 訂單唯一識別符（`order_uuid`）: `e8a5f1d9-c2a5-4f07-b31f-1e18c6cded1b`
+- 用戶唯一識別符（`user_uuid`）: `55f7d0f9-fba6-4833-b113-8f55e069c5b6`
+- 訂單狀態（`order_status`）: `pending`
+- 收件人（`receiver_name`）: `王小明`
+- 收件人電話（`receiver_phone`）: `91234567`
+- 收貨地址快照（`receiver_address_snapshot`）: `香港九龍尖沙咀...`
+- 訂單總價（`total_price`）: `25.00`
+- 建立日期（`create_time`）: `2026:01:04:13:00:00`
+
+### 訂單明細表（`order_items`）
+
+- 訂單明細唯一識別符（`order_item_uuid`）: `f1a7b2c3-d4e5-4f67-a8b9-0123456789ab`
+- 所屬訂單（`order_uuid`）: `e8a5f1d9-c2a5-4f07-b31f-1e18c6cded1b`
+- 商品唯一識別符（`product_details_uuid`）: `dd7660db-700d-4b1a-866a-16e1cd2ee4dd`
+- 購買數量（`quantity`）: `2`
+- 單價（`unit_price`）: `8.50`
+- 行小計（`line_total`）: `17.00`
+- 建立日期（`create_time`）: `2026:01:04:13:01:00`
+
 ## 新增商品相關表
 
 | 表（Table） | 说明 | 字段（Columns） |
