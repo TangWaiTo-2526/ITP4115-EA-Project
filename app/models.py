@@ -1,10 +1,13 @@
 
 from datetime import datetime, timedelta, timezone
 from hashlib import md5
+import uuid
+
 from app import app, db, login
 import jwt
 
 from flask_login import UserMixin
+from sqlalchemy.dialects import postgresql
 
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -90,3 +93,57 @@ class Post(db.Model):
 
     def __repr__(self) -> str:
         return f'<Post {self.body}>'
+
+
+class ProductCategory(db.Model):
+    """貨物分類"""
+
+    __tablename__ = 'product_categories'
+
+    product_categories_id = db.Column(db.Integer, primary_key=True)
+    product_categories_name = db.Column(db.String(128), nullable=False)
+    create_time = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+
+    products = db.relationship('ProductDetail', backref='category', lazy='dynamic')
+
+    def __repr__(self) -> str:
+        return f'<ProductCategory {self.product_categories_name}>'
+
+
+class Supplier(db.Model):
+    """供應商"""
+
+    __tablename__ = 'supplier'
+
+    supplier_id = db.Column(db.Integer, primary_key=True)
+    supplier_name = db.Column(db.String(128), nullable=False)
+    supplier_png = db.Column(db.String(256), nullable=True)
+    create_time = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+
+    products = db.relationship('ProductDetail', backref='supplier', lazy='dynamic')
+
+    def __repr__(self) -> str:
+        return f'<Supplier {self.supplier_name}>'
+
+
+class ProductDetail(db.Model):
+    """貨物詳情"""
+
+    __tablename__ = 'product_details'
+
+    product_categories_uuid = db.Column(
+        postgresql.UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
+    )
+    product_categories_id = db.Column(
+        db.Integer, db.ForeignKey('product_categories.product_categories_id'), nullable=False
+    )
+    supplier_id = db.Column(
+        db.Integer, db.ForeignKey('supplier.supplier_id'), nullable=False
+    )
+    product_name = db.Column(db.String(128), nullable=False)
+    product_details = db.Column(db.Text, nullable=True)
+    price = db.Column(db.Numeric(10, 2), nullable=False)
+    create_time = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+
+    def __repr__(self) -> str:
+        return f'<ProductDetail {self.product_name} ({self.product_categories_uuid})>'

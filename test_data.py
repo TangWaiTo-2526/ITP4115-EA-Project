@@ -1,5 +1,9 @@
+from datetime import datetime
+from decimal import Decimal
+import uuid
+
 from app import db, app
-from app.models import User, Post
+from app.models import User, Post, ProductCategory, Supplier, ProductDetail
 
 
 app_context = app.app_context()
@@ -20,5 +24,34 @@ p1 = Post(body='my first post!', author=u1)
 p2 = Post(body='my first post!', author=u2)
 db.session.add(p1)
 db.session.add(p2)
+
+# Sample product data
+pc = ProductCategory(
+    product_categories_id=3,
+    product_categories_name='飲品',
+    create_time=datetime(2026, 1, 3, 9, 30, 0)
+)
+
+supplier = Supplier(
+    supplier_id=1,
+    supplier_name='可口可樂代理商',
+    supplier_png='coke-supplier.png',
+    create_time=datetime(2026, 1, 3, 10, 0, 0)
+)
+
+product = ProductDetail(
+    product_categories_uuid=uuid.UUID('dd7660db-700d-4b1a-866a-16e1cd2ee4dd'),
+    product_categories_id=pc.product_categories_id,
+    supplier_id=supplier.supplier_id,
+    product_name='可樂',
+    product_details='330ml 罐裝，冰鎮更佳',
+    price=Decimal('8.50'),
+    create_time=datetime(2026, 1, 3, 11, 0, 0)
+)
+
+# Persist new records
+db.session.add(pc)
+db.session.add(supplier)
+db.session.add(product)
 
 db.session.commit()
