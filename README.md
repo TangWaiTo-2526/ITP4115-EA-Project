@@ -56,23 +56,35 @@
 - 會員積分（`membership_point`）: `1200`
 - 建立日期（`create_time`）: `2026:01:01:11:11:11`
 
-### 訂單主表（`orders`）
+## 新增商品相關表
 
-- 訂單唯一識別符（`order_uuid`）: `a1b2c3d4-e5f6-7890-abcd-ef1234567890`
-- 用戶唯一識別符（`user_uuid`）: `55f7d0f9-fba6-4833-b113-8f55e069c5b6`
-- 訂單狀態（`order_status`）: `pending`
-- 收件人（`receiver_name`）: `user-1`
-- 收件人電話（`receiver_phone`）: `12345678`
-- 收貨地址快照（`receiver_address_snapshot`）: `香港xxxxxxxxxxxxxxxx`
-- 訂單總價（`total_price`）: `100.00`
-- 建立日期（`create_time`）: `2026:03:19:10:00:00`
+| 表（Table） | 说明 | 字段（Columns） |
+| --- | --- | --- |
+| `product_categories` | 貨物分類 | `product_categories_id`, `product_categories_name`, `create_time` |
+| `supplier` | 供應商 | `supplier_id`, `supplier_name`, `supplier_png`, `create_time` |
+| `product_details` | 貨物詳情 | `product_categories_uuid`, `product_categories_id`, `supplier_id`, `product_name`, `product_details`, `price`, `create_time` |
 
-### 訂單明細表（`order_items`）
+## Sample Data (商品)
 
-- 訂單明細唯一識別符（`order_item_uuid`）: `b2c3d4e5-f6a7-8901-bcde-f23456789012`
-- 訂單唯一識別符（`order_uuid`）: `a1b2c3d4-e5f6-7890-abcd-ef1234567890`
-- 商品明細唯一識別符（`product_details_uuid`）: `c3d4e5f6-a7b8-9012-cdef-345678901234`
-- 購買數量（`quantity`）: `2`
-- 單價（`unit_price`）: `50.00`
-- 行小計（`line_total`）: `100.00`
-- 建立日期（`create_time`）: `2026:03:19:10:00:00`
+### 貨物分類（`product_categories`）
+
+- 商品分類識別符（`product_categories_id`）：3
+- 商品分類名字（`product_categories_name`）：飲品
+- 建立日期（`create_time`）：2026:01:03:09:30:00
+
+### 供應商（`supplier`）
+
+- 供應商識別符（`supplier_id`）：1
+- 供應商名字（`supplier_name`）：可口可樂代理商
+- 供應商圖片（`supplier_png`）：coke-supplier.png
+- 建立日期（`create_time`）：2026:01:03:10:00:00
+
+### 貨物詳情（`product_details`）
+
+- 商品分類識別符（`product_categories_id`）：3
+- 供應商識別符（`supplier_id`）：1
+- 商品唯一識別符（`product_categories_uuid`）：dd7660db-700d-4b1a-866a-16e1cd2ee4dd
+- 商品名稱（`product_name`）：可樂
+- 商品詳情（`product_details`）：330ml 罐裝，冰鎮更佳
+- 商品單價（`price`）：8.50
+- 建立日期（`create_time`）：2026:01:03:11:00:00
