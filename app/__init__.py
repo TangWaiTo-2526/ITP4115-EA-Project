@@ -14,8 +14,10 @@ from flask_babel import Babel
 
 app = Flask(__name__, static_folder='.', static_url_path='/app')
 app.config.from_object(Config)
+
 #app.config["TEMPLATES_AUTO_RELOAD"] = True
 #app.jinja_env.cache = {}
+
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 login = LoginManager()

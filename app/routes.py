@@ -65,14 +65,14 @@ def login():
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
         if user is None or not user.check_password(form.password.data):
-            flash(_('Invalid username or password'))
+            flash('使用者名稱或密碼不正確')
             return redirect(url_for('login'))
         login_user(user, remember=form.remember_me.data)
         next_page = request.args.get('next')
         if not next_page or url_parse(next_page).netloc != '':
             next_page = url_for('index')
         return redirect(next_page)
-    return render_template('login.html.j2', title=_('Sign In'), form=form)
+    return render_template('login.html.j2', title='登入', form=form)
 
 
 @app.route('/logout')
@@ -91,9 +91,9 @@ def register():
         user.set_password(form.password.data)
         db.session.add(user)
         db.session.commit()
-        flash(_('Congratulations, you are now a registered user!'))
+        flash('註冊成功，請登入。')
         return redirect(url_for('login'))
-    return render_template('register.html.j2', title=_('Register'), form=form)
+    return render_template('register.html.j2', title='註冊', form=form)
 
 
 @app.route('/reset_password_request', methods=['GET', 'POST'])

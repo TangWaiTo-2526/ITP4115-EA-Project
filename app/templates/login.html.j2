@@ -1,16 +1,97 @@
 {% extends "base.html.j2" %}
-{% import 'bootstrap/wtf.html' as wtf %}
+
+{% macro login_field_errors(field) %}
+    {% for err in field.errors %}<p class="login-error">{{ err }}</p>{% endfor %}
+{% endmacro %}
+
+{% block styles %}
+    {{ super() }}
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+{% endblock %}
+
+{% set user_hint = "使用者名稱 / 電子郵件" %}
+
 {% block app_content %}
-    <h1>{{ _('Sign In') }}</h1>
-    <div class="row">
-        <div class="col-md-4">{{ wtf.quick_form(form) }}</div>
-    </div>
-    <br/>
-    <p>
-        {{ _('New User?') }} <a href="{{ url_for('register') }}">{{ _('Click to Register!') }}</a>
-    </p>
-    <p>
-        {{ _('Forgot Your Password?') }}
-        <a href="{{ url_for('reset_password_request') }}">{{ _('Click to Reset It') }}</a>
-    </p>
+<div class="login-page">
+    <main class="login-main">
+        <div class="login-card">
+            <header class="login-card__head">
+                <div class="login-card__icon">
+                    <img class="login-card__icon-img" src="{{ url_for('static', filename='png/icon_exclusive.avif') }}" width="72" height="22" alt="" decoding="async">
+                </div>
+                <h1 class="login-card__title">登入</h1>
+                <p class="login-card__subtitle">易賞錢 網購會員</p>
+            </header>
+
+            <form class="login-form" method="post" action="" novalidate>
+                {{ form.hidden_tag() }}
+
+                <div class="login-field">
+                    <p class="login-label" id="login-username-label">{{ user_hint }}</p>
+                    <div class="login-input-wrap">
+                        <span class="material-symbols-outlined" aria-hidden="true">person</span>
+                        {{ form.username(class="login-input", placeholder=user_hint, autocomplete="username", aria_labelledby="login-username-label") }}
+                    </div>
+                    {{ login_field_errors(form.username) }}
+                </div>
+
+                <div class="login-field">
+                    <div class="login-label-row">
+                        <p class="login-label" id="login-password-label">密碼</p>
+                        <a class="login-forgot" href="{{ url_for('reset_password_request') }}">忘記密碼？</a>
+                    </div>
+                    <div class="login-input-wrap login-input-wrap--pwd">
+                        <span class="material-symbols-outlined" aria-hidden="true">lock</span>
+                        {{ form.password(class="login-input", placeholder="密碼", autocomplete="current-password", id="login-password-field", aria_labelledby="login-password-label") }}
+                        <button class="login-pwd-toggle" type="button" id="login-password-toggle" aria-label="顯示密碼">
+                            <span class="material-symbols-outlined login-pwd-icon-show">visibility</span>
+                            <span class="material-symbols-outlined login-pwd-icon-hide is-hidden">visibility_off</span>
+                        </button>
+                    </div>
+                    {{ login_field_errors(form.password) }}
+                </div>
+
+                <div class="login-remember">
+                    <label class="login-remember__label" for="{{ form.remember_me.id }}">
+                        {{ form.remember_me(class="login-remember__input") }}
+                        <span class="login-remember__box" aria-hidden="true">
+                            <span class="material-symbols-outlined login-remember__check">check</span>
+                        </span>
+                        <span class="login-remember__text">{{ form.remember_me.label.text }}</span>
+                    </label>
+                    {{ login_field_errors(form.remember_me) }}
+                </div>
+
+                <button type="submit" name="submit" class="login-submit">
+                    登入
+                    <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span>
+                </button>
+            </form>
+
+            <div class="login-card__foot">
+                <p>新用戶？ <a href="{{ url_for('register') }}">點此註冊</a></p>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script>
+(function () {
+    var pwd = document.getElementById('login-password-field');
+    var btn = document.getElementById('login-password-toggle');
+    if (!pwd || !btn) return;
+    var showIcon = btn.querySelector('.login-pwd-icon-show');
+    var hideIcon = btn.querySelector('.login-pwd-icon-hide');
+    btn.addEventListener('click', function () {
+        var masked = (pwd.type = pwd.type === 'password' ? 'text' : 'password') === 'password';
+        if (showIcon && hideIcon) {
+            showIcon.classList.toggle('is-hidden', !masked);
+            hideIcon.classList.toggle('is-hidden', masked);
+        }
+        btn.setAttribute('aria-label', masked ? '顯示密碼' : '隱藏密碼');
+    });
+})();
+</script>
 {% endblock %}
