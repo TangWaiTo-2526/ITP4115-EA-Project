@@ -116,34 +116,66 @@
 - 商品單價（`price`）：8.50
 - 建立日期（`create_time`）：2026:01:03:11:00:00
 
-【商品配送表格(delivery)】
-配送唯一識別符(delivery_uuid): 9d1c7a0a-2b7a-4b7b-8c4e-4b8baf0c1e22
-用戶唯一識別符(user_uuid): 55f7d0f9-fba6-4833-b113-8f55e069c5b6
-訂單唯一識別符(order_uuid): 7e1f0c7d-ef1a-4d87-a5f4-5d31c9c85d4f
-配送時間(deliver_time): 2026:01:05:10:00:00
-建立日期(create_time): 2026:01:05:09:00:00
+## 新增配送、支付與評價相關表
 
+| 表（Table） | 说明 | 字段（Columns） |
+| --- | --- | --- |
+| `delivery` | 商品配送 | `delivery_uuid`, `user_uuid`, `order_uuid`, `deliver_time`, `create_time` |
+| `payment_log` | 支付日誌 | `payment_uuid`, `user_uuid`, `order_uuid`, `payment_methods`, `price`, `state`, `create_time` |
+| `refund` | 售後退款 | `refund_uuid`, `order_uuid`, `user_uuid`, `create_time` |
+| `evaluate` | 商品評價 | `evaluate_uuid`, `product_details_uuid`, `user_uuid`, `evaluate_txt`, `create_time` |
 
-【支付日誌(payment_log)】
-支付唯一識別符(payment_uuid): 3a4b3c2d-8d57-4b0f-9c6a-0f4a0f1d2c33
-用戶唯一識別符(user_uuid): 55f7d0f9-fba6-4833-b113-8f55e069c5b6
-訂單唯一識別符(order_uuid): 7e1f0c7d-ef1a-4d87-a5f4-5d31c9c85d4f
-支付方式(payment_methods): credit_card
-支付金額(price): 25.50
-支付狀態(state): paid
-建立日期(create_time): 2026:01:04:14:21:10
+## 約束（Constraints）- 配送、支付與評價
 
-【售後/退款表格(refund)】
-退款唯一識別符(refund_uuid): 6b2e4f6b-3f12-4d1a-9c0f-7b0a0b1c2d3e
-訂單唯一識別符(order_uuid): 7e1f0c7d-ef1a-4d87-a5f4-5d31c9c85d4f
-用戶唯一識別符(user_uuid): 55f7d0f9-fba6-4833-b113-8f55e069c5b6
-建立日期(create_time): 2026:01:06:16:00:00
+### 主键（PK）
 
+- delivery: PK = delivery_uuid
+- payment_log: PK = payment_uuid
+- refund: PK = refund_uuid
+- evaluate: PK = evaluate_uuid
 
+### 外键（FK）
 
-【商品用後評價(evaluate)】
-評價唯一識別符(evaluate_uuid): 1f2e3d4c-5b6a-7c8d-9e0f-1a2b3c4d5e6f
-商品唯一識別符(product_details_uuid): dd7660db-700d-4b1a-866a-16e1cd2ee4dd
-用戶唯一識別符(user_uuid): 55f7d0f9-fba6-4833-b113-8f55e069c5b6
-評價內容(evalate_txt): 送貨快，包裝完好，味道很好
-建立日期(create_time): 2026:01:07:20:30:00
+- delivery.user_uuid -> user.user_uuid
+- delivery.order_uuid -> orders.order_uuid
+- payment_log.user_uuid -> user.user_uuid
+- payment_log.order_uuid -> orders.order_uuid
+- refund.user_uuid -> user.user_uuid
+- refund.order_uuid -> orders.order_uuid
+- evaluate.user_uuid -> user.user_uuid
+- evaluate.product_details_uuid -> product_details.product_categories_uuid
+
+## Sample Data (配送、支付與評價)
+
+### 商品配送（`delivery`）
+
+- 配送唯一識別符（`delivery_uuid`）: `9d1c7a0a-2b7a-4b7b-8c4e-4b8baf0c1e22`
+- 用戶唯一識別符（`user_uuid`）: `55f7d0f9-fba6-4833-b113-8f55e069c5b6`
+- 訂單唯一識別符（`order_uuid`）: `7e1f0c7d-ef1a-4d87-a5f4-5d31c9c85d4f`
+- 配送時間（`deliver_time`）: `2026:01:05:10:00:00`
+- 建立日期（`create_time`）: `2026:01:05:09:00:00`
+
+### 支付日誌（`payment_log`）
+
+- 支付唯一識別符（`payment_uuid`）: `3a4b3c2d-8d57-4b0f-9c6a-0f4a0f1d2c33`
+- 用戶唯一識別符（`user_uuid`）: `55f7d0f9-fba6-4833-b113-8f55e069c5b6`
+- 訂單唯一識別符（`order_uuid`）: `7e1f0c7d-ef1a-4d87-a5f4-5d31c9c85d4f`
+- 支付方式（`payment_methods`）: `credit_card`
+- 支付金額（`price`）: `25.50`
+- 支付狀態（`state`）: `paid`
+- 建立日期（`create_time`）: `2026:01:04:14:21:10`
+
+### 售後退款（`refund`）
+
+- 退款唯一識別符（`refund_uuid`）: `6b2e4f6b-3f12-4d1a-9c0f-7b0a0b1c2d3e`
+- 訂單唯一識別符（`order_uuid`）: `7e1f0c7d-ef1a-4d87-a5f4-5d31c9c85d4f`
+- 用戶唯一識別符（`user_uuid`）: `55f7d0f9-fba6-4833-b113-8f55e069c5b6`
+- 建立日期（`create_time`）: `2026:01:06:16:00:00`
+
+### 商品評價（`evaluate`）
+
+- 評價唯一識別符（`evaluate_uuid`）: `1f2e3d4c-5b6a-7c8d-9e0f-1a2b3c4d5e6f`
+- 商品唯一識別符（`product_details_uuid`）: `dd7660db-700d-4b1a-866a-16e1cd2ee4dd`
+- 用戶唯一識別符（`user_uuid`）: `55f7d0f9-fba6-4833-b113-8f55e069c5b6`
+- 評價內容（`evaluate_txt`）: `送貨快，包裝完好，味道很好`
+- 建立日期（`create_time`）: `2026:01:07:20:30:00`
