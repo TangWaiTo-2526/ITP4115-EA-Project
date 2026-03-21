@@ -20,7 +20,8 @@ followers = db.Table(
 
 
 class User(UserMixin, db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    user_uuid = db.Column(postgresql.UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    id = db.Column(db.Integer, unique=True)  # Keep for compatibility
     username = db.Column(db.String(64), index=True, unique=True)
     email = db.Column(db.String(120), index=True, unique=True)
     password_hash = db.Column(db.String(128))
@@ -147,3 +148,64 @@ class ProductDetail(db.Model):
 
     def __repr__(self) -> str:
         return f'<ProductDetail {self.product_name} ({self.product_categories_uuid})>'
+
+
+class Delivery(db.Model):
+    """商品配送表格"""
+
+    __tablename__ = 'delivery'
+
+    delivery_uuid = db.Column(postgresql.UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    user_uuid = db.Column(postgresql.UUID(as_uuid=True), nullable=False)  # Removed FK
+    order_uuid = db.Column(postgresql.UUID(as_uuid=True), nullable=False)  # Removed FK
+    deliver_time = db.Column(db.DateTime, nullable=True)
+    create_time = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+
+    def __repr__(self) -> str:
+        return f'<Delivery {self.delivery_uuid}>'
+
+
+class PaymentLog(db.Model):
+    """支付日誌"""
+
+    __tablename__ = 'payment_log'
+
+    payment_uuid = db.Column(postgresql.UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    user_uuid = db.Column(postgresql.UUID(as_uuid=True), nullable=False)  # Removed FK
+    order_uuid = db.Column(postgresql.UUID(as_uuid=True), nullable=False)  # Removed FK
+    payment_methods = db.Column(db.String(64), nullable=False)
+    price = db.Column(db.Numeric(10, 2), nullable=False)
+    state = db.Column(db.String(64), nullable=False)
+    create_time = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+
+    def __repr__(self) -> str:
+        return f'<PaymentLog {self.payment_uuid}>'
+
+
+class Refund(db.Model):
+    """售後/退款表格"""
+
+    __tablename__ = 'refund'
+
+    refund_uuid = db.Column(postgresql.UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    order_uuid = db.Column(postgresql.UUID(as_uuid=True), nullable=False)  # Removed FK
+    user_uuid = db.Column(postgresql.UUID(as_uuid=True), nullable=False)  # Removed FK
+    create_time = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+
+    def __repr__(self) -> str:
+        return f'<Refund {self.refund_uuid}>'
+
+
+class Evaluate(db.Model):
+    """商品用後評價"""
+
+    __tablename__ = 'evaluate'
+
+    evaluate_uuid = db.Column(postgresql.UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    product_details_uuid = db.Column(postgresql.UUID(as_uuid=True), nullable=False)  # Removed FK
+    user_uuid = db.Column(postgresql.UUID(as_uuid=True), nullable=False)  # Removed FK
+    evaluate_txt = db.Column(db.Text, nullable=True)
+    create_time = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+
+    def __repr__(self) -> str:
+        return f'<Evaluate {self.evaluate_uuid}>'
