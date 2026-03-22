@@ -1,14 +1,3 @@
-# PostgreSQL + pgAdmin（与 app/config.py 默认连接串一致：postgres/postgres@localhost:5432/postgres）
-#
-# 启动:   docker compose up -d
-# 停止:   docker compose down
-# 日志:   docker compose logs -f pgadmin
-#
-# pgAdmin 浏览器: http://127.0.0.1:5050
-# 在 pgAdmin「註冊伺服器」連本 compose 的 PostgreSQL 時：
-#   Host 請填 postgres（服務名），不要用 127.0.0.1——在容器內 127.0.0.1 不是資料庫。
-#   Port 5432，使用者/密碼 postgres / postgres
-# 若從宿主机上的程式連（本機 Flask、psql）：Host 用 127.0.0.1 即可。
 
 services:
   postgres:
@@ -37,6 +26,11 @@ services:
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL:-pns@vtcit.top}
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD:-it114115}
       PGADMIN_CONFIG_SERVER_MODE: "False"
+      # GitHub Codespaces / 反向代理後用 HTTPS 存取時，預設 Cookie/CSRF 易造成白屏或 401，需關閉增強保護並信任 X-Forwarded-*。
+      # 參考: https://www.pgadmin.org/docs/pgadmin4/latest/container_deployment.html
+      PGADMIN_CONFIG_ENHANCED_COOKIE_PROTECTION: "False"
+      PGADMIN_CONFIG_PROXY_X_HOST_COUNT: "1"
+      PGADMIN_CONFIG_PROXY_X_PROTO_COUNT: "1"
     ports:
       - "5050:80"
     volumes:
