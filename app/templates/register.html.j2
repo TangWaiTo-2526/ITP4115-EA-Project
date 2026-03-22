@@ -1,5 +1,7 @@
 {% extends "base.html.j2" %}
 
+{% block site_flash %}{% endblock %}
+
 {% block styles %}
     {{ super() }}
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -8,122 +10,123 @@
 {% endblock %}
 
 {% block app_content %}
-<div class="login-page login-page--register">
-    <main class="login-main">
-        <div class="register-stack">
-            <nav class="register-stepper" aria-label="註冊步驟">
-                <div class="register-stepper__track" role="list">
-                    <div class="register-stepper__track-node" role="listitem">
-                        <span class="register-stepper__dot register-stepper__dot--current" title="目前步驟：帳號">
-                            <span class="register-stepper__num">1</span>
+<div class="login-div1 login-div1-register">
+    {% include 'partials/_flash_messages.html.j2' %}
+    <main class="login-div2">
+        <div class="register-div1-stack-1">
+            <nav class="register-div2-stepper-1" aria-label="註冊步驟">
+                <div class="register-div2-track-1" role="list">
+                    <div class="register-div2-node-1" role="listitem">
+                        <span class="register-div2-dot-1 register-div2-dot-current-1" title="目前步驟：帳號">
+                            <span class="register-div2-num-1">1</span>
                         </span>
                     </div>
-                    <span class="register-stepper__line register-stepper__line--muted" aria-hidden="true"></span>
-                    <div class="register-stepper__track-node" role="listitem">
-                        <span class="register-stepper__dot register-stepper__dot--upcoming">
-                            <span class="register-stepper__num">2</span>
+                    <span class="register-div2-line-1 register-div2-line-muted-1" aria-hidden="true"></span>
+                    <div class="register-div2-node-1" role="listitem">
+                        <span class="register-div2-dot-1 register-div2-dot-upcoming-1">
+                            <span class="register-div2-num-1">2</span>
                         </span>
                     </div>
-                    <span class="register-stepper__line register-stepper__line--muted" aria-hidden="true"></span>
-                    <div class="register-stepper__track-node" role="listitem">
-                        <span class="register-stepper__dot register-stepper__dot--upcoming">
-                            <span class="register-stepper__num">3</span>
+                    <span class="register-div2-line-1 register-div2-line-muted-1" aria-hidden="true"></span>
+                    <div class="register-div2-node-1" role="listitem">
+                        <span class="register-div2-dot-1 register-div2-dot-upcoming-1">
+                            <span class="register-div2-num-1">3</span>
                         </span>
                     </div>
                 </div>
-                <div class="register-stepper__labels">
-                    <span class="register-stepper__label register-stepper__label--active">帳號</span>
-                    <span class="register-stepper__label">驗證</span>
-                    <span class="register-stepper__label">完成</span>
+                <div class="register-div2-labels-1">
+                    <span class="register-div2-label-1 register-div2-label-active-1">帳號</span>
+                    <span class="register-div2-label-1">驗證</span>
+                    <span class="register-div2-label-1">其他資訊</span>
                 </div>
             </nav>
 
-            <div class="login-card">
-                <header class="login-card__head">
-                    <h1 class="login-card__title">註冊</h1>
-                    <p class="login-card__subtitle">易賞錢 網購會員</p>
+            <div class="login-div3">
+                <header class="login-div3-head-1">
+                    <h1 class="login-div3-title-1">註冊</h1>
+                    <p class="login-div3-subtitle-1">易賞錢 網購會員</p>
                 </header>
 
-                <form class="login-form" method="post" action="" novalidate>
+                <form class="login-div4-form-1" method="post" action="" novalidate>
                     {{ form.hidden_tag() }}
 
-                    <div class="login-field">
-                        <label class="login-label" for="{{ form.username.id }}">{{ form.username.label.text }}</label>
-                        <div class="login-input-wrap">
+                    <div class="login-div4-field-1">
+                        <label class="login-div4-label-1" for="{{ form.username.id }}">{{ form.username.label.text }}</label>
+                        <div class="login-div5-wrap-1">
                             <span class="material-symbols-outlined" aria-hidden="true">person</span>
                             {{ form.username(
-                                class="login-input",
+                                class="login-div5-input-1",
                                 placeholder="使用者名稱",
                                 autocomplete="username"
                             ) }}
                         </div>
                         {% for err in form.username.errors %}
-                            <p class="login-error">{{ err }}</p>
+                            <p class="login-div4-error-1">{{ err }}</p>
                         {% endfor %}
                     </div>
 
-                    <div class="login-field">
-                        <label class="login-label" for="{{ form.email.id }}">{{ form.email.label.text }}</label>
-                        <div class="login-input-wrap">
+                    <div class="login-div4-field-1">
+                        <label class="login-div4-label-1" for="{{ form.email.id }}">{{ form.email.label.text }}</label>
+                        <div class="login-div5-wrap-1">
                             <span class="material-symbols-outlined" aria-hidden="true">mail</span>
                             {{ form.email(
-                                class="login-input",
+                                class="login-div5-input-1",
                                 placeholder="name@example.com",
                                 autocomplete="email"
                             ) }}
                         </div>
                         {% for err in form.email.errors %}
-                            <p class="login-error">{{ err }}</p>
+                            <p class="login-div4-error-1">{{ err }}</p>
                         {% endfor %}
                     </div>
 
-                    <div class="login-field">
-                        <label class="login-label" for="{{ form.password.id }}">{{ form.password.label.text }}</label>
-                        <div class="login-input-wrap login-input-wrap--pwd">
+                    <div class="login-div4-field-1">
+                        <label class="login-div4-label-1" for="{{ form.password.id }}">{{ form.password.label.text }}</label>
+                        <div class="login-div5-wrap-1 login-div5-wrap-pwd-1">
                             <span class="material-symbols-outlined" aria-hidden="true">lock</span>
                             {{ form.password(
-                                class="login-input",
+                                class="login-div5-input-1",
                                 placeholder="密碼",
                                 autocomplete="new-password",
                                 id="register-password-field"
                             ) }}
-                            <button type="button" class="login-pwd-toggle js-login-pwd-toggle" data-login-pwd-target="register-password-field" aria-label="顯示密碼">
-                                <span class="material-symbols-outlined login-pwd-icon-show">visibility</span>
-                                <span class="material-symbols-outlined login-pwd-icon-hide is-hidden">visibility_off</span>
+                            <button type="button" class="login-div5-toggle-1 js-login-div5-toggle-1" data-login-pwd-target="register-password-field" aria-label="顯示密碼">
+                                <span class="material-symbols-outlined login-div5-icon-show-1">visibility</span>
+                                <span class="material-symbols-outlined login-div5-icon-hide-1 is-hidden">visibility_off</span>
                             </button>
                         </div>
                         {% for err in form.password.errors %}
-                            <p class="login-error">{{ err }}</p>
+                            <p class="login-div4-error-1">{{ err }}</p>
                         {% endfor %}
                     </div>
 
-                    <div class="login-field">
-                        <label class="login-label" for="{{ form.password2.id }}">{{ form.password2.label.text }}</label>
-                        <div class="login-input-wrap login-input-wrap--pwd">
+                    <div class="login-div4-field-1">
+                        <label class="login-div4-label-1" for="{{ form.password2.id }}">{{ form.password2.label.text }}</label>
+                        <div class="login-div5-wrap-1 login-div5-wrap-pwd-1">
                             <span class="material-symbols-outlined" aria-hidden="true">lock</span>
                             {{ form.password2(
-                                class="login-input",
+                                class="login-div5-input-1",
                                 placeholder="再次輸入密碼",
                                 autocomplete="new-password",
                                 id="register-password2-field"
                             ) }}
-                            <button type="button" class="login-pwd-toggle js-login-pwd-toggle" data-login-pwd-target="register-password2-field" aria-label="顯示密碼">
-                                <span class="material-symbols-outlined login-pwd-icon-show">visibility</span>
-                                <span class="material-symbols-outlined login-pwd-icon-hide is-hidden">visibility_off</span>
+                            <button type="button" class="login-div5-toggle-1 js-login-div5-toggle-1" data-login-pwd-target="register-password2-field" aria-label="顯示密碼">
+                                <span class="material-symbols-outlined login-div5-icon-show-1">visibility</span>
+                                <span class="material-symbols-outlined login-div5-icon-hide-1 is-hidden">visibility_off</span>
                             </button>
                         </div>
                         {% for err in form.password2.errors %}
-                            <p class="login-error">{{ err }}</p>
+                            <p class="login-div4-error-1">{{ err }}</p>
                         {% endfor %}
                     </div>
 
-                    <button type="submit" name="submit" class="login-submit">
-                        註冊
+                    <button type="submit" name="submit" class="login-div7-submit-1">
+                        驗證郵箱
                         <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span>
                     </button>
                 </form>
 
-                <div class="login-card__foot">
+                <div class="login-div3-foot-1">
                     <p>已有帳戶？ <a href="{{ url_for('login') }}">返回登入</a></p>
                 </div>
             </div>
@@ -135,12 +138,12 @@
 (function () {
     var labelShow = "顯示密碼";
     var labelHide = "隱藏密碼";
-    document.querySelectorAll(".js-login-pwd-toggle").forEach(function (btn) {
+    document.querySelectorAll(".js-login-div5-toggle-1").forEach(function (btn) {
         var id = btn.getAttribute("data-login-pwd-target");
         var pwd = id ? document.getElementById(id) : null;
         if (!pwd || !btn) return;
-        var showIcon = btn.querySelector(".login-pwd-icon-show");
-        var hideIcon = btn.querySelector(".login-pwd-icon-hide");
+        var showIcon = btn.querySelector(".login-div5-icon-show-1");
+        var hideIcon = btn.querySelector(".login-div5-icon-hide-1");
         btn.addEventListener("click", function () {
             pwd.type = pwd.type === "password" ? "text" : "password";
             var masked = pwd.type === "password";

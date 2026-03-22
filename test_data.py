@@ -3,7 +3,7 @@ from decimal import Decimal
 import uuid
 
 from app import db, app
-from app.models import User, Post, ProductCategory, Supplier, ProductDetail
+from app.models import User, ProductCategory, Supplier, ProductDetail
 
 
 app_context = app.app_context()
@@ -11,19 +11,12 @@ app_context.push()
 db.drop_all()
 db.create_all()
 
-u1 = User(username='john', email='john@example.com')
-u2 = User(username='susan', email='susan@example.com')
+u1 = User(user_name='john', mail='john@example.com')
+u2 = User(user_name='susan', mail='susan@example.com')
 u1.set_password("P@ssw0rd")
 u2.set_password("P@ssw0rd")
 db.session.add(u1)
 db.session.add(u2)
-u1.follow(u2)
-u2.follow(u1)
-
-p1 = Post(body='my first post!', author=u1)
-p2 = Post(body='my first post!', author=u2)
-db.session.add(p1)
-db.session.add(p2)
 
 # Sample product data
 pc = ProductCategory(

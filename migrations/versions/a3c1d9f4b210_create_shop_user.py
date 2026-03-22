@@ -1,7 +1,7 @@
 """create shop_user
 
 Revision ID: a3c1d9f4b210
-Revises: 6092228cc420
+Revises:
 Create Date: 2026-03-18
 
 """
@@ -12,7 +12,7 @@ from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
 revision = 'a3c1d9f4b210'
-down_revision = '6092228cc420'
+down_revision = None
 branch_labels = None
 depends_on = None
 
@@ -29,6 +29,8 @@ def upgrade():
         sa.Column('phone_number', sa.String(length=8), nullable=True),
         # 邮箱（用于登录/联系，必须唯一）
         sa.Column('mail', sa.String(length=100), nullable=False),
+        # 密碼雜湊（Werkzeug 等）
+        sa.Column('password_hash', sa.String(length=256), nullable=True),
         # 创建时间：数据库端默认 now()
         sa.Column('create_time', sa.DateTime(), nullable=False, server_default=sa.text('now()')),
         sa.PrimaryKeyConstraint('user_uuid'),

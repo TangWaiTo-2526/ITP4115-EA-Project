@@ -1,0 +1,87 @@
+{% extends "base.html.j2" %}
+
+{% block site_flash %}{% endblock %}
+
+{% block styles %}
+    {{ super() }}
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+{% endblock %}
+
+{% block app_content %}
+<div class="login-div1 login-div1-register">
+    {% include 'partials/_flash_messages.html.j2' %}
+    <main class="login-div2">
+        <div class="register-div1-stack-1">
+            <nav class="register-div2-stepper-1" aria-label="註冊步驟">
+                <div class="register-div2-track-1" role="list">
+                    <div class="register-div2-node-1" role="listitem">
+                        <span class="register-div2-dot-1 register-div2-dot-done-1" title="已完成：帳號">
+                            <span class="register-div2-num-1">1</span>
+                            <span class="material-symbols-outlined register-div2-check-1" aria-hidden="true">check</span>
+                        </span>
+                    </div>
+                    <span class="register-div2-line-1 register-div2-line-done-1" aria-hidden="true"></span>
+                    <div class="register-div2-node-1" role="listitem">
+                        <span class="register-div2-dot-1 register-div2-dot-current-1" title="目前步驟：驗證">
+                            <span class="register-div2-num-1">2</span>
+                        </span>
+                    </div>
+                    <span class="register-div2-line-1 register-div2-line-muted-1" aria-hidden="true"></span>
+                    <div class="register-div2-node-1" role="listitem">
+                        <span class="register-div2-dot-1 register-div2-dot-upcoming-1">
+                            <span class="register-div2-num-1">3</span>
+                        </span>
+                    </div>
+                </div>
+                <div class="register-div2-labels-1">
+                    <span class="register-div2-label-1">帳號</span>
+                    <span class="register-div2-label-1 register-div2-label-active-1">驗證</span>
+                    <span class="register-div2-label-1">其他資訊</span>
+                </div>
+            </nav>
+
+            <div class="login-div3">
+                <header class="login-div3-head-1">
+                    <div class="login-div3-icon-1">
+                        <img class="login-div3-img-1" src="{{ url_for('static', filename='png/icon_exclusive.avif') }}" width="72" height="22" alt="" decoding="async">
+                    </div>
+                    <h1 class="login-div3-title-1">驗證郵箱</h1>
+                    <p class="login-div3-subtitle-1">易賞錢 網購會員</p>
+                </header>
+
+                <p class="login-div8-lead-1">
+                    我們已將 <strong>6 位數驗證碼</strong>寄至 <strong>{{ masked_email }}</strong>，請於下方輸入驗證碼以繼續。若未收到，請檢查垃圾郵件或稍後重試。
+                </p>
+
+                <form class="login-div4-form-1" method="post" action="" novalidate>
+                    {{ form.hidden_tag() }}
+
+                    <div class="login-div4-field-1">
+                        <label class="login-div4-label-1" for="{{ form.code.id }}">{{ form.code.label.text }}</label>
+                        <div class="login-div5-wrap-1 login-div5-wrap-verify-1{% if code_input_error %} login-div5-wrap-error-1{% endif %}">
+                            <span class="material-symbols-outlined" aria-hidden="true">mark_email_read</span>
+                            {{ form.code(class="login-div5-input-1", placeholder="000000") }}
+                        </div>
+                    </div>
+
+                    <button type="submit" name="submit" class="login-div7-submit-1">
+                        {{ form.submit.label.text }}
+                        <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span>
+                    </button>
+                </form>
+
+                <form class="login-div8-resend-1" method="post" action="{{ url_for('register_verify_resend') }}" novalidate>
+                    {{ resend_form.hidden_tag() }}
+                    {{ resend_form.submit(class="login-div7-submit-1 login-div7-submit-ghost-1") }}
+                </form>
+
+                <div class="login-div8-back-1">
+                    <a href="{{ url_for('register') }}">← 返回修改註冊資料</a>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+{% endblock %}

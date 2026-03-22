@@ -35,22 +35,16 @@
                 </a>
             </div>
 
-            <nav class="header-nav-2-nav">
-                <a class="header-nav-2-icon-link" href="{{ url_for('login') }}" aria-label="{{ _('login') }}">
-                    <i class="fa-regular fa-user header-nav-2-icon"></i>
+            <nav class="header-nav-2-nav" aria-label="{{ _('Header actions') }}">
+                <a class="header-nav-2-icon-link" href="{% if current_user.is_anonymous %}{{ url_for('login') }}{% else %}{{ url_for('user', username=current_user.username) }}{% endif %}" aria-label="{{ _('Account') }}">
+                    <i class="fa-regular fa-user header-nav-2-icon" aria-hidden="true"></i>
                 </a>
-                <a class="header-nav-2-icon-link" href="{{ url_for('explore') }}" aria-label="{{ _('Explore') }}">
-                    <i class="fa-regular fa-heart header-nav-2-icon"></i>
+                <a class="header-nav-2-icon-link" href="#" aria-label="{{ _('Favorites') }}">
+                    <i class="fa-regular fa-heart header-nav-2-icon" aria-hidden="true"></i>
                 </a>
-
-                {% if current_user.is_anonymous %}
-                    <a class="header-nav-2-icon-link" href="{{ url_for('login') }}" aria-label="{{ _('Login') }}">
-                        <i class="fa-solid fa-cart-shopping header-nav-2-icon"></i>
-                    </a>
-                {% else %}
-                    <a class="header-nav-2-link" href="{{ url_for('user', username=current_user.username) }}">{{ _('Profile') }}</a>
-                    <a class="header-nav-2-link" href="{{ url_for('logout') }}">{{ _('Logout') }}</a>
-                {% endif %}
+                <a class="header-nav-2-icon-link" href="#" aria-label="{{ _('Shopping cart') }}">
+                    <i class="fa-solid fa-cart-shopping header-nav-2-icon" aria-hidden="true"></i>
+                </a>
             </nav>
             
         </div>
@@ -86,90 +80,86 @@
 
 
 {% block content %}
-    <div class="site-content-wrap">
-        {% with messages = get_flashed_messages() %}
-            {% if messages %}
-                {% for message in messages %}
-                    <div role="alert" class="flash-alert">{{ message }}</div>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
+    <div class="footer-div1-wrap-1">
+        {% block site_flash %}
+            {% include 'partials/_flash_messages.html.j2' %}
+        {% endblock %}
         {# application content needs to be provided in the app_content block #}
         {% block app_content %}{% endblock %}
     </div>
 
-    <footer class="site-footer">
-        <div class="footer-banner">
-            <div class="footer-banner-inner">
-                <img class="footer-banner-img" src="{{ url_for('static', filename='png/illustration_moneybackapp.png') }}" alt="moneyback app">
-                <div class="footer-banner-text">
-                    <span class="footer-banner-text-accent">易賞錢 App </span>
-                    <span class="footer-banner-text-dark">會員可直接使用登記電郵或電話登錄，立即註冊儲積分換禮品！</span>
+    <footer class="footer-div1-1">
+        <div class="footer-div2-banner-1">
+            <div class="footer-div2-inner-1">
+                <img class="footer-div2-img-1" src="{{ url_for('static', filename='png/illustration_moneybackapp.png') }}" alt="moneyback app">
+                <div class="footer-div2-text-1">
+                    <span class="footer-div2-text-accent-1">易賞錢 App </span>
+                    <span class="footer-div2-text-dark-1">會員可直接使用登記電郵或電話登錄，立即註冊儲積分換禮品！</span>
                 </div>
             </div>
         </div>
 
-        <div class="footer-mid">
-            <div class="footer-mid-inner">
-                <div class="footer-download">
-                    <p class="footer-section-title">全新體驗 立即下載</p>
-                    <div class="footer-download-row">
+        <div class="footer-div3-mid-1">
+            <div class="footer-div3-inner-1">
+                <div class="footer-div3-download-1">
+                    <p class="footer-div3-title-1">全新體驗 立即下載</p>
+                    <div class="footer-div3-row-1">
                         <a href="https://www.pns.hk/DownloadApp" target="_blank" rel="noopener noreferrer">
-                            <img class="footer-img-app" src="{{ url_for('static', filename='png/PNS-logo.png') }}" alt="PNS">
+                            <img class="footer-div3-img-app-1" src="{{ url_for('static', filename='png/PNS-logo.png') }}" alt="PNS">
                         </a>
                         <a href="https://www.pns.hk/zh-hk/DownloadApp" target="_blank" rel="noopener noreferrer">
-                            <img class="footer-img-app" src="{{ url_for('static', filename='png/PNS-QR-code.png') }}" alt="QR code">
+                            <img class="footer-div3-img-app-1" src="{{ url_for('static', filename='png/PNS-QR-code.png') }}" alt="QR code">
                         </a>
-                        <div class="footer-store-badges">
+                        <div class="footer-div3-badges-1">
                             <a href="https://play.google.com/store/apps/details?id=com.parknshop.parknshopapp&hl=en" target="_blank" rel="noopener noreferrer">
-                                <img class="footer-img-store" src="{{ url_for('static', filename='png/icon_googleplay.avif') }}" alt="Google Play">
+                                <img class="footer-div3-img-store-1" src="{{ url_for('static', filename='png/icon_googleplay.avif') }}" alt="Google Play">
                             </a>
                             <a href="https://itunes.apple.com/hk/app/parknshop/id840837558?mt=8" target="_blank" rel="noopener noreferrer">
-                                <img class="footer-img-store" src="{{ url_for('static', filename='png/icon_appstore.png') }}" alt="App Store">
+                                <img class="footer-div3-img-store-1" src="{{ url_for('static', filename='png/icon_appstore.png') }}" alt="App Store">
                             </a>
                         </div>
                     </div>
                 </div>
 
-                <div class="footer-links-row">
-                    <div class="footer-col">
-                        <p class="footer-section-title">關於我們</p>
-                        <div class="footer-col-inner">
-                            <div class="footer-link-stack">
-                                <a class="footer-link-muted" href="https://www.pns.hk/zh-hk/aboutParknshop">關於百佳</a>
-                                <a class="footer-link-muted" href="https://www.aswatson.com/">企業資訊</a>
-                                <a class="footer-link-muted" href="https://www.pns.hk/zh-hk/qaDepartment">百佳品質檢定部</a>
+                <div class="footer-div3-links-row-1">
+                    <div class="footer-div3-col-1">
+                        <p class="footer-div3-title-1">關於我們</p>
+                        <div class="footer-div3-col-inner-1">
+                            <div class="footer-div3-stack-1">
+                                <a class="footer-div3-link-muted-1" href="https://www.pns.hk/zh-hk/aboutParknshop">關於百佳</a>
+                                <a class="footer-div3-link-muted-1" href="https://www.aswatson.com/">企業資訊</a>
+                                <a class="footer-div3-link-muted-1" href="https://www.pns.hk/zh-hk/qaDepartment">百佳品質檢定部</a>
                             </div>
-                            <div class="footer-link-stack">
-                                <a class="footer-link-muted" href="https://www.pns.hk/zh-hk/ClimateCrisis">可持續發展</a>
-                                <a class="footer-link-muted" href="https://career.aswatson.com/ermsportal/vacancy/index/parknshop/zh_tw">加入我們</a>
-                                <a class="footer-link-muted" href="https://www.pns.hk/zh-hk/SupplierPartner">加入成為合作夥伴</a>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="footer-col">
-                        <p class="footer-section-title">網上購物</p>
-                        <div class="footer-col-inner">
-                            <div class="footer-link-stack">
-                                <a class="footer-link-muted" href="https://www.pns.hk/zh-hk/aboutParknshop">網上購物流程</a>
-                                <a class="footer-link-muted" href="https://www.aswatson.com/">易賞錢</a>
-                                <a class="footer-link-muted" href="https://www.pns.hk/zh-hk/qaDepartment">店鋪一覽</a>
-                            </div>
-                            <div class="footer-link-stack">
-                                <a class="footer-link-muted" href="https://www.pns.hk/zh-hk/refundReplace">退款/退換政策</a>
-                                <a class="footer-link-muted" href="https://www.pns.hk/zh-hk/deliveryDetails">送貨服務</a>
+                            <div class="footer-div3-stack-1">
+                                <a class="footer-div3-link-muted-1" href="https://www.pns.hk/zh-hk/ClimateCrisis">可持續發展</a>
+                                <a class="footer-div3-link-muted-1" href="https://career.aswatson.com/ermsportal/vacancy/index/parknshop/zh_tw">加入我們</a>
+                                <a class="footer-div3-link-muted-1" href="https://www.pns.hk/zh-hk/SupplierPartner">加入成為合作夥伴</a>
                             </div>
                         </div>
                     </div>
 
-                    <div class="footer-col">
-                        <p class="footer-section-title">客戶服務</p>
-                        <div class="footer-col-inner">
-                            <div class="footer-link-stack">
-                                <a class="footer-link-muted" href="https://www.pns.hk/zh-hk/contactUs">聯絡我們</a>
-                                <a class="footer-link-muted" href="https://www.pns.hk/zh-hk/FAQ">常見問題</a>
-                                <a class="footer-link-muted" href="https://www.pns.hk/zh-hk/StoreRelated">門市有關</a>
+                    <div class="footer-div3-col-1">
+                        <p class="footer-div3-title-1">網上購物</p>
+                        <div class="footer-div3-col-inner-1">
+                            <div class="footer-div3-stack-1">
+                                <a class="footer-div3-link-muted-1" href="https://www.pns.hk/zh-hk/aboutParknshop">網上購物流程</a>
+                                <a class="footer-div3-link-muted-1" href="https://www.aswatson.com/">易賞錢</a>
+                                <a class="footer-div3-link-muted-1" href="https://www.pns.hk/zh-hk/qaDepartment">店鋪一覽</a>
+                            </div>
+                            <div class="footer-div3-stack-1">
+                                <a class="footer-div3-link-muted-1" href="https://www.pns.hk/zh-hk/refundReplace">退款/退換政策</a>
+                                <a class="footer-div3-link-muted-1" href="https://www.pns.hk/zh-hk/deliveryDetails">送貨服務</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="footer-div3-col-1">
+                        <p class="footer-div3-title-1">客戶服務</p>
+                        <div class="footer-div3-col-inner-1">
+                            <div class="footer-div3-stack-1">
+                                <a class="footer-div3-link-muted-1" href="https://www.pns.hk/zh-hk/contactUs">聯絡我們</a>
+                                <a class="footer-div3-link-muted-1" href="https://www.pns.hk/zh-hk/FAQ">常見問題</a>
+                                <a class="footer-div3-link-muted-1" href="https://www.pns.hk/zh-hk/StoreRelated">門市有關</a>
                             </div>
                         </div>
                     </div>
@@ -177,24 +167,24 @@
             </div>
         </div>
 
-        <div class="footer-legal">
-            <div class="footer-legal-inner">
-                <div class="footer-legal-copy">
-                    <div class="footer-legal-text-block">
-                        <p class="footer-legal-p">根據香港法律，不得在業務過程中，向未成年人(18歲以下人士)售賣或供應令人醺醉的酒類。本網站發售之酒類產品酒精濃度 最高為53%。</p>
-                        <p class="footer-legal-p">Under the law of Hong Kong, intoxicating liquor must not be sold or supplied to a minor (under 18) in the course of business. The highest alcohol by volume for the alcoholic beverages we sell on this website is 53%.</p>
-                        <div class="footer-legal-brand-row">
-                            <img class="footer-img-ckh" src="{{ url_for('static', filename='png/logo_ckh.png') }}" alt="CKH logo">
-                            <p class="footer-legal-p">©2026 PNS.HK Online Store. 版權所有</p>
+        <div class="footer-div4-legal-1">
+            <div class="footer-div4-inner-1">
+                <div class="footer-div4-copy-1">
+                    <div class="footer-div4-text-block-1">
+                        <p class="footer-div4-p-1">根據香港法律，不得在業務過程中，向未成年人(18歲以下人士)售賣或供應令人醺醉的酒類。本網站發售之酒類產品酒精濃度 最高為53%。</p>
+                        <p class="footer-div4-p-1">Under the law of Hong Kong, intoxicating liquor must not be sold or supplied to a minor (under 18) in the course of business. The highest alcohol by volume for the alcoholic beverages we sell on this website is 53%.</p>
+                        <div class="footer-div4-brand-row-1">
+                            <img class="footer-div4-img-ckh-1" src="{{ url_for('static', filename='png/logo_ckh.png') }}" alt="CKH logo">
+                            <p class="footer-div4-p-1">©2026 PNS.HK Online Store. 版權所有</p>
                         </div>
                     </div>
                 </div>
-                <div class="footer-legal-links">
-                    <a class="footer-legal-inline-link" href="https://www.pns.hk/zh-hk/contactUs">使用條款</a>
-                    <div class="footer-sep footer-sep-wide" aria-hidden="true"></div>
-                    <a class="footer-legal-inline-link" href="https://www.pns.hk/zh-hk/contactUs">私隱政策</a>
-                    <div class="footer-sep footer-sep-wide" aria-hidden="true"></div>
-                    <a class="footer-legal-inline-link" href="https://www.pns.hk/zh-hk/contactUs">免責聲明及通知</a>
+                <div class="footer-div4-links-1">
+                    <a class="footer-div4-inline-link-1" href="https://www.pns.hk/zh-hk/contactUs">使用條款</a>
+                    <div class="footer-div3-sep-1 footer-div3-sep-wide-1" aria-hidden="true"></div>
+                    <a class="footer-div4-inline-link-1" href="https://www.pns.hk/zh-hk/contactUs">私隱政策</a>
+                    <div class="footer-div3-sep-1 footer-div3-sep-wide-1" aria-hidden="true"></div>
+                    <a class="footer-div4-inline-link-1" href="https://www.pns.hk/zh-hk/contactUs">免責聲明及通知</a>
                 </div>
             </div>
         </div>

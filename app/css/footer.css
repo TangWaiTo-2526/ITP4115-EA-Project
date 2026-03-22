@@ -1,11 +1,12 @@
 
-.site-content-wrap {
+.footer-div1-wrap-1 {
     max-width: 1100px;
     margin: 0 auto;
     padding: 0 15px;
 }
 
-.flash-alert {
+/* 僅內容區最外層閃訊；登入頁內嵌於 .login-div1 的 flash 由 login.css 毛玻璃樣式負責 */
+.footer-div1-wrap-1 > .footer-div1-flash-1 {
     padding: 10px 14px;
     margin: 10px 0;
     background: #d9edf7;
@@ -13,14 +14,14 @@
     border-radius: 4px;
 }
 
-.site-footer {
+.footer-div1-1 {
     height: auto;
     width: 100%;
     display: flex;
     flex-direction: column;
 }
 
-.footer-banner {
+.footer-div2-banner-1 {
     height: 80px;
     width: 100%;
     background: #88baed;
@@ -28,7 +29,7 @@
     align-items: center;
 }
 
-.footer-banner-inner {
+.footer-div2-inner-1 {
     width: 70%;
     margin: 0 auto;
     display: flex;
@@ -38,33 +39,33 @@
     white-space: nowrap;
 }
 
-.footer-banner-img {
+.footer-div2-img-1 {
     height: 80px;
     width: auto;
     display: block;
 }
 
-.footer-banner-text {
+.footer-div2-text-1 {
     font-size: 16px;
     line-height: 1.2;
     font-weight: 700;
 }
 
-.footer-banner-text-accent {
+.footer-div2-text-accent-1 {
     color: rgb(153, 235, 222);
 }
 
-.footer-banner-text-dark {
+.footer-div2-text-dark-1 {
     color: rgb(31, 31, 31);
 }
 
-.footer-mid {
+.footer-div3-mid-1 {
     height: 180px;
     width: 100%;
     background: #3e3e3e;
 }
 
-.footer-mid-inner {
+.footer-div3-inner-1 {
     height: 100%;
     width: 100%;
     display: flex;
@@ -76,7 +77,7 @@
     white-space: nowrap;
 }
 
-.footer-download {
+.footer-div3-download-1 {
     display: flex;
     flex-direction: column;
     gap: 0;
@@ -86,7 +87,7 @@
     min-width: 0;
 }
 
-.footer-section-title {
+.footer-div3-title-1 {
     color: #ffffff;
     font-weight: 700;
     font-size: 14px;
@@ -94,32 +95,32 @@
     padding: 0;
 }
 
-.footer-download-row {
+.footer-div3-row-1 {
     display: flex;
     align-items: center;
     gap: 16px;
 }
 
-.footer-img-app {
+.footer-div3-img-app-1 {
     height: 80px;
     width: auto;
     display: block;
 }
 
-.footer-store-badges {
+.footer-div3-badges-1 {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 16px;
 }
 
-.footer-img-store {
+.footer-div3-img-store-1 {
     height: 27px;
     width: 108px;
     display: block;
 }
 
-.footer-links-row {
+.footer-div3-links-row-1 {
     display: flex;
     flex-direction: row;
     gap: 60px;
@@ -130,52 +131,52 @@
     align-items: flex-start;
 }
 
-.footer-col {
+.footer-div3-col-1 {
     flex: 0 0 auto;
 }
 
-.footer-col-inner {
+.footer-div3-col-inner-1 {
     display: flex;
     gap: 60px;
     justify-content: flex-start;
     flex-wrap: nowrap;
 }
 
-.footer-link-stack {
+.footer-div3-stack-1 {
     display: flex;
     flex-direction: column;
     gap: 14px;
     flex: 0 0 auto;
 }
 
-.footer-link-muted {
+.footer-div3-link-muted-1 {
     color: #9b9b9b;
     text-decoration: none;
 }
 
-.footer-link-muted:hover {
+.footer-div3-link-muted-1:hover {
     color: #c5c5c5;
 }
 
-.footer-sep {
+.footer-div3-sep-1 {
     width: 1px;
     height: 14px;
     background: rgba(255, 255, 255, 0.35);
     flex: 0 0 auto;
 }
 
-.footer-sep-wide {
+.footer-div3-sep-wide-1 {
     margin: 0 12px;
 }
 
-.footer-legal {
+.footer-div4-legal-1 {
     flex: 1;
     width: 100%;
     background: #333333;
     min-height: 0;
 }
 
-.footer-legal-inner {
+.footer-div4-inner-1 {
     max-width: 1100px;
     margin: 0 auto;
     padding: 16px 20px;
@@ -188,7 +189,7 @@
     box-sizing: border-box;
 }
 
-.footer-legal-copy {
+.footer-div4-copy-1 {
     flex: 1 1 480px;
     min-width: 0;
     display: flex;
@@ -198,19 +199,19 @@
     gap: 24px 32px;
 }
 
-.footer-legal-text-block {
+.footer-div4-text-block-1 {
     flex: 1 1 240px;
     min-width: 0;
 }
 
-.footer-legal-p {
+.footer-div4-p-1 {
     margin: 0;
     color: #cccccc;
     font-size: 12px;
     line-height: 1.5;
 }
 
-.footer-legal-brand-row {
+.footer-div4-brand-row-1 {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
@@ -219,14 +220,14 @@
     margin-top: 8px;
 }
 
-.footer-img-ckh {
+.footer-div4-img-ckh-1 {
     height: 27px;
     width: auto;
     display: block;
     flex-shrink: 0;
 }
 
-.footer-legal-links {
+.footer-div4-links-1 {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
@@ -239,11 +240,11 @@
     gap: 0;
 }
 
-.footer-legal-inline-link {
+.footer-div4-inline-link-1 {
     color: #9b9b9b;
     text-decoration: none;
 }
 
-.footer-legal-inline-link:hover {
+.footer-div4-inline-link-1:hover {
     color: #c5c5c5;
 }

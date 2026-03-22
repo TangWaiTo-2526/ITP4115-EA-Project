@@ -1,0 +1,50 @@
+# PostgreSQL + pgAdmin（与 app/config.py 默认连接串一致：postgres/postgres@localhost:5432/postgres）
+#
+# 启动:   docker compose up -d
+# 停止:   docker compose down
+# 日志:   docker compose logs -f pgadmin
+#
+# pgAdmin 浏览器: http://127.0.0.1:5050
+# 在 pgAdmin「註冊伺服器」連本 compose 的 PostgreSQL 時：
+#   Host 請填 postgres（服務名），不要用 127.0.0.1——在容器內 127.0.0.1 不是資料庫。
+#   Port 5432，使用者/密碼 postgres / postgres
+# 若從宿主机上的程式連（本機 Flask、psql）：Host 用 127.0.0.1 即可。
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: itp4115-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  pgadmin:
+    image: dpage/pgadmin4:9.13
+    container_name: itp4115-pgadmin
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL:-pns@vtcit.top}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD:-it114115}
+      PGADMIN_CONFIG_SERVER_MODE: "False"
+    ports:
+      - "5050:80"
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  postgres_data:
+  pgadmin_data:

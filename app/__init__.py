@@ -14,10 +14,6 @@ from flask_babel import Babel
 
 app = Flask(__name__, static_folder='.', static_url_path='/app')
 app.config.from_object(Config)
-
-#app.config["TEMPLATES_AUTO_RELOAD"] = True
-#app.jinja_env.cache = {}
-
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 login = LoginManager()
@@ -26,7 +22,13 @@ login.init_app(app)
 mail = Mail(app)
 bootstrap = Bootstrap(app)
 moment = Moment(app)
-babel = Babel(app)
+
+
+def get_locale():
+    return request.accept_languages.best_match(app.config['LANGUAGES'])
+
+
+babel = Babel(app, locale_selector=get_locale)
 
 if not app.debug:
     root = logging.getLogger()
@@ -45,10 +47,10 @@ if not app.debug:
         mail_handler.setLevel(logging.ERROR)
         root.addHandler(mail_handler)
 
-    if not os.path.exists('logs'):
-        os.mkdir('logs')
-    file_handler = RotatingFileHandler('logs/microblog.log', maxBytes=10240,
-                                       backupCount=10)
+    _log_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'logs')
+    os.makedirs(_log_dir, exist_ok=True)
+    file_handler = RotatingFileHandler(
+        os.path.join(_log_dir, 'microblog.log'), maxBytes=10240, backupCount=10)
     file_handler.setFormatter(logging.Formatter(
         '%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]'))
     file_handler.setLevel(logging.INFO)
@@ -56,9 +58,4 @@ if not app.debug:
     root.setLevel(logging.INFO)
     root.info('Microblog startup')
 
-@babel.localeselector
-def get_locale():
-    return request.accept_languages.best_match(app.config['LANGUAGES'])
-
-# You must keep the routes at the end.
 from app import routes, errors

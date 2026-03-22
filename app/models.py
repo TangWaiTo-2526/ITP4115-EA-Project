@@ -12,88 +12,145 @@ from sqlalchemy.dialects import postgresql
 from werkzeug.security import generate_password_hash, check_password_hash
 
 
-followers = db.Table(
-    'followers',
-    db.Column('follower_id', db.Integer, db.ForeignKey('user.id')),
-    db.Column('followed_id', db.Integer, db.ForeignKey('user.id'))
-)
+# ---------------------------------------------------------------------------
+# 用戶（表名 user）：商城 / 登入註冊
+# ---------------------------------------------------------------------------
 
 
 class User(UserMixin, db.Model):
-    user_uuid = db.Column(postgresql.UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    id = db.Column(db.Integer, unique=True)  # Keep for compatibility
-    username = db.Column(db.String(64), index=True, unique=True)
-    email = db.Column(db.String(120), index=True, unique=True)
-    password_hash = db.Column(db.String(128))
-    posts = db.relationship('Post', backref='author', lazy='dynamic')
-    about_me = db.Column(db.String(140))
-    last_seen = db.Column(db.DateTime, default=datetime.utcnow)
-    followed = db.relationship(
-        'User', secondary=followers,
-        primaryjoin=(followers.c.follower_id == id),
-        secondaryjoin=(followers.c.followed_id == id),
-        backref=db.backref('followers', lazy='dynamic'), lazy='dynamic')
+    """PostgreSQL 表名 user（與 SQL 關鍵字無衝突時使用 user 表）"""
 
-    def __repr__(self) -> str:
-        return f'<User {self.username}>'
+    __tablename__ = 'user'
+
+    user_uuid = db.Column(postgresql.UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    user_name = db.Column(db.String(32), nullable=False, index=True)
+    phone_number = db.Column(db.String(8), nullable=True, index=True)
+    mail = db.Column(db.String(100), nullable=False, unique=True)
+    password_hash = db.Column(db.String(256), nullable=True)
+    create_time = db.Column(db.DateTime, nullable=False, server_default=db.func.now())
+
+    addresses = db.relationship(
+        'UserAddress', back_populates='user', lazy='dynamic', cascade='all, delete-orphan'
+    )
+    membership_row = db.relationship(
+        'Membership', back_populates='user', uselist=False, cascade='all, delete-orphan'
+    )
+
+    def get_id(self):
+        return str(self.user_uuid)
+
+    @property
+    def username(self):
+        return self.user_name
+
+    @username.setter
+    def username(self, value):
+        self.user_name = value
+
+    @property
+    def email(self):
+        return self.mail
+
+    @email.setter
+    def email(self, value):
+        self.mail = value
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
 
     def check_password(self, password):
+        if not self.password_hash:
+            return False
         return check_password_hash(self.password_hash, password)
 
+    def __repr__(self) -> str:
+        return f'<User {self.user_name}>'
+
     def avatar(self, size):
-        digest = md5(self.email.lower().encode("utf-8")).hexdigest()
-        return 'https://www.gravatar.com/avatar/{}?d=identicon&s={}'.format(
-            digest, size)
-
-    def follow(self, user):
-        if not self.is_following(user):
-            self.followed.append(user)
-
-    def unfollow(self, user):
-        if self.is_following(user):
-            self.followed.remove(user)
-
-    def is_following(self, user):
-        return self.followed.filter(followers.c.followed_id == user.id).count() > 0
-
-    def followed_posts(self):
-        followed = Post.query.join(
-            followers, followers.c.followed_id == Post.user_id
-        ).filter(followers.c.follower_id == self.id)
-        own = Post.query.filter_by(user_id=self.id)
-        return followed.union(own).order_by(Post.timestamp.desc())
+        digest = md5(self.mail.lower().encode('utf-8')).hexdigest()
+        return 'https://www.gravatar.com/avatar/{}?d=identicon&s={}'.format(digest, size)
 
     def get_reset_password_token(self, expires_in=600):
-        return jwt.encode({"reset_password": self.id,
-                           "exp": datetime.now(tz=timezone.utc) + timedelta(seconds=expires_in)},
-                          app.config["SECRET_KEY"], algorithm="HS256")
+        return jwt.encode(
+            {
+                'reset_password': str(self.user_uuid),
+                'exp': datetime.now(tz=timezone.utc) + timedelta(seconds=expires_in),
+            },
+            app.config['SECRET_KEY'],
+            algorithm='HS256',
+        )
 
     @staticmethod
     def verify_reset_password_token(token):
         try:
-            id = jwt.decode(token, app.config["SECRET_KEY"], algorithms="HS256")[
-                "reset_password"]
-        except:           
+            payload = jwt.decode(
+                token, app.config['SECRET_KEY'], algorithms=['HS256']
+            )
+            uid = uuid.UUID(payload['reset_password'])
+        except Exception:
             return None
-        return User.query.get(id)
+        return User.query.get(uid)
 
 
 @login.user_loader
 def load_user(id):
-    return User.query.get(int(id))
+    try:
+        uid = uuid.UUID(str(id))
+    except ValueError:
+        return None
+    return User.query.get(uid)
 
 
-class Post(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    body = db.Column(db.String(140))
-    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+class UserAddress(db.Model):
+    __tablename__ = 'user_address'
+
+    user_address_uuid = db.Column(postgresql.UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    user_uuid = db.Column(
+        postgresql.UUID(as_uuid=True),
+        db.ForeignKey('user.user_uuid', ondelete='CASCADE'),
+        nullable=False,
+        index=True,
+    )
+    user = db.relationship('User', back_populates='addresses')
+    user_address = db.Column(db.Text, nullable=False)
+    create_time = db.Column(db.DateTime, nullable=False, server_default=db.func.now())
 
     def __repr__(self) -> str:
-        return f'<Post {self.body}>'
+        return f'<UserAddress {self.user_address_uuid}>'
+
+
+class RegistrationVerificationCode(db.Model):
+    """註冊驗證碼稽核：記錄 IP、郵箱、建立／過期／最後發送時間；完成註冊後標記 consumed。"""
+
+    __tablename__ = 'registration_verification_code'
+
+    id = db.Column(db.Integer, primary_key=True)
+    client_ip = db.Column(db.String(45), nullable=False, index=True)
+    code = db.Column(db.String(6), nullable=False)
+    mail = db.Column(db.String(100), nullable=False, index=True)
+    created_at = db.Column(db.DateTime(timezone=True), nullable=False)
+    expires_at = db.Column(db.DateTime(timezone=True), nullable=False)
+    last_sent_at = db.Column(db.DateTime(timezone=True), nullable=False)
+    consumed_at = db.Column(db.DateTime(timezone=True), nullable=True)
+
+    def __repr__(self) -> str:
+        return f'<RegistrationVerificationCode {self.id} ip={self.client_ip} mail={self.mail}>'
+
+
+class Membership(db.Model):
+    __tablename__ = 'membership'
+
+    user_uuid = db.Column(
+        postgresql.UUID(as_uuid=True),
+        db.ForeignKey('user.user_uuid', ondelete='CASCADE'),
+        primary_key=True,
+    )
+    user = db.relationship('User', back_populates='membership_row')
+    membership_point = db.Column(db.Integer, nullable=False, default=0)
+    create_time = db.Column(db.DateTime, nullable=False, server_default=db.func.now())
+
+    def __repr__(self) -> str:
+        return f'<Membership user={self.user_uuid} points={self.membership_point}>'
 
 
 class ProductCategory(db.Model):

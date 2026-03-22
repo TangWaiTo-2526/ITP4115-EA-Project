@@ -1,7 +1,9 @@
 {% extends "base.html.j2" %}
 
+{% block site_flash %}{% endblock %}
+
 {% macro login_field_errors(field) %}
-    {% for err in field.errors %}<p class="login-error">{{ err }}</p>{% endfor %}
+    {% for err in field.errors %}<p class="login-div4-error-1">{{ err }}</p>{% endfor %}
 {% endmacro %}
 
 {% block styles %}
@@ -14,63 +16,64 @@
 {% set user_hint = "使用者名稱 / 電子郵件" %}
 
 {% block app_content %}
-<div class="login-page">
-    <main class="login-main">
-        <div class="login-card">
-            <header class="login-card__head">
-                <div class="login-card__icon">
-                    <img class="login-card__icon-img" src="{{ url_for('static', filename='png/icon_exclusive.avif') }}" width="72" height="22" alt="" decoding="async">
+<div class="login-div1">
+    {% include 'partials/_flash_messages.html.j2' %}
+    <main class="login-div2">
+        <div class="login-div3">
+            <header class="login-div3-head-1">
+                <div class="login-div3-icon-1">
+                    <img class="login-div3-img-1" src="{{ url_for('static', filename='png/icon_exclusive.avif') }}" width="72" height="22" alt="" decoding="async">
                 </div>
-                <h1 class="login-card__title">登入</h1>
-                <p class="login-card__subtitle">易賞錢 網購會員</p>
+                <h1 class="login-div3-title-1">登入</h1>
+                <p class="login-div3-subtitle-1">易賞錢 網購會員</p>
             </header>
 
-            <form class="login-form" method="post" action="" novalidate>
+            <form class="login-div4-form-1" method="post" action="" novalidate>
                 {{ form.hidden_tag() }}
 
-                <div class="login-field">
-                    <p class="login-label" id="login-username-label">{{ user_hint }}</p>
-                    <div class="login-input-wrap">
+                <div class="login-div4-field-1">
+                    <p class="login-div4-label-1" id="login-username-label">{{ user_hint }}</p>
+                    <div class="login-div5-wrap-1">
                         <span class="material-symbols-outlined" aria-hidden="true">person</span>
-                        {{ form.username(class="login-input", placeholder=user_hint, autocomplete="username", aria_labelledby="login-username-label") }}
+                        {{ form.username(class="login-div5-input-1", placeholder=user_hint, autocomplete="username", aria_labelledby="login-username-label") }}
                     </div>
                     {{ login_field_errors(form.username) }}
                 </div>
 
-                <div class="login-field">
-                    <div class="login-label-row">
-                        <p class="login-label" id="login-password-label">密碼</p>
-                        <a class="login-forgot" href="{{ url_for('reset_password_request') }}">忘記密碼？</a>
+                <div class="login-div4-field-1">
+                    <div class="login-div4-label-row-1">
+                        <p class="login-div4-label-1" id="login-password-label">密碼</p>
+                        <a class="login-div4-forgot-1" href="{{ url_for('reset_password_request') }}">忘記密碼？</a>
                     </div>
-                    <div class="login-input-wrap login-input-wrap--pwd">
+                    <div class="login-div5-wrap-1 login-div5-wrap-pwd-1">
                         <span class="material-symbols-outlined" aria-hidden="true">lock</span>
-                        {{ form.password(class="login-input", placeholder="密碼", autocomplete="current-password", id="login-password-field", aria_labelledby="login-password-label") }}
-                        <button class="login-pwd-toggle" type="button" id="login-password-toggle" aria-label="顯示密碼">
-                            <span class="material-symbols-outlined login-pwd-icon-show">visibility</span>
-                            <span class="material-symbols-outlined login-pwd-icon-hide is-hidden">visibility_off</span>
+                        {{ form.password(class="login-div5-input-1", placeholder="密碼", autocomplete="current-password", id="login-password-field", aria_labelledby="login-password-label") }}
+                        <button class="login-div5-toggle-1" type="button" id="login-password-toggle" aria-label="顯示密碼">
+                            <span class="material-symbols-outlined login-div5-icon-show-1">visibility</span>
+                            <span class="material-symbols-outlined login-div5-icon-hide-1 is-hidden">visibility_off</span>
                         </button>
                     </div>
                     {{ login_field_errors(form.password) }}
                 </div>
 
-                <div class="login-remember">
-                    <label class="login-remember__label" for="{{ form.remember_me.id }}">
-                        {{ form.remember_me(class="login-remember__input") }}
-                        <span class="login-remember__box" aria-hidden="true">
-                            <span class="material-symbols-outlined login-remember__check">check</span>
+                <div class="login-div6-remember-1">
+                    <label class="login-div6-label-1" for="{{ form.remember_me.id }}">
+                        {{ form.remember_me(class="login-div6-input-1") }}
+                        <span class="login-div6-box-1" aria-hidden="true">
+                            <span class="material-symbols-outlined login-div6-check-1">check</span>
                         </span>
-                        <span class="login-remember__text">{{ form.remember_me.label.text }}</span>
+                        <span class="login-div6-text-1">{{ form.remember_me.label.text }}</span>
                     </label>
                     {{ login_field_errors(form.remember_me) }}
                 </div>
 
-                <button type="submit" name="submit" class="login-submit">
+                <button type="submit" name="submit" class="login-div7-submit-1">
                     登入
                     <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span>
                 </button>
             </form>
 
-            <div class="login-card__foot">
+            <div class="login-div3-foot-1">
                 <p>新用戶？ <a href="{{ url_for('register') }}">點此註冊</a></p>
             </div>
         </div>
@@ -82,8 +85,8 @@
     var pwd = document.getElementById('login-password-field');
     var btn = document.getElementById('login-password-toggle');
     if (!pwd || !btn) return;
-    var showIcon = btn.querySelector('.login-pwd-icon-show');
-    var hideIcon = btn.querySelector('.login-pwd-icon-hide');
+    var showIcon = btn.querySelector('.login-div5-icon-show-1');
+    var hideIcon = btn.querySelector('.login-div5-icon-hide-1');
     btn.addEventListener('click', function () {
         var masked = (pwd.type = pwd.type === 'password' ? 'text' : 'password') === 'password';
         if (showIcon && hideIcon) {
