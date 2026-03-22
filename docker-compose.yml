@@ -37,6 +37,11 @@ services:
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL:-pns@vtcit.top}
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD:-it114115}
       PGADMIN_CONFIG_SERVER_MODE: "False"
+      # GitHub Codespaces / 反向代理後用 HTTPS 存取時，預設 Cookie/CSRF 易造成白屏或 401，需關閉增強保護並信任 X-Forwarded-*。
+      # 參考: https://www.pgadmin.org/docs/pgadmin4/latest/container_deployment.html
+      PGADMIN_CONFIG_ENHANCED_COOKIE_PROTECTION: "False"
+      PGADMIN_CONFIG_PROXY_X_HOST_COUNT: "1"
+      PGADMIN_CONFIG_PROXY_X_PROTO_COUNT: "1"
     ports:
       - "5050:80"
     volumes:
