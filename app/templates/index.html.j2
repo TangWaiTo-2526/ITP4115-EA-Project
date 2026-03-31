@@ -6,7 +6,55 @@
         {{ _('Welcome') }}
     {% endif %}
 {% endblock %}
+{% block styles %}
+    {{ super() }}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+{% endblock %}
 {% block app_content %}
+<section class="hero-carousel" aria-label="{{ _('Promotions carousel') }}">
+        <div class="hero-carousel-track" id="hero-carousel-track">
+            <div class="hero-carousel-item is-center" style="background-image:url('{{ url_for('static', filename='png/carousel/001.webp') }}');"></div>
+            <div class="hero-carousel-item is-right" style="background-image:url('{{ url_for('static', filename='png/carousel/002.webp') }}');"></div>
+            <div class="hero-carousel-item is-hidden" style="background-image:url('{{ url_for('static', filename='png/carousel/003.webp') }}');"></div>
+            <div class="hero-carousel-item is-hidden" style="background-image:url('{{ url_for('static', filename='png/carousel/004.webp') }}');"></div>
+            <div class="hero-carousel-item is-hidden" style="background-image:url('{{ url_for('static', filename='png/carousel/005.webp') }}');"></div>
+            <div class="hero-carousel-item is-hidden" style="background-image:url('{{ url_for('static', filename='png/carousel/006.webp') }}');"></div>
+            <div class="hero-carousel-item is-hidden" style="background-image:url('{{ url_for('static', filename='png/carousel/007.webp') }}');"></div>
+            <div class="hero-carousel-item is-hidden" style="background-image:url('{{ url_for('static', filename='png/carousel/008.webp') }}');"></div>
+            <div class="hero-carousel-item is-hidden" style="background-image:url('{{ url_for('static', filename='png/carousel/009.webp') }}');"></div>
+            <div class="hero-carousel-item is-hidden" style="background-image:url('{{ url_for('static', filename='png/carousel/010.webp') }}');"></div>
+            <div class="hero-carousel-item is-hidden" style="background-image:url('{{ url_for('static', filename='png/carousel/011.webp') }}');"></div>
+            <div class="hero-carousel-item is-hidden" style="background-image:url('{{ url_for('static', filename='png/carousel/012.webp') }}');"></div>
+            <div class="hero-carousel-item is-hidden" style="background-image:url('{{ url_for('static', filename='png/carousel/013.webp') }}');"></div>
+            <div class="hero-carousel-item is-hidden" style="background-image:url('{{ url_for('static', filename='png/carousel/014.webp') }}');"></div>
+            <div class="hero-carousel-item is-hidden" style="background-image:url('{{ url_for('static', filename='png/carousel/015.webp') }}');"></div>
+            <div class="hero-carousel-item is-hidden" style="background-image:url('{{ url_for('static', filename='png/carousel/016.webp') }}');"></div>
+            <div class="hero-carousel-item is-hidden" style="background-image:url('{{ url_for('static', filename='png/carousel/017.webp') }}');"></div>
+            <div class="hero-carousel-item is-hidden" style="background-image:url('{{ url_for('static', filename='png/carousel/018.webp') }}');"></div>
+            <div class="hero-carousel-item is-hidden" style="background-image:url('{{ url_for('static', filename='png/carousel/019.webp') }}');"></div>
+            <div class="hero-carousel-item is-hidden" style="background-image:url('{{ url_for('static', filename='png/carousel/020.webp') }}');"></div>
+            <div class="hero-carousel-item is-hidden" style="background-image:url('{{ url_for('static', filename='png/carousel/021.webp') }}');"></div>
+            <div class="hero-carousel-item is-hidden" style="background-image:url('{{ url_for('static', filename='png/carousel/022.webp') }}');"></div>
+            <div class="hero-carousel-item is-hidden" style="background-image:url('{{ url_for('static', filename='png/carousel/023.webp') }}');"></div>
+            <div class="hero-carousel-item is-hidden" style="background-image:url('{{ url_for('static', filename='png/carousel/024.webp') }}');"></div>
+            <div class="hero-carousel-item is-hidden" style="background-image:url('{{ url_for('static', filename='png/carousel/025.webp') }}');"></div>
+            <div class="hero-carousel-item is-hidden" style="background-image:url('{{ url_for('static', filename='png/carousel/026.webp') }}');"></div>
+            <div class="hero-carousel-item is-hidden" style="background-image:url('{{ url_for('static', filename='png/carousel/027.webp') }}');"></div>
+            <div class="hero-carousel-item is-hidden" style="background-image:url('{{ url_for('static', filename='png/carousel/028.webp') }}');"></div>
+            <div class="hero-carousel-item is-hidden" style="background-image:url('{{ url_for('static', filename='png/carousel/029.webp') }}');"></div>
+            <div class="hero-carousel-item is-hidden" style="background-image:url('{{ url_for('static', filename='png/carousel/030.webp') }}');"></div>
+            <div class="hero-carousel-item is-hidden" style="background-image:url('{{ url_for('static', filename='png/carousel/031.webp') }}');"></div>
+            <div class="hero-carousel-item is-hidden" style="background-image:url('{{ url_for('static', filename='png/carousel/032.webp') }}');"></div>
+            <div class="hero-carousel-item is-hidden" style="background-image:url('{{ url_for('static', filename='png/carousel/033.webp') }}');"></div>
+            <div class="hero-carousel-item is-hidden" style="background-image:url('{{ url_for('static', filename='png/carousel/034.webp') }}');"></div>
+            <div class="hero-carousel-item is-hidden" style="background-image:url('{{ url_for('static', filename='png/carousel/035.webp') }}');"></div>
+            <div class="hero-carousel-item is-hidden" style="background-image:url('{{ url_for('static', filename='png/carousel/036.webp') }}');"></div>
+            <div class="hero-carousel-item is-hidden" style="background-image:url('{{ url_for('static', filename='png/carousel/037.webp') }}');"></div>
+            <div class="hero-carousel-item is-hidden" style="background-image:url('{{ url_for('static', filename='png/carousel/038.webp') }}');"></div>
+            <div class="hero-carousel-item is-left" style="background-image:url('{{ url_for('static', filename='png/carousel/039.webp') }}');"></div>
+        </div>
+        <div class="hero-carousel-pager" id="hero-carousel-pager" aria-label="{{ _('Carousel pagination') }}"></div>
+    </section>
     {% if current_user.is_anonymous %}
         <p>{{ _('Welcome to PNS online store.') }}</p>
     {% else %}
@@ -23,4 +71,89 @@
             {% endfor %}
         </div>
     </div>
+    <div style="display:flex; gap:8px; margin-top:20px;">
+        <div style="width:672px; height:244px; background-color:#ffffff; border-radius: 12px; display:flex; justify-content:space-between; align-items:center; padding:0 20px;">
+            <h2 class="preview-title" style="width:80px; height:24px; color:#1E388C; white-space: nowrap; font-size:20px;" role="heading">&nbsp;&nbsp;易賞價</h2>
+            <a class="btn btn-secondary-sm view-all-btn" style="width:110px; height:35px; color:#575757; background-color:#eeeeee;" role="link">查看所有</a>
+        </div>
+        <div style="width:672px; height:244px; background-color:#ffffff; border-radius: 12px; display:flex; justify-content:space-between; align-items:center; padding:0 20px;">
+            <h2 class="preview-title" style="width:80px; height:24px; color:#1E388C; white-space: nowrap; font-size:20px;" role="heading">&nbsp;&nbsp;新貨上架</h2>
+            <a class="btn btn-secondary-sm view-all-btn" style="width:110px; height:35px; color:#575757; background-color:#eeeeee;" role="link">查看所有</a>
+        </div>
+    </div>
+{% endblock %}
+{% block scripts %}
+    {{ super() }}
+    <script>
+        (function () {
+            function syncSafeViewportWidth() {
+                const width = document.documentElement.clientWidth;
+                document.documentElement.style.setProperty("--safe-vw", width + "px");
+            }
+
+            syncSafeViewportWidth();
+            window.addEventListener("resize", syncSafeViewportWidth);
+
+            const track = document.getElementById("hero-carousel-track");
+            const pager = document.getElementById("hero-carousel-pager");
+            if (!track) return;
+
+            const slides = Array.from(track.querySelectorAll(".hero-carousel-item"));
+            const total = slides.length;
+            let centerIndex = 0;
+
+            function render() {
+                slides.forEach((slide, i) => {
+                    const offset = (i - centerIndex + total) % total;
+                    slide.classList.remove("is-left", "is-center", "is-right", "is-hidden", "is-hidden-left", "is-hidden-right");
+
+                    if (offset === 0) {
+                        slide.classList.add("is-center");
+                    } else if (offset === 1) {
+                        slide.classList.add("is-right");
+                    } else if (offset === total - 1) {
+                        slide.classList.add("is-left");
+                    } else {
+                        if (offset < total / 2) {
+                            slide.classList.add("is-hidden-right");
+                        } else {
+                            slide.classList.add("is-hidden-left");
+                        }
+                    }
+                });
+
+                if (pager) {
+                    const dots = pager.querySelectorAll(".hero-carousel-dot");
+                    dots.forEach((dot, i) => {
+                        dot.classList.toggle("is-active", i === centerIndex);
+                    });
+                }
+            }
+
+            function renderPager() {
+                if (!pager) return;
+                pager.innerHTML = "";
+                for (let i = 0; i < total; i += 1) {
+                    const dot = document.createElement("button");
+                    dot.type = "button";
+                    dot.className = "hero-carousel-dot";
+                    dot.setAttribute("aria-label", "Go to slide " + (i + 1));
+                    dot.addEventListener("click", () => {
+                        centerIndex = i;
+                        render();
+                    });
+                    pager.appendChild(dot);
+                }
+            }
+
+            function next() {
+                centerIndex = (centerIndex + 1) % total;
+                render();
+            }
+
+            renderPager();
+            render();
+            setInterval(next, 3000);
+        })();
+    </script>
 {% endblock %}
