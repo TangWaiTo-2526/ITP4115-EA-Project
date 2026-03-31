@@ -13,4 +13,14 @@
         <h1>{{ _('Hi, %(username)s!', username=current_user.username) }}</h1>
         <p>{{ _('You are signed in.') }}</p>
     {% endif %}
+    <div style="height:100px; background-color:#f8f8f8; display:flex; align-items:center;">
+        <div style="display:flex; gap:12px; overflow-x:auto; padding:8px 12px; width:100%;">
+            {% for i in range(1,11) %}
+            <div style="min-width:80px; text-align:center; flex:0 0 auto;">
+                <img src="{{ url_for('static', filename='png/desktop-logo.avif') }}" alt="{{ _('商品') }} {{ i }}" style="width:64px; height:64px; object-fit:cover; display:block; margin:0 auto 4px;">
+                <div style="font-size:12px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{ _('商品') }} {{ i }}</div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
 {% endblock %}
