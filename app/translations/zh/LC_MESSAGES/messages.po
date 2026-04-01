@@ -10,8 +10,8 @@ msgstr ""
 "POT-Creation-Date: 2022-12-20 03:03+0000\n"
 "PO-Revision-Date: 2022-12-20 02:53+0000\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language: zh\n"
-"Language-Team: zh <LL@li.org>\n"
+"Language: zh_Hant\n"
+"Language-Team: Chinese (Traditional) <LL@li.org>\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
@@ -32,7 +32,7 @@ msgstr ""
 
 #: routes.py:39 templates/base.html.j2:28
 msgid "Home"
-msgstr "首頁"
+msgstr "主頁"
 
 #: routes.py:54 templates/base.html.j2:31
 msgid "Explore"
@@ -70,9 +70,9 @@ msgstr ""
 msgid "Your changes have been saved."
 msgstr ""
 
-#: routes.py:158 templates/edit_profile.html.j2:4
+#: routes.py:158 templates/partials/info-page_edit-profile.html.j2:4
 msgid "Edit Profile"
-msgstr ""
+msgstr "編輯個人資料"
 
 #: routes.py:167 routes.py:183
 #, python-format
@@ -196,4 +196,44 @@ msgstr ""
 #: templates/user.html.j2:25
 msgid "Unfollow"
 msgstr ""
+
+#: templates/base.html.j2
+msgid "Account menu"
+msgstr "帳戶選單"
+
+#: templates/base.html.j2
+msgid "Forgot password"
+msgstr "忘記密碼"
+
+#: templates/base.html.j2
+msgid "My account"
+msgstr "我的帳戶"
+
+#: templates/partials/info-page_edit-profile.html.j2
+msgid "Personal profile"
+msgstr "個人資料"
+
+#: templates/partials/info-page_edit-profile.html.j2
+msgid "Basic information"
+msgstr "基本資料"
+
+#: templates/partials/info-page_edit-profile.html.j2
+msgid "Delivery address"
+msgstr "送貨地址"
+
+#: templates/partials/info-page_edit-profile.html.j2
+msgid "Password"
+msgstr "密碼"
+
+#: templates/partials/info-page_edit-profile.html.j2
+msgid "Contact method"
+msgstr "聯絡方法"
+
+#: templates/partials/info-page_edit-profile.html.j2
+msgid "Direct marketing info will be sent to your phone via instant messaging apps, e.g. WhatsApp."
+msgstr "直接促銷的資訊會透過即時通訊應用程式發送至您的電話，例如 Whatsapp。"
+
+#: templates/partials/info-page_edit-profile.html.j2
+msgid "I am interested in receiving promotions from the following brands:"
+msgstr "我有興趣收到經由以下品牌發出之推廣、優惠、折扣或其他相關通訊："
 

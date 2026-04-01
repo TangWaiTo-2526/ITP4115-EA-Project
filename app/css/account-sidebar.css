@@ -1,0 +1,94 @@
+/* 帳戶頁左欄垂直導航 */
+.account-sidebar-1 {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 0 0 16px;
+    background: transparent;
+}
+
+.account-sidebar-link-1 {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 14px 11px 16px;
+    margin: 0 8px;
+    color: #3d4a5c;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.35;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: background 0.15s ease, color 0.15s ease;
+}
+
+.account-sidebar-link-1:hover:not(.is-active),
+.account-sidebar-link-1:focus-visible:not(.is-active) {
+    background: rgba(255, 255, 255, 0.75);
+    color: #2c5282;
+    outline: none;
+}
+
+.account-sidebar-link-1.is-active {
+    background: transparent;
+    color: rgb(63, 167, 243);
+    font-weight: 600;
+}
+
+.account-sidebar-link-1.is-active:hover,
+.account-sidebar-link-1.is-active:focus-visible {
+    background: transparent;
+    color: rgb(63, 167, 243);
+    outline: none;
+}
+
+.account-sidebar-link-1.is-active .account-sidebar-ico-1 {
+    color: rgb(63, 167, 243);
+}
+
+.account-sidebar-ico-1 {
+    flex-shrink: 0;
+    width: 22px;
+    text-align: center;
+    font-size: 17px;
+    color: #4a5568;
+    line-height: 1;
+}
+
+.account-sidebar-link-1:hover:not(.is-active) .account-sidebar-ico-1,
+.account-sidebar-link-1:focus-visible:not(.is-active) .account-sidebar-ico-1 {
+    color: #2c5282;
+}
+
+.account-sidebar-link-badge-1 {
+    padding-right: 10px;
+}
+
+.account-sidebar-badge-1 {
+    margin-left: auto;
+    min-width: 22px;
+    height: 22px;
+    padding: 0 6px;
+    border-radius: 999px;
+    background: #ffc400;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 22px;
+    text-align: center;
+}
+
+.account-sidebar-link-logout-1 .account-sidebar-ico-1 {
+    color: #4a5568;
+}
+
+.account-sidebar-link-logout-1:hover,
+.account-sidebar-link-logout-1:focus-visible {
+    background: rgba(255, 255, 255, 0.75);
+    color: #c62828;
+}
+
+.account-sidebar-link-logout-1:hover .account-sidebar-ico-1,
+.account-sidebar-link-logout-1:focus-visible .account-sidebar-ico-1 {
+    color: #c62828;
+}

@@ -1,0 +1,46 @@
+{# info-page_sidebar：帳戶頁左欄導航；需 current_user、user 與 request #}
+<nav class="account-sidebar-1" aria-label="帳戶選單">
+    <a href="{{ url_for('user', username=current_user.username) }}"
+       class="account-sidebar-link-1{% if request.endpoint == 'user' %} is-active{% endif %}">
+        <i class="fa-solid fa-eye account-sidebar-ico-1" aria-hidden="true"></i>
+        <span>帳戶概覽</span>
+    </a>
+    <a href="#" class="account-sidebar-link-1">
+        <i class="fa-solid fa-box account-sidebar-ico-1" aria-hidden="true"></i>
+        <span>訂單紀錄</span>
+    </a>
+    <a href="#" class="account-sidebar-link-1">
+        <i class="fa-regular fa-heart account-sidebar-ico-1" aria-hidden="true"></i>
+        <span>我的清單</span>
+    </a>
+    <a href="#" class="account-sidebar-link-1">
+        <i class="fa-solid fa-ticket account-sidebar-ico-1" aria-hidden="true"></i>
+        <span>電子優惠券／電子禮券</span>
+    </a>
+    <a href="#" class="account-sidebar-link-1">
+        <i class="fa-solid fa-right-left account-sidebar-ico-1" aria-hidden="true"></i>
+        <span>易賞錢積分</span>
+    </a>
+    <a href="#" class="account-sidebar-link-1 account-sidebar-link-badge-1">
+        <i class="fa-regular fa-thumbs-up account-sidebar-ico-1" aria-hidden="true"></i>
+        <span>產品評價</span>
+        <span class="account-sidebar-badge-1" aria-label="待評價 0">0</span>
+    </a>
+    <a href="#" class="account-sidebar-link-1">
+        <i class="fa-solid fa-location-dot account-sidebar-ico-1" aria-hidden="true"></i>
+        <span>送貨地址</span>
+    </a>
+    <a href="#" class="account-sidebar-link-1">
+        <i class="fa-regular fa-credit-card account-sidebar-ico-1" aria-hidden="true"></i>
+        <span>我的信用卡</span>
+    </a>
+    <a href="{{ url_for('edit_profile') }}"
+       class="account-sidebar-link-1{% if request.endpoint == 'edit_profile' %} is-active{% endif %}">
+        <i class="fa-regular fa-user account-sidebar-ico-1" aria-hidden="true"></i>
+        <span>我的個人資料</span>
+    </a>
+    <a href="{{ url_for('logout') }}" class="account-sidebar-link-1 account-sidebar-link-logout-1">
+        <i class="fa-solid fa-arrow-right-from-bracket account-sidebar-ico-1" aria-hidden="true"></i>
+        <span>登出</span>
+    </a>
+</nav>

@@ -1,0 +1,130 @@
+{# info-page_dashboard：帳戶概覽主內容區；需變數 user（當前檢視的會員） #}
+<div class="account-dash-wrap-1">
+    {# 1 積分與會員卡區 #}
+    <div class="account-dash-block-points-1">
+        <div class="account-dash-points-bar-1">
+            <span class="account-dash-greet-1">您好，{{ user.username }}</span>
+        </div>
+        <div class="account-dash-points-inner-1">
+            <div class="account-dash-points-left-1">
+                <div class="account-dash-points-headline-1">
+                    <div class="account-dash-points-stat-1">
+                        <p class="account-dash-points-label-1">積分</p>
+                        <p class="account-dash-points-value-1">
+                            <span class="account-dash-points-num-1">833</span>
+                        </p>
+                    </div>
+                    <div class="account-dash-points-eq-1" aria-hidden="true">=</div>
+                    <div class="account-dash-points-stat-1">
+                        <p class="account-dash-points-label-1">HKD$</p>
+                        <p class="account-dash-points-value-1">
+                            <span class="account-dash-points-num-1">$16</span>
+                        </p>
+                    </div>
+                </div>
+                <p class="account-dash-points-note-1"><span class="account-dash-points-note-num-1">93 積分</span> 將在2027年10月01日到期</p>
+            </div>
+        </div>
+        {# 會員卡示意：定位基準為 account-dash-block-points-1 #}
+        <div class="account-dash-points-card-1">
+            <div class="account-dash-card-ph-1">
+                <img
+                    class="account-dash-card-face-1"
+                    src="{{ url_for('static', filename='png/account/cardFace_DEFAULT_BASE.avif') }}"
+                    width="120"
+                    height="200"
+                    alt=""
+                    decoding="async"
+                />
+            </div>
+            <div class="account-dash-card-uuid-wrap-1">
+                <span class="account-dash-card-uuid-1">#{{ user.user_uuid }}</span>
+            </div>
+        </div>
+    </div>
+
+    {# 2 電子優惠券／電子禮券 #}
+    <div class="account-dash-block-white-1">
+        <h2 class="account-dash-heading-1">電子優惠券／電子禮券</h2>
+        <div class="account-dash-panel-1 account-dash-panel-empty-1">
+            <p>尚未有電子優惠券／電子禮券</p>
+        </div>
+    </div>
+
+    {# 3 電子印花 #}
+    <div class="account-dash-block-white-1">
+        <h2 class="account-dash-heading-1">電子印花</h2>
+        <div class="account-dash-stamps-1">
+            <div class="account-dash-stamp-1">
+                <img
+                    class="account-dash-stamp-ico-1"
+                    src="{{ url_for('static', filename='png/account/PNS-x-KAO-PNS-Estamp-202503-v1.avif') }}"
+                    width="40"
+                    height="40"
+                    alt=""
+                    decoding="async"
+                />
+                <span class="account-dash-stamp-title-1">花王電子印花</span>
+                <span class="account-dash-stamp-count-1 account-dash-stamp-count-zero-1">× 0</span>
+                <div class="account-dash-stamp-dates-1">
+                    <span class="account-dash-stamp-date-label-1">派发日期:</span>
+                    <span class="account-dash-stamp-date-1">2025/05/01 - 2026/03/31</span>
+                </div>
+            </div>
+            <div class="account-dash-stamp-1">
+                <img
+                    class="account-dash-stamp-ico-1"
+                    src="{{ url_for('static', filename='png/account/Asset-1.png') }}"
+                    width="40"
+                    height="40"
+                    alt=""
+                    decoding="async"
+                />
+                <span class="account-dash-stamp-title-1">網購店取即日取貨</span>
+                <span class="account-dash-stamp-count-1 account-dash-stamp-count-zero-1">× 0</span>
+                <div class="account-dash-stamp-dates-1">
+                    <span class="account-dash-stamp-date-label-1">派发日期:</span>
+                    <span class="account-dash-stamp-date-1">2025/11/14 - 2026/12/31</span>
+                </div>
+            </div>
+            <div class="account-dash-stamp-1">
+                <img
+                    class="account-dash-stamp-ico-1"
+                    src="{{ url_for('static', filename='png/account/Staub-x-Ballarini-Mass-eStamp-1-.avif') }}"
+                    width="40"
+                    height="40"
+                    alt=""
+                    decoding="async"
+                />
+                <span class="account-dash-stamp-title-1">Staub 電子印花</span>
+                <span class="account-dash-stamp-count-1">× 17</span>
+                <div class="account-dash-stamp-dates-1">
+                    <span class="account-dash-stamp-date-label-1">派发日期:</span>
+                    <span class="account-dash-stamp-date-1">2026/01/09 - 2026/04/23</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# 4 同一排：返貨通知 + 再次購買 #}
+    <div class="account-dash-split-1">
+        <div class="account-dash-split-col-1 account-dash-split-col-white-1">
+            <div class="account-dash-heading-row-1">
+                <h2 class="account-dash-heading-1">返貨通知</h2>
+                <a href="#" class="account-dash-view-all-1">查看所有</a>
+            </div>
+            <div class="account-dash-panel-1 account-dash-panel-empty-1">
+                <p>尚未有貨品</p>
+            </div>
+        </div>
+        <div class="account-dash-split-col-1 account-dash-split-col-white-1">
+            <div class="account-dash-heading-row-1">
+                <h2 class="account-dash-heading-1">再次購買</h2>
+                <a href="#" class="account-dash-view-all-1">查看所有</a>
+            </div>
+            <div class="account-dash-panel-1 account-dash-panel-empty-1">
+                <p>尚未有貨品</p>
+            </div>
+        </div>
+    </div>
+</div>

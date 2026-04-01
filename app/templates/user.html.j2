@@ -1,18 +1,45 @@
 {% extends "base.html.j2" %}
+
+{% block styles %}
+    {{ super() }}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/account-layout.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/account-breadcrumb.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/account-sidebar.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/account-dashboard.css') }}">
+{% endblock %}
+
 {% block app_content %}
-    <table class="table table-hover">
+    {% if current_user.is_authenticated and user == current_user %}
+        {% set account_breadcrumb_items = [
+            {'text': _('Home'), 'href': url_for('index')},
+            {'text': _('My account')},
+        ] %}
+    {% else %}
+        {% set account_breadcrumb_items = [
+            {'text': _('Home'), 'href': url_for('index')},
+            {'text': user.username},
+        ] %}
+    {% endif %}
+    <table class="table account-layout-table-1">
         <tr>
-            <td width="256px">
-                <img src="{{ user.avatar(256) }}" alt="">
+            <td class="account-layout-bc-cell-1" colspan="2">
+                {% include 'partials/info-page_breadcrumb.html.j2' %}
             </td>
-            <td>
-                <h1>{{ _('User') }}: {{ user.username }}</h1>
-                {% if user == current_user %}
-                    <p>
-                        <a href="{{ url_for('edit_profile') }}">{{ _('Edit your profile') }}</a>
-                        ·
-                        <a href="{{ url_for('logout') }}">{{ _('Logout') }}</a>
-                    </p>
+        </tr>
+        <tr>
+            <td class="account-layout-nav-cell-1" width="272">
+                {% if current_user.is_authenticated and user == current_user %}
+                    {% include 'partials/info-page_sidebar.html.j2' %}
+                {% else %}
+                    <img src="{{ user.avatar(256) }}" alt="">
+                {% endif %}
+            </td>
+            <td class="account-layout-main-1">
+                {% if current_user.is_authenticated and user == current_user %}
+                    {% include 'partials/info-page_dashboard.html.j2' %}
+                {% else %}
+                    <img class="account-layout-avatar-1" src="{{ user.avatar(256) }}" alt="">
+                    <h1>{{ _('User') }}: {{ user.username }}</h1>
                 {% endif %}
             </td>
         </tr>

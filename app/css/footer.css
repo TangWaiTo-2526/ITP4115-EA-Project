@@ -2,16 +2,70 @@
 .footer-div1-wrap-1 {
     max-width: 1100px;
     margin: 0 auto;
-    padding: 0 15px;
+    padding: 0 15px 50px;
 }
 
-/* 僅內容區最外層閃訊；登入頁內嵌於 .login-div1 的 flash 由 login.css 毛玻璃樣式負責 */
+/* 全站內容區 flash：與登入頁 login-div1-flash 同系——水平置中、自上方滑入 → 停留 → 滑出（login.css 僅在登入頁載入，故 keyframes 在此重複一份） */
 .footer-div1-wrap-1 > .footer-div1-flash-1 {
-    padding: 10px 14px;
-    margin: 10px 0;
-    background: #d9edf7;
-    color: #31708f;
-    border-radius: 4px;
+    position: fixed;
+    left: 50%;
+    /* 緊貼 header.micro-header 底邊下方（勿用 top:0，否則會與頂欄重疊） */
+    top: calc(var(--micro-header-height, 155px) + 0.5rem);
+    z-index: 5000;
+    width: min(36rem, calc(100% - 2rem));
+    margin: 0;
+    padding: 0.75rem 1.35rem;
+    text-align: center;
+    font-family: "Manrope", system-ui, sans-serif;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    line-height: 1.45;
+    color: #153e75;
+    border-radius: 999px;
+    background: linear-gradient(
+        155deg,
+        rgba(255, 255, 255, 0.58) 0%,
+        rgba(255, 255, 255, 0.28) 45%,
+        rgba(255, 255, 255, 0.4) 100%
+    );
+    border: 1px solid rgba(0, 71, 141, 0.42);
+    box-shadow:
+        0 12px 40px rgba(0, 71, 141, 0.16),
+        0 1px 0 rgba(255, 255, 255, 0.75) inset;
+    backdrop-filter: blur(24px) saturate(1.35);
+    -webkit-backdrop-filter: blur(24px) saturate(1.35);
+    transform: translateX(-50%);
+    animation: footer-div1-flash-toast-1 6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    will-change: transform, opacity;
+    pointer-events: none;
+}
+
+@keyframes footer-div1-flash-toast-1 {
+    0% {
+        transform: translateX(-50%) translateY(calc(-100% - 1.25rem));
+        opacity: 1;
+    }
+    8.33% {
+        transform: translateX(-50%) translateY(0);
+        opacity: 1;
+    }
+    91.67% {
+        transform: translateX(-50%) translateY(0);
+        opacity: 1;
+    }
+    100% {
+        transform: translateX(-50%) translateY(calc(-100% - 1.25rem));
+        opacity: 0;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .footer-div1-wrap-1 > .footer-div1-flash-1 {
+        animation: none;
+        transform: translateX(-50%);
+        opacity: 1;
+        top: calc(var(--micro-header-height, 155px) + 0.5rem);
+    }
 }
 
 .footer-div1-1 {

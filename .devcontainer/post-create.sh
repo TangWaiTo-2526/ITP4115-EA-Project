@@ -4,7 +4,7 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
 
-TOTAL_STEPS=4
+TOTAL_STEPS=3
 
 log() {
   printf '[post-create %s] %s\n' "$(date '+%H:%M:%S')" "$*"
@@ -60,18 +60,3 @@ python3 -m pip install -U pip setuptools wheel
 step_header 3 "Python：安裝 requirements.txt"
 log "執行: python3 -m pip install -r requirements.txt（依套件數量可能需數分鐘）"
 python3 -m pip install -r requirements.txt
-
-step_header 4 "完成"
-log "完成。pgAdmin: http://127.0.0.1:5050"
-echo ""
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo "  啟動 Flask：請在下方終端執行（或複製整行貼上後 Enter）"
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo ""
-echo "  bash .devcontainer/start-flask.sh"
-echo ""
-echo "  等同於："
-echo "  cd \"$ROOT\" && export FLASK_APP=app && flask --debug run --host=0.0.0.0"
-echo ""
-echo "  啟動後瀏覽: http://127.0.0.1:5000"
-echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"

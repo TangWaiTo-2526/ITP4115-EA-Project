@@ -69,7 +69,7 @@ msgstr ""
 msgid "Your changes have been saved."
 msgstr ""
 
-#: routes.py:158 templates/edit_profile.html.j2:4
+#: routes.py:158 templates/partials/info-page_edit-profile.html.j2:4
 msgid "Edit Profile"
 msgstr ""
 

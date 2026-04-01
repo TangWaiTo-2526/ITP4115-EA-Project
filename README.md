@@ -2,10 +2,12 @@
 
 ## 表結構總覽
 
+以下 `user`、`user_address` 欄位與 Alembic 遷移 `a3c1d9f4b210_create_shop_user`、`f6b2a0c81d7e_create_shop_user_address` 及 `app.models` 一致。
+
 | 表（Table） | 说明 | 字段（Columns） |
 | --- | --- | --- |
-| `user` | 用戶表 | `user_uuid`, `user_name`, `phone_number`, `mail`, `password_hash`, `create_time` |
-| `user_address` | 用戶收貨地址 | `user_address_uuid`, `user_uuid`, `user_address`, `create_time` |
+| `user` | 用戶表 | `user_uuid`, `user_name`, `phone_number`, `mail`, `password_hash`, `create_time`, `salutation`, `birthday`, `nationality`, `communication_language`, `marketing_opt_out`, `brand_fortress`, `brand_parknshop`, `brand_watsons`, `brand_moneyback` |
+| `user_address` | 用戶收貨地址 | `user_address_uuid`, `user_uuid`, `user_address`, `unit`, `floor`, `building_street`, `region`, `district`, `phone_number`, `home_phone`, `create_time` |
 | `registration_verification_code` | 註冊驗證碼 | `id`, `client_ip`, `code`, `mail`, `created_at`, `expires_at`, `last_sent_at`, `consumed_at` |
 | `membership` | 會員促銷/積分 | `user_uuid`, `membership_point`, `create_time` |
 | `cart` | 購物車表 | `user_uuid`, `product_details_uuid`, `create_time` |
@@ -16,8 +18,8 @@
 
 ### 主键（PK）
 
-- user: PK = user_uuid
-- user_address: PK = user_address_uuid
+- user: PK = user_uuid；`mail` 唯一（`uq_user_mail`）；索引 `ix_user_user_name`、`ix_user_phone_number`
+- user_address: PK = user_address_uuid；索引 `ix_user_address_user_uuid`
 - registration_verification_code: PK = id
 - membership: PK = user_uuid
 - cart: PK = user_uuid, product_details_uuid
@@ -44,12 +46,28 @@
 - 用戶電子郵箱（`mail`）: `xxxx@mail.com`
 - 密碼雜湊（`password_hash`）: `pbkdf2:sha256:...`
 - 建立日期（`create_time`）: `2026:01:01:11:11:11`
+- 稱謂（`salutation`）: `先生`（可空）
+- 生日（`birthday`）: `1990-05-20`（可空）
+- 國籍（`nationality`）: `中國香港`（可空）
+- 通訊語言（`communication_language`）: `繁體`（預設）
+- 拒收推廣（`marketing_opt_out`）: `false`（預設）
+- 品牌訂閱 — 豐澤（`brand_fortress`）: `true`（預設）
+- 品牌訂閱 — 百佳（`brand_parknshop`）: `true`（預設）
+- 品牌訂閱 — 屈臣氏（`brand_watsons`）: `true`（預設）
+- 品牌訂閱 — MoneyBack（`brand_moneyback`）: `true`（預設）
 
 ### 用戶收貨地址（`user_address`）
 
 - 用戶收貨地址唯一識別符（`user_address_uuid`）: `8f0f4d4f-7f1e-4b6a-9a2a-2f1a7d9c3b10`
 - 用戶唯一識別符（`user_uuid`）: `55f7d0f9-fba6-4833-b113-8f55e069c5b6`
-- 用戶收貨地址（`user_address`）: `香港xxxxxxxxxxxxxxxx`
+- 完整地址文字（`user_address`）: `香港九龍尖沙咀彌敦道 100 號`（與表單合成展示用）
+- 單位（`unit`）: `A`（可空）
+- 樓層（`floor`）: `12`（可空）
+- 大廈／街道（`building_street`）: `彌敦道 100 號某某大廈`（可空）
+- 地區（`region`）: `九龍`（可空）
+- 分區（`district`）: `油尖旺區`（可空）
+- 聯絡電話（`phone_number`）: `91234567`（可空）
+- 住宅電話（`home_phone`）: `21234567`（可空）
 - 建立日期（`create_time`）: `2026:01:02:12:00:00`
 
 ### 註冊驗證碼（`registration_verification_code`）
