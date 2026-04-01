@@ -1,0 +1,44 @@
+/* 帳戶頁：兩欄表格外殼（麵包屑列 + 側欄 + 主內容） */
+.account-layout-bc-cell-1 {
+    padding: 0 0 14px;
+    vertical-align: middle;
+    border-bottom: none !important;
+}
+
+.account-layout-table-1 tbody tr:first-child + tr > td {
+    border-top: none !important;
+}
+
+.account-layout-table-1 {
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: transparent;
+}
+
+.account-layout-table-1.table > tbody > tr:hover > td {
+    background-color: transparent;
+}
+
+.account-layout-table-1 td {
+    vertical-align: top;
+}
+
+.account-layout-nav-cell-1 {
+    width: 272px;
+    padding: 0 20px 0 0;
+}
+
+.account-layout-main-1 {
+    padding: 0 0 0 16px;
+}
+
+.account-layout-main-1 .account-layout-avatar-1 {
+    width: 120px;
+    height: auto;
+    border-radius: 8px;
+    display: block;
+    margin-bottom: 16px;
+}

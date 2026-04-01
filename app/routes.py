@@ -22,10 +22,96 @@ from app.forms import (
 )
 from app.models import User, UserAddress, Membership, RegistrationVerificationCode
 from app.email import send_password_reset_email, send_registration_verification_email
+from app.hk_address import HK_DISTRICTS
 
 
 REG_VERIFY_TTL_SEC = 900
 REG_VERIFY_IP_COOLDOWN_MIN = 15
+
+
+def _populate_edit_profile_form(form, user):
+    form.salutation.data = user.salutation or ''
+    form.username.data = user.user_name
+    form.nationality.data = user.nationality or ''
+    form.mobile_phone.data = user.phone_number or ''
+    form.mail.data = user.mail
+    form.comm_language.data = user.communication_language or '繁體'
+    form.birthday.data = user.birthday
+    form.marketing_opt_out.data = bool(user.marketing_opt_out)
+    form.brand_fortress.data = bool(user.brand_fortress)
+    form.brand_parknshop.data = bool(user.brand_parknshop)
+    form.brand_watsons.data = bool(user.brand_watsons)
+    form.brand_moneyback.data = bool(user.brand_moneyback)
+
+    addr = user.addresses.order_by(UserAddress.create_time.asc()).first()
+    if addr:
+        form.home_phone.data = addr.home_phone or ''
+        form.addr_unit.data = addr.unit or ''
+        form.addr_floor.data = addr.floor or ''
+        form.addr_building_street.data = addr.building_street or ''
+        r = (addr.region or '').strip()
+        form.addr_region.data = r
+        if r in HK_DISTRICTS:
+            form.addr_district.choices = [('', '請選擇')] + [(d, d) for d in HK_DISTRICTS[r]]
+        else:
+            form.addr_district.choices = [('', '請選擇')]
+        form.addr_district.data = addr.district or ''
+    else:
+        form.home_phone.data = ''
+        form.addr_unit.data = ''
+        form.addr_floor.data = ''
+        form.addr_building_street.data = ''
+        form.addr_region.data = ''
+        form.addr_district.choices = [('', '請選擇')]
+        form.addr_district.data = ''
+
+
+def _save_profile_and_address(form, user):
+    user.salutation = (form.salutation.data or '').strip() or None
+    user.user_name = (form.username.data or '').strip()
+    user.mail = (form.mail.data or '').strip()
+    ph = (form.mobile_phone.data or '').strip()
+    user.phone_number = ph if ph else None
+    user.birthday = form.birthday.data
+    user.nationality = (form.nationality.data or '').strip() or None
+    user.communication_language = (form.comm_language.data or '繁體').strip()
+    user.marketing_opt_out = bool(form.marketing_opt_out.data)
+    user.brand_fortress = bool(form.brand_fortress.data)
+    user.brand_parknshop = bool(form.brand_parknshop.data)
+    user.brand_watsons = bool(form.brand_watsons.data)
+    user.brand_moneyback = bool(form.brand_moneyback.data)
+
+    unit = (form.addr_unit.data or '').strip()
+    floor = (form.addr_floor.data or '').strip()
+    building = (form.addr_building_street.data or '').strip()
+    region = (form.addr_region.data or '').strip()
+    district = (form.addr_district.data or '').strip()
+    home_ph = (form.home_phone.data or '').strip()
+
+    has_addr = any([unit, floor, building, region, district, home_ph])
+    addr = user.addresses.order_by(UserAddress.create_time.asc()).first()
+
+    if not has_addr:
+        if addr:
+            db.session.delete(addr)
+        return
+
+    line = ' '.join(x for x in [region, district, building, floor, unit] if x).strip() or '-'
+
+    if not addr:
+        addr = UserAddress(user_uuid=user.user_uuid, user_address=line)
+        db.session.add(addr)
+    else:
+        addr.user_address = line
+
+    addr.unit = unit or None
+    addr.floor = floor or None
+    addr.building_street = building or None
+    addr.region = region or None
+    addr.district = district or None
+    addr.home_phone = home_ph or None
+    sync_ph = (user.phone_number or '').strip()
+    addr.phone_number = sync_ph if sync_ph else None
 
 
 def _clear_reg_session():
@@ -244,6 +330,7 @@ def register():
                 _delete_registration_code_row(session.get('reg_verify_row_id'))
                 _clear_reg_session()
                 return redirect(url_for('register'))
+            flash('驗證碼已發送至您的信箱，請查收。')
             return redirect(url_for('register_verify'))
 
         if existing.expires_at < now:
@@ -258,6 +345,7 @@ def register():
                 _delete_registration_code_row(session.get('reg_verify_row_id'))
                 _clear_reg_session()
                 return redirect(url_for('register'))
+            flash('驗證碼已發送至您的信箱，請查收。')
             return redirect(url_for('register_verify'))
 
         session['reg_verify_code'] = existing.code
@@ -271,6 +359,7 @@ def register():
             return redirect(url_for('register_verify'))
         existing.last_sent_at = now
         db.session.commit()
+        flash('驗證碼已發送至您的信箱，請查收。')
         return redirect(url_for('register_verify'))
     return render_template('register.html.j2', title='註冊', form=form)
 
@@ -381,8 +470,7 @@ def register_verify_resend():
         return redirect(url_for('register_verify'))
     row.last_sent_at = datetime.now(timezone.utc)
     db.session.commit()
-    if not app.debug:
-        flash('已重新發送驗證郵件（驗證碼與先前相同）。')
+    flash('已重新發送驗證郵件。')
     return redirect(url_for('register_verify'))
 
 
@@ -435,13 +523,21 @@ def user(username):
 @app.route('/edit_profile', methods=['GET', 'POST'])
 @login_required
 def edit_profile():
-    form = EditProfileForm(current_user.user_name)
+    form = EditProfileForm(current_user.user_name, current_user.mail)
+    if request.method == 'POST':
+        reg = (request.form.get('addr_region') or '').strip()
+        if reg in HK_DISTRICTS:
+            form.addr_district.choices = [('', '請選擇')] + [(d, d) for d in HK_DISTRICTS[reg]]
     if form.validate_on_submit():
-        current_user.user_name = form.username.data
+        _save_profile_and_address(form, current_user)
         db.session.commit()
-        flash(_('Your changes have been saved.'))
+        flash('資料已儲存。')
         return redirect(url_for('edit_profile'))
-    elif request.method == 'GET':
-        form.username.data = current_user.user_name
-    return render_template('edit_profile.html.j2', title=_('Edit Profile'),
-                           form=form)
+    if request.method == 'GET':
+        _populate_edit_profile_form(form, current_user)
+    return render_template(
+        'partials/info-page_edit-profile.html.j2',
+        title='個人資料',
+        form=form,
+        hk_districts=HK_DISTRICTS,
+    )

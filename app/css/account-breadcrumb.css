@@ -1,0 +1,34 @@
+/* 帳戶頁麵包屑 */
+.account-bc-inner-1 {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    padding: 30px 14px;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.account-bc-link-1 {
+    color: #5a6470;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.account-bc-link-1:hover,
+.account-bc-link-1:focus-visible {
+    color: #3d4a5c;
+    text-decoration: underline;
+    outline: none;
+}
+
+.account-bc-sep-1 {
+    color: #5a6470;
+    user-select: none;
+    font-weight: 500;
+}
+
+.account-bc-current-1 {
+    color: rgb(63, 167, 243);
+    font-weight: 600;
+}

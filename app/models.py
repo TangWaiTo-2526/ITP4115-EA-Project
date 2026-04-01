@@ -28,6 +28,15 @@ class User(UserMixin, db.Model):
     mail = db.Column(db.String(100), nullable=False, unique=True)
     password_hash = db.Column(db.String(256), nullable=True)
     create_time = db.Column(db.DateTime, nullable=False, server_default=db.func.now())
+    salutation = db.Column(db.String(32), nullable=True)
+    birthday = db.Column(db.Date, nullable=True)
+    nationality = db.Column(db.String(64), nullable=True)
+    communication_language = db.Column(db.String(32), nullable=True)
+    marketing_opt_out = db.Column(db.Boolean, nullable=False, default=False)
+    brand_fortress = db.Column(db.Boolean, nullable=False, default=True)
+    brand_parknshop = db.Column(db.Boolean, nullable=False, default=True)
+    brand_watsons = db.Column(db.Boolean, nullable=False, default=True)
+    brand_moneyback = db.Column(db.Boolean, nullable=False, default=True)
 
     addresses = db.relationship(
         'UserAddress', back_populates='user', lazy='dynamic', cascade='all, delete-orphan'
@@ -113,7 +122,24 @@ class UserAddress(db.Model):
     )
     user = db.relationship('User', back_populates='addresses')
     user_address = db.Column(db.Text, nullable=False)
+    unit = db.Column(db.String(64), nullable=True)
+    floor = db.Column(db.String(32), nullable=True)
+    building_street = db.Column(db.String(512), nullable=True)
+    region = db.Column(db.String(32), nullable=True)
+    district = db.Column(db.String(64), nullable=True)
+    phone_number = db.Column(db.String(32), nullable=True)
+    home_phone = db.Column(db.String(32), nullable=True)
     create_time = db.Column(db.DateTime, nullable=False, server_default=db.func.now())
+
+    def formatted_line(self) -> str:
+        parts = [
+            self.region or '',
+            self.district or '',
+            self.building_street or '',
+            self.floor or '',
+            self.unit or '',
+        ]
+        return ' '.join(p for p in parts if p).strip()
 
     def __repr__(self) -> str:
         return f'<UserAddress {self.user_address_uuid}>'

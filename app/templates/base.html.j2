@@ -10,7 +10,7 @@
 {% block navbar %}
     <header class="micro-header">
         <div class="header-nav-1">
-            <div class="header-nav-1-inner">
+            <div class="header-shell-inner header-nav-1-inner">
                 <span class="header-nav-1-txt">⭐購物滿$399即享免費送貨；滿$100即可免費店取！</span>
 
                 <div class="header-nav-1-right">
@@ -29,28 +29,58 @@
         </div>
         
         <div class="header-nav-2">
-            <div class="header-nav-2-logo">
-                <a class="header-nav-2-logo-link" href="{{ url_for('index') }}">
-                    <img class="header-nav-2-logo-img" src="{{ url_for('static', filename='png/desktop-logo.avif') }}" alt="Logo">
-                </a>
-            </div>
+            <div class="header-shell-inner header-nav-2-row">
+                <div class="header-nav-2-logo">
+                    <a class="header-nav-2-logo-link" href="{{ url_for('index') }}">
+                        <img class="header-nav-2-logo-img" src="{{ url_for('static', filename='png/desktop-logo.avif') }}" alt="Logo">
+                    </a>
+                </div>
 
-            <nav class="header-nav-2-nav" aria-label="{{ _('Header actions') }}">
-                <a class="header-nav-2-icon-link" href="{% if current_user.is_anonymous %}{{ url_for('login') }}{% else %}{{ url_for('user', username=current_user.username) }}{% endif %}" aria-label="{{ _('Account') }}">
-                    <i class="fa-regular fa-user header-nav-2-icon" aria-hidden="true"></i>
-                </a>
-                <a class="header-nav-2-icon-link" href="#" aria-label="{{ _('Favorites') }}">
-                    <i class="fa-regular fa-heart header-nav-2-icon" aria-hidden="true"></i>
-                </a>
-                <a class="header-nav-2-icon-link" href="#" aria-label="{{ _('Shopping cart') }}">
-                    <i class="fa-solid fa-cart-shopping header-nav-2-icon" aria-hidden="true"></i>
-                </a>
-            </nav>
-            
+                <nav class="header-nav-2-nav" aria-label="{{ _('Header actions') }}">
+                    <div class="header-nav-2-account">
+                        <a class="header-nav-2-icon-link header-nav-2-account-trigger" href="{% if current_user.is_anonymous %}{{ url_for('login') }}{% else %}{{ url_for('user', username=current_user.username) }}{% endif %}" aria-haspopup="true" aria-label="{{ _('Account') }}">
+                            <i class="fa-regular fa-user header-nav-2-icon" aria-hidden="true"></i>
+                        </a>
+                        <div class="header-nav-2-account-panel" role="menu" aria-label="{{ _('Account menu') }}">
+                            {% if current_user.is_anonymous %}
+                            <a role="menuitem" class="header-nav-2-account-item" href="{{ url_for('login') }}">{{ _('Sign In') }}</a>
+                            <a role="menuitem" class="header-nav-2-account-item" href="{{ url_for('register') }}">{{ _('Register') }}</a>
+                            <a role="menuitem" class="header-nav-2-account-item" href="{{ url_for('reset_password_request') }}">{{ _('Forgot password') }}</a>
+                            {% else %}
+                            <div class="header-nav-2-account-main">
+                                <a role="menuitem" class="header-nav-2-account-item header-nav-2-account-item--with-icon" href="{{ url_for('user', username=current_user.username) }}">
+                                    <i class="fa-regular fa-user header-nav-2-account-ico" aria-hidden="true"></i>
+                                    <span>我的帳戶</span>
+                                </a>
+                                <a role="menuitem" class="header-nav-2-account-item header-nav-2-account-item--with-icon" href="#">
+                                    <i class="fa-solid fa-box header-nav-2-account-ico" aria-hidden="true"></i>
+                                    <span>訂單紀錄</span>
+                                </a>
+                                <a role="menuitem" class="header-nav-2-account-item header-nav-2-account-item--with-icon" href="#">
+                                    <i class="fa-solid fa-clock-rotate-left header-nav-2-account-ico" aria-hidden="true"></i>
+                                    <span>再次購買</span>
+                                </a>
+                            </div>
+                            <div class="header-nav-2-account-footer">
+                                <a role="menuitem" class="header-nav-2-account-item header-nav-2-account-item--logout" href="{{ url_for('logout') }}">登出</a>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="header-nav-2-nav-scroll">
+                        <a class="header-nav-2-icon-link" href="#" aria-label="{{ _('Favorites') }}">
+                            <i class="fa-regular fa-heart header-nav-2-icon" aria-hidden="true"></i>
+                        </a>
+                        <a class="header-nav-2-icon-link" href="#" aria-label="{{ _('Shopping cart') }}">
+                            <i class="fa-solid fa-cart-shopping header-nav-2-icon" aria-hidden="true"></i>
+                        </a>
+                    </div>
+                </nav>
+            </div>
         </div>
 
         <nav class="header-nav-3" aria-label="{{ _('主選單') }}">
-            <div class="header-nav-3-inner">
+            <div class="header-shell-inner header-nav-3-inner">
                 <a class="header-nav-3-link{% if request.endpoint in ('index',) %} is-active{% endif %}" href="{{ url_for('index') }}"><span class="header-nav-3-label">{{ _('首頁') }}</span><i class="fa-solid fa-chevron-down header-nav-3-chevron" aria-hidden="true"></i></a>
                 <a class="header-nav-3-link" href="#"><span class="header-nav-3-label">{{ _('食品及飲品') }}</span><i class="fa-solid fa-chevron-down header-nav-3-chevron" aria-hidden="true"></i></a>
                 <a class="header-nav-3-link" href="#"><span class="header-nav-3-label">{{ _('母嬰') }}</span><i class="fa-solid fa-chevron-down header-nav-3-chevron" aria-hidden="true"></i></a>
@@ -82,7 +112,7 @@
 {% block content %}
     <div class="footer-div1-wrap-1">
         {% block site_flash %}
-            {% include 'partials/_flash_messages.html.j2' %}
+            {% include 'partials/info-page_flash-messages.html.j2' %}
         {% endblock %}
         {# application content needs to be provided in the app_content block #}
         {% block app_content %}{% endblock %}

@@ -1,34 +1,57 @@
-.micro-header {
-    min-height: 155px;
-    background: #3D62D5;
-    position: relative;
-    overflow: hidden;
-    width: 100%;
-    box-shadow: 0 2px 2px rgba(86, 102, 173, 0.2);
+/* 避免橫向溢出／捲動條導致 max-width 置中區塊視覺偏移；stable 預留垂直捲軸寬度減少閃動 */
+:root {
+    /* 與 .micro-header 三列高度一致（nav-1 28 + nav-2 72 + nav-3 55），供全站 fixed toast 等對齊頂欄底邊 */
+    --micro-header-height: 155px;
 }
 
+html {
+    overflow-x: hidden;
+    scrollbar-gutter: stable;
+}
+
+body {
+    overflow-x: hidden;
+}
+
+.micro-header {
+    min-height: var(--micro-header-height);
+    background: #3D62D5;
+    position: relative;
+    overflow: visible;
+    width: 100%;
+    box-shadow: 0 2px 2px rgba(86, 102, 173, 0.2);
+    box-sizing: border-box;
+}
+
+/* 頂欄置於 header 最上方：使用文檔流第一塊，避免 absolute + 子元素 margin 造成上方空白 */
 .header-nav-1 {
-    position: absolute;
-    left: 0;
-    right: 0;
+    position: relative;
+    width: 100%;
     height: 28px;
+    flex-shrink: 0;
     background: #292D84;
-    z-index: 1;
+    z-index: 3;
     color: #FFFFFF;
     display: flex;
     align-items: center;
 }
 
-.header-nav-1-inner {
+/* 頂欄／Logo 列／白底選單列共用同一水平基準，避免各層各自 max-width 產生 1～2px 誤差 */
+.header-shell-inner {
     width: 100%;
     max-width: 1100px;
-    margin: 0 auto;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: clamp(12px, 3vw, 24px);
+    padding-right: clamp(12px, 3vw, 24px);
+    box-sizing: border-box;
+}
+
+.header-nav-1-inner {
     display: flex;
     align-items: center;
     justify-content: flex-start;
     gap: 12px;
-    padding: 0 clamp(12px, 3vw, 24px);
-    box-sizing: border-box;
     line-height: 28px;
 }
 
@@ -70,17 +93,16 @@
 .header-nav-2 {
     position: relative;
     z-index: 2;
-    height: 72px;
     width: 100%;
-    max-width: 1100px;
-    margin: 28px auto 0;
+}
+
+.header-nav-2-row {
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    padding: 0 clamp(12px, 3vw, 24px);
-    box-sizing: border-box;
     gap: 12px;
-    overflow: visible;
+    height: 72px;
+    box-sizing: border-box;
 }
 
 .header-nav-2-logo {
@@ -109,13 +131,24 @@
     flex-wrap: nowrap;
     flex-shrink: 1;
     min-width: 0;
+    overflow: visible;
+}
+
+.header-nav-2-nav-scroll {
+    display: flex;
+    gap: clamp(16px, 2.6vw, 28px);
+    align-items: center;
+    flex-wrap: nowrap;
+    min-width: 0;
+    flex: 1 1 auto;
+    justify-content: flex-end;
     overflow-x: auto;
     overflow-y: hidden;
     -webkit-overflow-scrolling: touch;
     scrollbar-width: thin;
 }
 
-.header-nav-2-nav::-webkit-scrollbar {
+.header-nav-2-nav-scroll::-webkit-scrollbar {
     height: 3px;
 }
 
@@ -136,6 +169,129 @@
     color: #FFFFFF !important;;
     text-decoration: none !important;;
     opacity: 0.95 !important;;
+}
+
+.header-nav-2-account {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    flex-shrink: 1;
+}
+
+.header-nav-2-account-panel {
+    position: absolute;
+    /* 與圖示留出間距，避免遮擋；勿 overflow:hidden，否則 ::before 橋被裁切會導致 hover 中斷 */
+    top: calc(100% + 8px);
+    left: 50%;
+    right: auto;
+    min-width: 220px;
+    max-width: min(280px, calc(100vw - 24px));
+    padding: 0;
+    background: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(41, 45, 132, 0.2);
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    z-index: 500;
+    opacity: 0;
+    visibility: hidden;
+    overflow: visible;
+    /* 水平置中對齊使用者圖示；垂直用 translateY 做出現動畫 */
+    transform: translate(-50%, -6px);
+    transition: opacity 0.18s ease, transform 0.18s ease, visibility 0.18s;
+    pointer-events: none;
+}
+
+.header-nav-2-account-main {
+    padding: 6px 0;
+}
+
+/* 透明橋：補滿圖示與選單間的 8px 縫隙，避免移入選單時失 hover */
+.header-nav-2-account-panel::before {
+    content: '';
+    position: absolute;
+    bottom: 100%;
+    left: 0;
+    right: 0;
+    height: 24px;
+}
+
+.header-nav-2-account:hover .header-nav-2-account-panel,
+.header-nav-2-account:focus-within .header-nav-2-account-panel {
+    opacity: 1;
+    visibility: visible;
+    transform: translate(-50%, 0);
+    pointer-events: auto;
+}
+
+.header-nav-2-account-item {
+    display: block;
+    padding: 10px 16px;
+    color: #1f1f1f;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.3;
+    text-decoration: none;
+    transition: background 0.15s ease, color 0.15s ease;
+}
+
+.header-nav-2-account-item--with-icon {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #424752;
+    font-weight: 500;
+}
+
+.header-nav-2-account-ico {
+    flex-shrink: 0;
+    width: 22px;
+    text-align: center;
+    font-size: 18px;
+    line-height: 1;
+    color: #5a5f6a;
+}
+
+.header-nav-2-account-item--with-icon:hover .header-nav-2-account-ico,
+.header-nav-2-account-item--with-icon:focus-visible .header-nav-2-account-ico {
+    color: #3d62d5;
+}
+
+.header-nav-2-account-panel > a.header-nav-2-account-item:hover,
+.header-nav-2-account-panel > a.header-nav-2-account-item:focus-visible {
+    background: rgba(61, 98, 213, 0.08);
+    color: #3d62d5;
+    outline: none;
+}
+
+.header-nav-2-account-item--with-icon:hover,
+.header-nav-2-account-item--with-icon:focus-visible {
+    background: rgba(61, 98, 213, 0.08);
+    color: #3d62d5;
+    outline: none;
+}
+
+/* 與外層 .header-nav-2-account-panel 的 border-radius 對齊底部兩角（否則灰底會是直角，像多套一層方盒） */
+.header-nav-2-account-footer {
+    border-top: 1px solid #e8e9ec;
+    background: #f4f5f7;
+    padding: 10px 12px 12px;
+    border-radius: 0 0 9px 9px;
+}
+
+.header-nav-2-account-item--logout {
+    padding: 8px 12px;
+    text-align: center;
+    color: #3d62d5;
+    font-weight: 600;
+    background: transparent;
+    transition: color 0.15s ease;
+}
+
+.header-nav-2-account-item--logout:hover,
+.header-nav-2-account-item--logout:focus-visible {
+    background: transparent;
+    color: #d32f2f;
+    outline: none;
 }
 
 .header-nav-2-icon {
@@ -177,12 +333,7 @@
 }
 
 .header-nav-3-inner {
-    width: 100%;
-    max-width: 1100px;
     height: 100%;
-    margin: 0 auto;
-    padding: 0 clamp(12px, 3vw, 24px);
-    box-sizing: border-box;
     display: flex;
     align-items: stretch;
     justify-content: flex-start;
