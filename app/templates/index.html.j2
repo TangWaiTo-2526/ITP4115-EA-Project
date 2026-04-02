@@ -165,6 +165,519 @@
         </article>
         {% endfor %}
     </div>
+    <div class="generic-banner" role="generic" aria-label="generic images">
+        <a class="generic-banner-link" href="#" role="link" aria-label="C 图片 1">
+            <img src="{{ url_for('static', filename='png/c/1.jpeg') }}" alt="C 图片 1" />
+        </a>
+        <a class="generic-banner-link" href="#" role="link" aria-label="C 图片 2">
+            <img src="{{ url_for('static', filename='png/c/2.jpeg') }}" alt="C 图片 2" />
+        </a>
+        <a class="generic-banner-link" href="#" role="link" aria-label="C 图片 3">
+            <img src="{{ url_for('static', filename='png/c/3.jpeg') }}" alt="C 图片 3" />
+        </a>
+        <a class="generic-banner-link" href="#" role="link" aria-label="C 图片 4">
+            <img src="{{ url_for('static', filename='png/c/4.jpeg') }}" alt="C 图片 4" />
+        </a>
+    </div>
+    <div class="generic-banner" role="generic" aria-label="generic images 2">
+        <a class="generic-banner-link" href="#" role="link" aria-label="C 图片 1 2">
+            <img src="{{ url_for('static', filename='png/d/5.jpeg') }}" alt="D 图片 1" />
+        </a>
+        <a class="generic-banner-link" href="#" role="link" aria-label="C 图片 2 2">
+            <img src="{{ url_for('static', filename='png/d/6.jpeg') }}" alt="D 图片 2" />
+        </a>
+        <a class="generic-banner-link" href="#" role="link" aria-label="C 图片 3 2">
+            <img src="{{ url_for('static', filename='png/d/7.jpeg') }}" alt="D 图片 3" />
+        </a>
+        <a class="generic-banner-link" href="#" role="link" aria-label="C 图片 4 2">
+            <img src="{{ url_for('static', filename='png/d/8.jpeg') }}" alt="D 图片 4" />
+        </a>
+    </div>
+    <div class="generic-strip-896" role="generic" aria-label="896 strip">
+        <a class="generic-strip-896-link" href="#" role="link" aria-label="F 图片 1">
+            <img src="{{ url_for('static', filename='png/f/a.jpeg') }}" alt="F 图片 1" />
+        </a>
+        <a class="generic-strip-896-link" href="#" role="link" aria-label="F 图片 2">
+            <img src="{{ url_for('static', filename='png/f/b.jpeg') }}" alt="F 图片 2" />
+        </a>
+        <a class="generic-strip-896-link" href="#" role="link" aria-label="F 图片 3">
+            <img src="{{ url_for('static', filename='png/f/c.jpeg') }}" alt="F 图片 3" />
+        </a>
+    </div>
+    <div class="generic-block-1192x286" role="generic" aria-label="1192 x 286 block">
+        <a class="generic-block-1192x286-link" href="#" role="link" aria-label="G 图片 1">
+            <img src="{{ url_for('static', filename='png/g/d.jpeg') }}" alt="G 图片 1" />
+        </a>
+        <a class="generic-block-1192x286-link" href="#" role="link" aria-label="G 图片 2">
+            <img src="{{ url_for('static', filename='png/g/e.jpeg') }}" alt="G 图片 2" />
+        </a>
+        <a class="generic-block-1192x286-link" href="#" role="link" aria-label="G 图片 3">
+            <img src="{{ url_for('static', filename='png/g/f.jpeg') }}" alt="G 图片 3" />
+        </a>
+        <a class="generic-block-1192x286-link" href="#" role="link" aria-label="G 图片 4">
+            <img src="{{ url_for('static', filename='png/g/g.jpeg') }}" alt="G 图片 4" />
+        </a>
+    </div>
+    {% set shelf_products = [
+        {'name': 'AVEENO 燕麥舒緩沐浴露', 'spec': '1L', 'sale': '135.00', 'orig': '169.00', 'sales': '已售 20K+', 'reviews': '99+', 'img': 'png/carousel/001.webp'},
+        {'name': '道地 極品解茶 無糖', 'spec': '250MLX6X4', 'sale': '88.00', 'orig': '108.00', 'sales': '已售 15K+', 'reviews': '120+', 'img': 'png/carousel/002.webp'},
+        {'name': '金龍魚 純香花生油', 'spec': '5L', 'sale': '129.90', 'orig': '149.00', 'sales': '已售 8K+', 'reviews': '88+', 'img': 'png/carousel/003.webp'},
+        {'name': '維他 檸檬茶', 'spec': '250MLX6', 'sale': '42.00', 'orig': '52.00', 'sales': '已售 32K+', 'reviews': '256+', 'img': 'png/carousel/004.webp'},
+        {'name': '出前一丁 即食麵', 'spec': '5包裝', 'sale': '28.50', 'orig': '35.00', 'sales': '已售 11K+', 'reviews': '64+', 'img': 'png/carousel/005.webp'},
+        {'name': '可口可樂', 'spec': '330MLX8', 'sale': '36.00', 'orig': '44.00', 'sales': '已售 25K+', 'reviews': '99+', 'img': 'png/carousel/006.webp'}
+    ] %}
+    <div class="jiadimai-shelf-block" role="generic" aria-label="佳抵買與商品列表">
+        <img
+            class="jiadimai-image"
+            src="{{ url_for('static', filename='png/h/aa.avif') }}"
+            alt="佳抵買"
+            aria-label="佳抵買"
+            role="img"
+        />
+        <div class="generic-block-896x451" role="generic" aria-label="896 x 451 block">
+        <div class="generic-block-896x451-header">
+            <a class="btn btn-secondary-sm view-all-btn promo-panel-link" href="#" role="link">查看所有</a>
+        </div>
+        <div class="generic-block-896x451-grid" role="generic">
+            {% for item in shelf_products %}
+            <article class="porductContainer porductContainer--shelf">
+                <div class="porductContainer-media">
+                    <img class="porductContainer-img" src="{{ url_for('static', filename=item.img) }}" alt="{{ item.name }}">
+                </div>
+                <div class="porductContainer-body">
+                    <h3 class="porductContainer-name">{{ item.name }}</h3>
+                    <p class="porductContainer-spec">{{ item.spec }}</p>
+                    <div class="porductContainer-meta">
+                        <span class="porductContainer-stars" aria-hidden="true">★★★★★</span>
+                        <span class="porductContainer-reviews">({{ item.reviews }})</span>
+                        <span class="porductContainer-sales-sep" aria-hidden="true">|</span>
+                        <span class="porductContainer-sales">{{ item.sales }}</span>
+                    </div>
+                    <div class="porductContainer-prices">
+                        <span class="porductContainer-price-sale">${{ item.sale }}</span>
+                        <span class="porductContainer-price-original">${{ item.orig }}</span>
+                    </div>
+                    <button type="button" class="porductContainer-cart">{{ _('加入購物車') }}</button>
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+        </div>
+    </div>
+    <div class="jiadimai-shelf-block jiadimai-shelf-block--meow9" role="generic" aria-label="Meow9 與商品列表">
+        <img
+            class="jiadimai-image"
+            src="{{ url_for('static', filename='png/meow9-banner.png') }}"
+            alt="Meow9"
+            aria-label="Meow9"
+            role="img"
+        />
+        <div class="generic-block-896x451" role="generic" aria-label="Meow9 商品區">
+        <div class="generic-block-896x451-header">
+            <a class="btn btn-secondary-sm view-all-btn promo-panel-link" href="#" role="link">查看所有</a>
+        </div>
+        <div class="generic-block-896x451-grid" role="generic">
+            {% for item in shelf_products %}
+            <article class="porductContainer porductContainer--shelf">
+                <div class="porductContainer-media">
+                    <img class="porductContainer-img" src="{{ url_for('static', filename=item.img) }}" alt="{{ item.name }}">
+                </div>
+                <div class="porductContainer-body">
+                    <h3 class="porductContainer-name">{{ item.name }}</h3>
+                    <p class="porductContainer-spec">{{ item.spec }}</p>
+                    <div class="porductContainer-meta">
+                        <span class="porductContainer-stars" aria-hidden="true">★★★★★</span>
+                        <span class="porductContainer-reviews">({{ item.reviews }})</span>
+                        <span class="porductContainer-sales-sep" aria-hidden="true">|</span>
+                        <span class="porductContainer-sales">{{ item.sales }}</span>
+                    </div>
+                    <div class="porductContainer-prices">
+                        <span class="porductContainer-price-sale">${{ item.sale }}</span>
+                        <span class="porductContainer-price-original">${{ item.orig }}</span>
+                    </div>
+                    <button type="button" class="porductContainer-cart">{{ _('加入購物車') }}</button>
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+        </div>
+    </div>
+    <div class="jiadimai-shelf-block jiadimai-shelf-block--easter" role="generic" aria-label="復活派對與商品列表">
+        <img
+            class="jiadimai-image"
+            src="{{ url_for('static', filename='png/easter-party-banner.png') }}"
+            alt="復活派對"
+            aria-label="復活派對"
+            role="img"
+        />
+        <div class="generic-block-896x451" role="generic" aria-label="復活派對 商品區">
+        <div class="generic-block-896x451-header">
+            <a class="btn btn-secondary-sm view-all-btn promo-panel-link" href="#" role="link">查看所有</a>
+        </div>
+        <div class="generic-block-896x451-grid" role="generic">
+            {% for item in shelf_products %}
+            <article class="porductContainer porductContainer--shelf">
+                <div class="porductContainer-media">
+                    <img class="porductContainer-img" src="{{ url_for('static', filename=item.img) }}" alt="{{ item.name }}">
+                </div>
+                <div class="porductContainer-body">
+                    <h3 class="porductContainer-name">{{ item.name }}</h3>
+                    <p class="porductContainer-spec">{{ item.spec }}</p>
+                    <div class="porductContainer-meta">
+                        <span class="porductContainer-stars" aria-hidden="true">★★★★★</span>
+                        <span class="porductContainer-reviews">({{ item.reviews }})</span>
+                        <span class="porductContainer-sales-sep" aria-hidden="true">|</span>
+                        <span class="porductContainer-sales">{{ item.sales }}</span>
+                    </div>
+                    <div class="porductContainer-prices">
+                        <span class="porductContainer-price-sale">${{ item.sale }}</span>
+                        <span class="porductContainer-price-original">${{ item.orig }}</span>
+                    </div>
+                    <button type="button" class="porductContainer-cart">{{ _('加入購物車') }}</button>
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+        </div>
+    </div>
+    <div class="jiadimai-shelf-block jiadimai-shelf-block--fitness" role="generic" aria-label="佳住你操肌與商品列表">
+        <img
+            class="jiadimai-image"
+            src="{{ url_for('static', filename='png/fitness-banner.png') }}"
+            alt="佳住你操肌"
+            aria-label="佳住你操肌"
+            role="img"
+        />
+        <div class="generic-block-896x451" role="generic" aria-label="佳住你操肌 商品區">
+        <div class="generic-block-896x451-header">
+            <a class="btn btn-secondary-sm view-all-btn promo-panel-link" href="#" role="link">查看所有</a>
+        </div>
+        <div class="generic-block-896x451-grid" role="generic">
+            {% for item in shelf_products %}
+            <article class="porductContainer porductContainer--shelf">
+                <div class="porductContainer-media">
+                    <img class="porductContainer-img" src="{{ url_for('static', filename=item.img) }}" alt="{{ item.name }}">
+                </div>
+                <div class="porductContainer-body">
+                    <h3 class="porductContainer-name">{{ item.name }}</h3>
+                    <p class="porductContainer-spec">{{ item.spec }}</p>
+                    <div class="porductContainer-meta">
+                        <span class="porductContainer-stars" aria-hidden="true">★★★★★</span>
+                        <span class="porductContainer-reviews">({{ item.reviews }})</span>
+                        <span class="porductContainer-sales-sep" aria-hidden="true">|</span>
+                        <span class="porductContainer-sales">{{ item.sales }}</span>
+                    </div>
+                    <div class="porductContainer-prices">
+                        <span class="porductContainer-price-sale">${{ item.sale }}</span>
+                        <span class="porductContainer-price-original">${{ item.orig }}</span>
+                    </div>
+                    <button type="button" class="porductContainer-cart">{{ _('加入購物車') }}</button>
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+        </div>
+    </div>
+    <div class="jiadimai-shelf-block jiadimai-shelf-block--case-deal" role="generic" aria-label="原箱至抵買與商品列表">
+        <img
+            class="jiadimai-image"
+            src="{{ url_for('static', filename='png/case-deal-banner.png') }}"
+            alt="原箱至抵買"
+            aria-label="原箱至抵買"
+            role="img"
+        />
+        <div class="generic-block-896x451" role="generic" aria-label="原箱至抵買 商品區">
+        <div class="generic-block-896x451-header">
+            <a class="btn btn-secondary-sm view-all-btn promo-panel-link" href="#" role="link">查看所有</a>
+        </div>
+        <div class="generic-block-896x451-grid" role="generic">
+            {% for item in shelf_products %}
+            <article class="porductContainer porductContainer--shelf">
+                <div class="porductContainer-media">
+                    <img class="porductContainer-img" src="{{ url_for('static', filename=item.img) }}" alt="{{ item.name }}">
+                </div>
+                <div class="porductContainer-body">
+                    <h3 class="porductContainer-name">{{ item.name }}</h3>
+                    <p class="porductContainer-spec">{{ item.spec }}</p>
+                    <div class="porductContainer-meta">
+                        <span class="porductContainer-stars" aria-hidden="true">★★★★★</span>
+                        <span class="porductContainer-reviews">({{ item.reviews }})</span>
+                        <span class="porductContainer-sales-sep" aria-hidden="true">|</span>
+                        <span class="porductContainer-sales">{{ item.sales }}</span>
+                    </div>
+                    <div class="porductContainer-prices">
+                        <span class="porductContainer-price-sale">${{ item.sale }}</span>
+                        <span class="porductContainer-price-original">${{ item.orig }}</span>
+                    </div>
+                    <button type="button" class="porductContainer-cart">{{ _('加入購物車') }}</button>
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+        </div>
+    </div>
+    <div class="jiadimai-shelf-block jiadimai-shelf-block--xinjiapin" role="generic" aria-label="新佳品與商品列表">
+        <img
+            class="jiadimai-image"
+            src="{{ url_for('static', filename='png/xinjiapin-banner.png') }}"
+            alt="新佳品"
+            aria-label="新佳品"
+            role="img"
+        />
+        <div class="generic-block-896x451" role="generic" aria-label="新佳品 商品區">
+        <div class="generic-block-896x451-header">
+            <a class="btn btn-secondary-sm view-all-btn promo-panel-link" href="#" role="link">查看所有</a>
+        </div>
+        <div class="generic-block-896x451-grid" role="generic">
+            {% for item in shelf_products %}
+            <article class="porductContainer porductContainer--shelf">
+                <div class="porductContainer-media">
+                    <img class="porductContainer-img" src="{{ url_for('static', filename=item.img) }}" alt="{{ item.name }}">
+                </div>
+                <div class="porductContainer-body">
+                    <h3 class="porductContainer-name">{{ item.name }}</h3>
+                    <p class="porductContainer-spec">{{ item.spec }}</p>
+                    <div class="porductContainer-meta">
+                        <span class="porductContainer-stars" aria-hidden="true">★★★★★</span>
+                        <span class="porductContainer-reviews">({{ item.reviews }})</span>
+                        <span class="porductContainer-sales-sep" aria-hidden="true">|</span>
+                        <span class="porductContainer-sales">{{ item.sales }}</span>
+                    </div>
+                    <div class="porductContainer-prices">
+                        <span class="porductContainer-price-sale">${{ item.sale }}</span>
+                        <span class="porductContainer-price-original">${{ item.orig }}</span>
+                    </div>
+                    <button type="button" class="porductContainer-cart">{{ _('加入購物車') }}</button>
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+        </div>
+    </div>
+    <div class="jiadimai-shelf-block jiadimai-shelf-block--duomai" role="generic" aria-label="多買多慳與商品列表">
+        <img
+            class="jiadimai-image"
+            src="{{ url_for('static', filename='png/duomai-duoxian-banner.png') }}"
+            alt="多買多慳"
+            aria-label="多買多慳"
+            role="img"
+        />
+        <div class="generic-block-896x451" role="generic" aria-label="多買多慳 商品區">
+        <div class="generic-block-896x451-header">
+            <a class="btn btn-secondary-sm view-all-btn promo-panel-link" href="#" role="link">查看所有</a>
+        </div>
+        <div class="generic-block-896x451-grid" role="generic">
+            {% for item in shelf_products %}
+            <article class="porductContainer porductContainer--shelf">
+                <div class="porductContainer-media">
+                    <img class="porductContainer-img" src="{{ url_for('static', filename=item.img) }}" alt="{{ item.name }}">
+                </div>
+                <div class="porductContainer-body">
+                    <h3 class="porductContainer-name">{{ item.name }}</h3>
+                    <p class="porductContainer-spec">{{ item.spec }}</p>
+                    <div class="porductContainer-meta">
+                        <span class="porductContainer-stars" aria-hidden="true">★★★★★</span>
+                        <span class="porductContainer-reviews">({{ item.reviews }})</span>
+                        <span class="porductContainer-sales-sep" aria-hidden="true">|</span>
+                        <span class="porductContainer-sales">{{ item.sales }}</span>
+                    </div>
+                    <div class="porductContainer-prices">
+                        <span class="porductContainer-price-sale">${{ item.sale }}</span>
+                        <span class="porductContainer-price-original">${{ item.orig }}</span>
+                    </div>
+                    <button type="button" class="porductContainer-cart">{{ _('加入購物車') }}</button>
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+        </div>
+    </div>
+    <div class="jiadimai-shelf-block jiadimai-shelf-block--maihaozhuan" role="generic" aria-label="佳住你買好饌與商品列表">
+        <img
+            class="jiadimai-image"
+            src="{{ url_for('static', filename='png/jiazhu-maihaozhuan-banner.png') }}"
+            alt="佳住你買好饌"
+            aria-label="佳住你買好饌"
+            role="img"
+        />
+        <div class="generic-block-896x451" role="generic" aria-label="佳住你買好饌 商品區">
+        <div class="generic-block-896x451-header">
+            <a class="btn btn-secondary-sm view-all-btn promo-panel-link" href="#" role="link">查看所有</a>
+        </div>
+        <div class="generic-block-896x451-grid" role="generic">
+            {% for item in shelf_products %}
+            <article class="porductContainer porductContainer--shelf">
+                <div class="porductContainer-media">
+                    <img class="porductContainer-img" src="{{ url_for('static', filename=item.img) }}" alt="{{ item.name }}">
+                </div>
+                <div class="porductContainer-body">
+                    <h3 class="porductContainer-name">{{ item.name }}</h3>
+                    <p class="porductContainer-spec">{{ item.spec }}</p>
+                    <div class="porductContainer-meta">
+                        <span class="porductContainer-stars" aria-hidden="true">★★★★★</span>
+                        <span class="porductContainer-reviews">({{ item.reviews }})</span>
+                        <span class="porductContainer-sales-sep" aria-hidden="true">|</span>
+                        <span class="porductContainer-sales">{{ item.sales }}</span>
+                    </div>
+                    <div class="porductContainer-prices">
+                        <span class="porductContainer-price-sale">${{ item.sale }}</span>
+                        <span class="porductContainer-price-original">${{ item.orig }}</span>
+                    </div>
+                    <button type="button" class="porductContainer-cart">{{ _('加入購物車') }}</button>
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+        </div>
+    </div>
+    <div class="jiadimai-shelf-block jiadimai-shelf-block--xingzhijiapin" role="generic" aria-label="星之佳品推介與商品列表">
+        <img
+            class="jiadimai-image"
+            src="{{ url_for('static', filename='png/xingzhijiapin-banner.png') }}"
+            alt="星之佳品推介"
+            aria-label="星之佳品推介"
+            role="img"
+        />
+        <div class="generic-block-896x451" role="generic" aria-label="星之佳品推介 商品區">
+        <div class="generic-block-896x451-header">
+            <a class="btn btn-secondary-sm view-all-btn promo-panel-link" href="#" role="link">查看所有</a>
+        </div>
+        <div class="generic-block-896x451-grid" role="generic">
+            {% for item in shelf_products %}
+            <article class="porductContainer porductContainer--shelf">
+                <div class="porductContainer-media">
+                    <img class="porductContainer-img" src="{{ url_for('static', filename=item.img) }}" alt="{{ item.name }}">
+                </div>
+                <div class="porductContainer-body">
+                    <h3 class="porductContainer-name">{{ item.name }}</h3>
+                    <p class="porductContainer-spec">{{ item.spec }}</p>
+                    <div class="porductContainer-meta">
+                        <span class="porductContainer-stars" aria-hidden="true">★★★★★</span>
+                        <span class="porductContainer-reviews">({{ item.reviews }})</span>
+                        <span class="porductContainer-sales-sep" aria-hidden="true">|</span>
+                        <span class="porductContainer-sales">{{ item.sales }}</span>
+                    </div>
+                    <div class="porductContainer-prices">
+                        <span class="porductContainer-price-sale">${{ item.sale }}</span>
+                        <span class="porductContainer-price-original">${{ item.orig }}</span>
+                    </div>
+                    <button type="button" class="porductContainer-cart">{{ _('加入購物車') }}</button>
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+        </div>
+    </div>
+    <div class="jiadimai-shelf-block jiadimai-shelf-block--huanqiu-xianrou" role="generic" aria-label="環球鮮肉與商品列表">
+        <img
+            class="jiadimai-image"
+            src="{{ url_for('static', filename='png/huanqiu-xianrou-banner.png') }}"
+            alt="環球鮮肉"
+            aria-label="環球鮮肉"
+            role="img"
+        />
+        <div class="generic-block-896x451" role="generic" aria-label="環球鮮肉 商品區">
+        <div class="generic-block-896x451-header">
+            <a class="btn btn-secondary-sm view-all-btn promo-panel-link" href="#" role="link">查看所有</a>
+        </div>
+        <div class="generic-block-896x451-grid" role="generic">
+            {% for item in shelf_products %}
+            <article class="porductContainer porductContainer--shelf">
+                <div class="porductContainer-media">
+                    <img class="porductContainer-img" src="{{ url_for('static', filename=item.img) }}" alt="{{ item.name }}">
+                </div>
+                <div class="porductContainer-body">
+                    <h3 class="porductContainer-name">{{ item.name }}</h3>
+                    <p class="porductContainer-spec">{{ item.spec }}</p>
+                    <div class="porductContainer-meta">
+                        <span class="porductContainer-stars" aria-hidden="true">★★★★★</span>
+                        <span class="porductContainer-reviews">({{ item.reviews }})</span>
+                        <span class="porductContainer-sales-sep" aria-hidden="true">|</span>
+                        <span class="porductContainer-sales">{{ item.sales }}</span>
+                    </div>
+                    <div class="porductContainer-prices">
+                        <span class="porductContainer-price-sale">${{ item.sale }}</span>
+                        <span class="porductContainer-price-original">${{ item.orig }}</span>
+                    </div>
+                    <button type="button" class="porductContainer-cart">{{ _('加入購物車') }}</button>
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+        </div>
+    </div>
+    <div class="jiadimai-shelf-block jiadimai-shelf-block--xiansong-xiande" role="generic" aria-label="鮮餸先得與商品列表">
+        <img
+            class="jiadimai-image"
+            src="{{ url_for('static', filename='png/xiansong-xiande-banner.png') }}"
+            alt="鮮餸先得"
+            aria-label="鮮餸先得"
+            role="img"
+        />
+        <div class="generic-block-896x451" role="generic" aria-label="鮮餸先得 商品區">
+        <div class="generic-block-896x451-header">
+            <a class="btn btn-secondary-sm view-all-btn promo-panel-link" href="#" role="link">查看所有</a>
+        </div>
+        <div class="generic-block-896x451-grid" role="generic">
+            {% for item in shelf_products %}
+            <article class="porductContainer porductContainer--shelf">
+                <div class="porductContainer-media">
+                    <img class="porductContainer-img" src="{{ url_for('static', filename=item.img) }}" alt="{{ item.name }}">
+                </div>
+                <div class="porductContainer-body">
+                    <h3 class="porductContainer-name">{{ item.name }}</h3>
+                    <p class="porductContainer-spec">{{ item.spec }}</p>
+                    <div class="porductContainer-meta">
+                        <span class="porductContainer-stars" aria-hidden="true">★★★★★</span>
+                        <span class="porductContainer-reviews">({{ item.reviews }})</span>
+                        <span class="porductContainer-sales-sep" aria-hidden="true">|</span>
+                        <span class="porductContainer-sales">{{ item.sales }}</span>
+                    </div>
+                    <div class="porductContainer-prices">
+                        <span class="porductContainer-price-sale">${{ item.sale }}</span>
+                        <span class="porductContainer-price-original">${{ item.orig }}</span>
+                    </div>
+                    <button type="button" class="porductContainer-cart">{{ _('加入購物車') }}</button>
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+        </div>
+    </div>
+    <div class="jiadimai-shelf-block jiadimai-shelf-block--ii-below" role="generic" aria-label="II 圖片列">
+        <div class="xiansong-ii-strip" role="generic">
+            <a class="xiansong-ii-strip-link" href="#" role="link" aria-label="II 圖片 1">
+                <img src="{{ url_for('static', filename='png/II/AAA.avif') }}" alt="II 圖片 1" />
+            </a>
+            <a class="xiansong-ii-strip-link" href="#" role="link" aria-label="II 圖片 2">
+                <img src="{{ url_for('static', filename='png/II/BBB.avif') }}" alt="II 圖片 2" />
+            </a>
+            <a class="xiansong-ii-strip-link" href="#" role="link" aria-label="II 圖片 3">
+                <img src="{{ url_for('static', filename='png/II/CCC.avif') }}" alt="II 圖片 3" />
+            </a>
+            <a class="xiansong-ii-strip-link" href="#" role="link" aria-label="II 圖片 4">
+                <img src="{{ url_for('static', filename='png/II/DDD.avif') }}" alt="II 圖片 4" />
+            </a>
+        </div>
+    </div>
+    <div class="jiadimai-shelf-block jiadimai-shelf-block--j-strip" role="generic" aria-label="J 圖片列">
+        <div class="j-strip-grid" role="generic">
+            {% for fname in ['1A.avif', '1B.avif', '1C.avif', '1D.avif', '1E.avif', '1F.avif', '1G.avif', '1H.avif'] %}
+            <a class="j-strip-link" href="#" role="link" aria-label="J 圖片 {{ loop.index }}">
+                <img src="{{ url_for('static', filename='png/J/' ~ fname) }}" alt="J 圖片 {{ loop.index }}" />
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="jiadimai-shelf-block jiadimai-shelf-block--k-strip" role="generic" aria-label="K 圖片列">
+        <div class="j-strip-grid" role="generic">
+            {% for fname in ['2A.avif', '2B.avif', '2C.avif', '2D.avif', '2E.avif', '2F.avif', '2FF.avif', '2G.avif'] %}
+            <a class="j-strip-link" href="#" role="link" aria-label="K 圖片 {{ loop.index }}">
+                <img src="{{ url_for('static', filename='png/K/' ~ fname) }}" alt="K 圖片 {{ loop.index }}" />
+            </a>
+            {% endfor %}
+        </div>
+    </div>
     </div>
     <div id="cart-toast" class="cart-toast" role="status" aria-live="polite">{{ _('成功加入购物车') }}</div>
 {% endblock %}
