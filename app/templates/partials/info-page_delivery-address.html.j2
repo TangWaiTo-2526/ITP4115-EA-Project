@@ -1,0 +1,245 @@
+{# info-page_delivery-address：送貨地址頁（地址列表 + 新增浮層） #}
+{% extends "base.html.j2" %}
+
+{% block styles %}
+    {{ super() }}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/account-layout.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/account-breadcrumb.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/account-sidebar.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/account-profile.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/account-delivery-address.css') }}">
+{% endblock %}
+
+{% block app_content %}
+{% set account_breadcrumb_items = [
+    {'text': _('Home'), 'href': url_for('index')},
+    {'text': _('My account'), 'href': url_for('user', username=current_user.username)},
+    {'text': _('Delivery address')},
+] %}
+
+<table class="table account-layout-table-1">
+    <tr>
+        <td class="account-layout-bc-cell-1" colspan="2">
+            {% include 'partials/info-page_breadcrumb.html.j2' %}
+        </td>
+    </tr>
+    <tr>
+        <td class="account-layout-nav-cell-1" width="272">
+            {% include 'partials/info-page_sidebar.html.j2' %}
+        </td>
+        <td class="account-layout-main-1">
+            <div class="account-profile-wrap-1">
+                <h1 class="account-profile-title-1">{{ _('Delivery address') }}</h1>
+
+                <div class="delivery-address-title-divider-1" aria-hidden="true"></div>
+
+                <section class="delivery-address-section-1">
+                    <section
+                        class="account-profile-card-1 delivery-address-add-card-1"
+                        id="delivery-address-add-card-1"
+                        role="button"
+                        tabindex="0"
+                        aria-label="{{ _('新增送貨地址') }}"
+                    >
+                        <h2 class="delivery-address-add-title-1">+ {{ _('新增地址') }}</h2>
+                        <p class="delivery-address-add-hint-1">{{ _('點擊後新增／填寫送貨地址') }}</p>
+                    </section>
+
+                {% if addresses %}
+                    <div class="delivery-address-list-1">
+                    {% for addr in addresses %}
+                        <section class="account-profile-card-1 delivery-address-card-1">
+                            <div class="delivery-address-card-top-1">
+                                <div class="delivery-address-card-label-1">
+                                    <span class="delivery-address-card-label-text-1">{{ _('送貨地址') }}</span>
+                                    {% if addr.is_default %}
+                                        <span class="delivery-default-badge-1">{{ _('預設') }}</span>
+                                    {% endif %}
+                                </div>
+                                <div class="delivery-address-card-actions-1">
+                                    {% if not addr.is_default %}
+                                        <a class="delivery-set-default-link-1" href="{{ url_for('delivery_address_set_default', user_address_uuid=addr.user_address_uuid) }}">{{ _('設為預設') }}</a>
+                                    {% endif %}
+                                    <a class="delivery-delete-link-1" href="{{ url_for('delivery_address_delete', user_address_uuid=addr.user_address_uuid) }}" onclick="return confirm('{{ _('確定刪除此地址？') }}');">{{ _('刪除') }}</a>
+                                </div>
+                            </div>
+
+                            <div class="delivery-address-line-1">{{ addr.formatted_line() }}</div>
+                            <div class="delivery-address-phone-row-1">
+                                <div class="delivery-address-phone-item-1">
+                                    <i class="fa-solid fa-mobile-screen-button delivery-address-phone-icon-1" aria-hidden="true"></i>
+                                    {% if addr.phone_number %}
+                                        {{ _('手提：+852') }} {{ addr.phone_number }}
+                                    {% else %}
+                                        {{ _('手提：+852') }} —
+                                    {% endif %}
+                                </div>
+                                {% if addr.home_phone %}
+                                    <span class="delivery-address-phone-sep-1" aria-hidden="true">|</span>
+                                    <div class="delivery-address-phone-item-1">
+                                        <i class="fa-solid fa-phone delivery-address-phone-icon-1" aria-hidden="true"></i>
+                                        {{ _('住宅：+852') }} {{ addr.home_phone }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </section>
+                    {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="delivery-address-empty-1">
+                        {{ _('尚未有送貨地址') }}
+                    </div>
+                {% endif %}
+                </section>
+            </div>
+        </td>
+    </tr>
+</table>
+
+<div
+    id="delivery-address-modal-overlay-1"
+    class="delivery-modal-overlay-1"
+    aria-hidden="true"
+>
+    <div class="delivery-modal-1" role="dialog" aria-modal="true" aria-labelledby="delivery-address-modal-title-1">
+        <div class="delivery-modal-header-1">
+            <h2 class="delivery-modal-title-1" id="delivery-address-modal-title-1">{{ _('新增送貨地址') }}</h2>
+            <button type="button" class="delivery-modal-close-1" id="delivery-address-modal-close-1" aria-label="{{ _('關閉') }}">×</button>
+        </div>
+
+        <form method="post" action="{{ url_for('delivery_address_add') }}" id="profile-form" novalidate>
+            {{ form.hidden_tag() }}
+            <section class="account-profile-card-1 delivery-address-form-card-1" aria-label="{{ _('Delivery address') }}">
+
+                <div class="account-profile-grid-1 account-profile-grid-cols-2-1">
+                    <div class="account-profile-field-1">
+                        {{ form.addr_unit.label(class='account-profile-label-1') }}
+                        {{ form.addr_unit(class='account-profile-input-1') }}
+                        {% for e in form.addr_unit.errors %}<span class="account-profile-error-1">{{ e }}</span>{% endfor %}
+                    </div>
+                    <div class="account-profile-field-1">
+                        {{ form.addr_floor.label(class='account-profile-label-1') }}
+                        {{ form.addr_floor(class='account-profile-input-1') }}
+                        {% for e in form.addr_floor.errors %}<span class="account-profile-error-1">{{ e }}</span>{% endfor %}
+                    </div>
+                </div>
+
+                <div class="account-profile-field-1 account-profile-field-full-1">
+                    {{ form.addr_building_street.label(class='account-profile-label-1') }}
+                    {{ form.addr_building_street(class='account-profile-input-1') }}
+                    {% for e in form.addr_building_street.errors %}<span class="account-profile-error-1">{{ e }}</span>{% endfor %}
+                </div>
+
+                <div class="account-profile-grid-1 account-profile-grid-cols-2-1">
+                    <div class="account-profile-field-1">
+                        {{ form.addr_region.label(class='account-profile-label-1') }}
+                        {{ form.addr_region(class='account-profile-input-1 account-profile-select-1', id='addr_region') }}
+                        {% for e in form.addr_region.errors %}<span class="account-profile-error-1">{{ e }}</span>{% endfor %}
+                    </div>
+                    <div class="account-profile-field-1">
+                        {{ form.addr_district.label(class='account-profile-label-1') }}
+                        {{ form.addr_district(class='account-profile-input-1 account-profile-select-1', id='addr_district') }}
+                        {% for e in form.addr_district.errors %}<span class="account-profile-error-1">{{ e }}</span>{% endfor %}
+                    </div>
+                </div>
+
+                <div class="account-profile-grid-1 account-profile-grid-cols-2-1">
+                    <div class="account-profile-field-1 account-profile-field-narrow-1">
+                        {{ form.home_phone.label(class='account-profile-label-1') }}
+                        <div class="account-profile-tel-row-1">
+                            <span class="account-profile-tel-prefix-1" aria-hidden="true">+852</span>
+                            {{ form.home_phone(class='account-profile-input-1 account-profile-tel-input-1', placeholder=_('選填')) }}
+                        </div>
+                        {% for e in form.home_phone.errors %}<span class="account-profile-error-1">{{ e }}</span>{% endfor %}
+                    </div>
+
+                    <div class="account-profile-field-1 account-profile-field-narrow-1">
+                        {{ form.home_tel.label(class='account-profile-label-1') }}
+                        <div class="account-profile-tel-row-1 account-profile-tel-row-last-1">
+                            <span class="account-profile-tel-prefix-1" aria-hidden="true">+852</span>
+                            {{ form.home_tel(class='account-profile-input-1 account-profile-tel-input-1', placeholder=_('選填')) }}
+                        </div>
+                        {% for e in form.home_tel.errors %}<span class="account-profile-error-1">{{ e }}</span>{% endfor %}
+                    </div>
+                </div>
+
+                <div class="account-profile-field-1 account-profile-field-full-1">
+                    <span class="account-profile-label-1">{{ _('Contact method') }}</span>
+                    <p class="account-profile-hint-1">
+                        *{{ _('Direct marketing info will be sent to your phone via instant messaging apps, e.g. WhatsApp.') }}
+                    </p>
+                </div>
+
+                <div class="account-profile-actions-1">
+                    {{ form.submit() }}
+                </div>
+            </section>
+        </form>
+    </div>
+</div>
+
+<script type="application/json" id="hk-districts-json">{{ hk_districts | tojson }}</script>
+<script>
+(function () {
+    var overlay = document.getElementById('delivery-address-modal-overlay-1');
+    var closeBtn = document.getElementById('delivery-address-modal-close-1');
+    var addCard = document.getElementById('delivery-address-add-card-1');
+    if (!overlay || !closeBtn || !addCard) return;
+
+    function openModal() {
+        overlay.style.display = 'flex';
+        overlay.setAttribute('aria-hidden', 'false');
+    }
+
+    function closeModal() {
+        overlay.style.display = 'none';
+        overlay.setAttribute('aria-hidden', 'true');
+    }
+
+    addCard.addEventListener('click', openModal);
+    addCard.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') openModal();
+    });
+    closeBtn.addEventListener('click', closeModal);
+    overlay.addEventListener('click', function (e) {
+        if (e.target === overlay) closeModal();
+    });
+
+    // 香港區域/地區聯動（複用 edit_profile 邏輯）
+    var el = document.getElementById('hk-districts-json');
+    if (!el) return;
+    var HK_DISTRICTS = JSON.parse(el.textContent || '{}');
+    var regionSel = document.getElementById('addr_region');
+    var districtSel = document.getElementById('addr_district');
+    if (!regionSel || !districtSel) return;
+
+    function fillDistricts(region, keepValue) {
+        var list = HK_DISTRICTS[region] || [];
+        districtSel.innerHTML = '';
+        var opt0 = document.createElement('option');
+        opt0.value = '';
+        opt0.textContent = '{{ _("請選擇") }}';
+        districtSel.appendChild(opt0);
+        list.forEach(function (d) {
+            var o = document.createElement('option');
+            o.value = d;
+            o.textContent = d;
+            districtSel.appendChild(o);
+        });
+        if (keepValue && list.indexOf(keepValue) !== -1) {
+            districtSel.value = keepValue;
+        } else {
+            districtSel.value = '';
+        }
+    }
+
+    regionSel.addEventListener('change', function () {
+        fillDistricts(regionSel.value, false);
+    });
+    if (regionSel.value && (districtSel.options.length <= 1)) {
+        fillDistricts(regionSel.value, '');
+    }
+})();
+</script>
+{% endblock %}
+

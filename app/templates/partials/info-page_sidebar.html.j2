@@ -1,46 +1,100 @@
 {# info-page_sidebar：帳戶頁左欄導航；需 current_user、user 與 request #}
-<nav class="account-sidebar-1" aria-label="帳戶選單">
+<div class="account-sidebar-mobile-wrap-1">
+    <button type="button" class="account-sidebar-mobile-toggle-1" id="account-sidebar-mobile-toggle-1" aria-expanded="false" aria-controls="account-sidebar-mobile-panel-1">
+        <span class="account-sidebar-mobile-toggle-text-1">{{ _('帳戶選單') }}</span>
+        <i class="fa-solid fa-chevron-down account-sidebar-mobile-toggle-ico-1" aria-hidden="true"></i>
+    </button>
+
+    <nav class="account-sidebar-1" id="account-sidebar-mobile-panel-1" aria-label="{{ _('帳戶選單') }}">
     <a href="{{ url_for('user', username=current_user.username) }}"
        class="account-sidebar-link-1{% if request.endpoint == 'user' %} is-active{% endif %}">
         <i class="fa-solid fa-eye account-sidebar-ico-1" aria-hidden="true"></i>
-        <span>帳戶概覽</span>
+        <span>{{ _('帳戶概覽') }}</span>
     </a>
     <a href="#" class="account-sidebar-link-1">
         <i class="fa-solid fa-box account-sidebar-ico-1" aria-hidden="true"></i>
-        <span>訂單紀錄</span>
+        <span>{{ _('訂單紀錄') }}</span>
     </a>
     <a href="#" class="account-sidebar-link-1">
         <i class="fa-regular fa-heart account-sidebar-ico-1" aria-hidden="true"></i>
-        <span>我的清單</span>
+        <span>{{ _('我的清單') }}</span>
     </a>
-    <a href="#" class="account-sidebar-link-1">
+    <a href="{{ url_for('digital_coupons') }}"
+       class="account-sidebar-link-1{% if request.endpoint == 'digital_coupons' %} is-active{% endif %}">
         <i class="fa-solid fa-ticket account-sidebar-ico-1" aria-hidden="true"></i>
-        <span>電子優惠券／電子禮券</span>
+        <span>{{ _('電子優惠券／電子禮券') }}</span>
     </a>
-    <a href="#" class="account-sidebar-link-1">
+    <a href="{{ url_for('membership_points') }}"
+       class="account-sidebar-link-1{% if request.endpoint == 'membership_points' %} is-active{% endif %}">
         <i class="fa-solid fa-right-left account-sidebar-ico-1" aria-hidden="true"></i>
-        <span>易賞錢積分</span>
+        <span>{{ _('易賞錢積分') }}</span>
     </a>
     <a href="#" class="account-sidebar-link-1 account-sidebar-link-badge-1">
         <i class="fa-regular fa-thumbs-up account-sidebar-ico-1" aria-hidden="true"></i>
-        <span>產品評價</span>
-        <span class="account-sidebar-badge-1" aria-label="待評價 0">0</span>
+        <span>{{ _('產品評價') }}</span>
+        <span class="account-sidebar-badge-1" aria-label="{{ _('待評價 0') }}">0</span>
     </a>
-    <a href="#" class="account-sidebar-link-1">
+    <a href="{{ url_for('delivery_address') }}"
+       class="account-sidebar-link-1{% if request.endpoint == 'delivery_address' %} is-active{% endif %}">
         <i class="fa-solid fa-location-dot account-sidebar-ico-1" aria-hidden="true"></i>
-        <span>送貨地址</span>
+        <span>{{ _('送貨地址') }}</span>
     </a>
-    <a href="#" class="account-sidebar-link-1">
+    <a href="{{ url_for('my_credit_cards') }}"
+       class="account-sidebar-link-1{% if request.endpoint == 'my_credit_cards' %} is-active{% endif %}">
         <i class="fa-regular fa-credit-card account-sidebar-ico-1" aria-hidden="true"></i>
-        <span>我的信用卡</span>
+        <span>{{ _('我的信用卡') }}</span>
     </a>
     <a href="{{ url_for('edit_profile') }}"
        class="account-sidebar-link-1{% if request.endpoint == 'edit_profile' %} is-active{% endif %}">
         <i class="fa-regular fa-user account-sidebar-ico-1" aria-hidden="true"></i>
-        <span>我的個人資料</span>
+        <span>{{ _('我的個人資料') }}</span>
     </a>
     <a href="{{ url_for('logout') }}" class="account-sidebar-link-1 account-sidebar-link-logout-1">
         <i class="fa-solid fa-arrow-right-from-bracket account-sidebar-ico-1" aria-hidden="true"></i>
-        <span>登出</span>
+        <span>{{ _('登出') }}</span>
     </a>
-</nav>
+    </nav>
+</div>
+
+<script>
+(function () {
+    var toggle = document.getElementById('account-sidebar-mobile-toggle-1');
+    var panel = document.getElementById('account-sidebar-mobile-panel-1');
+    var wrap = document.querySelector('.account-sidebar-mobile-wrap-1');
+    if (!toggle || !panel || !wrap) return;
+
+    function isMobile() {
+        return window.matchMedia && window.matchMedia('(max-width: 900px)').matches;
+    }
+
+    function setOpen(open) {
+        toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+        panel.classList.toggle('is-open', open);
+    }
+
+    toggle.addEventListener('click', function (e) {
+        e.stopPropagation();
+        var open = toggle.getAttribute('aria-expanded') === 'true';
+        setOpen(!open);
+    });
+
+    document.addEventListener('click', function (e) {
+        if (!isMobile()) return;
+        if (!wrap.contains(e.target)) {
+            setOpen(false);
+        }
+    });
+
+    window.addEventListener('resize', function () {
+        if (!isMobile()) {
+            setOpen(true);
+        } else {
+            setOpen(false);
+        }
+    });
+
+    if (window.matchMedia && window.matchMedia('(min-width: 901px)').matches) {
+        setOpen(true);
+    }
+})();
+</script>

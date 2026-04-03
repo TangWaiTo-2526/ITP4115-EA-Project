@@ -1,0 +1,49 @@
+{% extends "base.html.j2" %}
+
+{% block styles %}
+    {{ super() }}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/account-layout.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/account-breadcrumb.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/account-sidebar.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/account-dashboard.css') }}">
+{% endblock %}
+
+{% block app_content %}
+{% set account_breadcrumb_items = [
+    {'text': _('Home'), 'href': url_for('index')},
+    {'text': _('My account'), 'href': url_for('user', username=current_user.username)},
+    {'text': _('電子優惠券／電子禮券')},
+] %}
+
+<table class="table account-layout-table-1">
+    <tr>
+        <td class="account-layout-bc-cell-1" colspan="2">
+            {% include 'partials/info-page_breadcrumb.html.j2' %}
+        </td>
+    </tr>
+    <tr>
+        <td class="account-layout-nav-cell-1" width="272">
+            {% include 'partials/info-page_sidebar.html.j2' %}
+        </td>
+        <td class="account-layout-main-1">
+            <div class="account-dash-wrap-1">
+                <h1 class="account-page-title-1">{{ _('電子券') }}</h1>
+
+                <div class="account-dash-block-white-1">
+                    <h2 class="account-dash-heading-1">{{ _('電子優惠券') }}</h2>
+                    <div class="account-dash-panel-1 account-dash-panel-empty-1">
+                        <p>{{ _('暫時還沒有電子優惠券') }}</p>
+                    </div>
+                </div>
+
+                <div class="account-dash-block-white-1">
+                    <h2 class="account-dash-heading-1">{{ _('電子禮券') }}</h2>
+                    <div class="account-dash-panel-1 account-dash-panel-empty-1">
+                        <p>{{ _('暫時還沒有電子禮券') }}</p>
+                    </div>
+                </div>
+            </div>
+        </td>
+    </tr>
+</table>
+{% endblock %}

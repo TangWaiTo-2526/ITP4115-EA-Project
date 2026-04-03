@@ -42,3 +42,26 @@
     display: block;
     margin-bottom: 16px;
 }
+
+@media (max-width: 900px) {
+    .account-layout-table-1,
+    .account-layout-table-1 tbody,
+    .account-layout-table-1 tr,
+    .account-layout-table-1 td {
+        display: block;
+        width: 100% !important;
+    }
+
+    .account-layout-bc-cell-1 {
+        padding-bottom: 8px;
+    }
+
+    .account-layout-nav-cell-1 {
+        padding: 0;
+        margin: 0;
+    }
+
+    .account-layout-main-1 {
+        padding: 10px 0 0;
+    }
+}

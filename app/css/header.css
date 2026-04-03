@@ -92,7 +92,7 @@ body {
 
 .header-nav-2 {
     position: relative;
-    z-index: 2;
+    z-index: 10;
     width: 100%;
 }
 
@@ -501,5 +501,28 @@ body {
 }
 
 
+@media (max-width: 900px) {
+    .header-nav-1-right {
+        overflow: visible;
+    }
 
+    .header-nav-1-right .header-nav-1-sep {
+        display: none;
+    }
 
+    .header-nav-1-right .header-nav-1-link {
+        display: none;
+    }
+
+    .header-nav-1-right .header-nav-1-link:last-of-type {
+        display: inline-block;
+    }
+
+    /* 手機版：不顯示帳戶下拉面板，點擊帳戶圖示直接導到連結（已登入=帳戶概覽；未登入=登入頁） */
+    .header-nav-2-account-panel {
+        display: none !important;
+        opacity: 0 !important;
+        visibility: hidden !important;
+        pointer-events: none !important;
+    }
+}

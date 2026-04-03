@@ -1,0 +1,263 @@
+/* 送貨地址管理：卡片列表 + 新增地址浮層 */
+
+.delivery-address-title-divider-1 {
+    height: 1px;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.08);
+    margin: -6px 0 18px;
+}
+
+.delivery-address-section-1 {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.delivery-address-add-card-1 {
+    cursor: pointer;
+    position: relative;
+    padding: 22px 22px;
+    border-style: dashed;
+    border-color: rgba(61, 98, 213, 0.35);
+    background: rgba(61, 98, 213, 0.04);
+    transition: border-color 0.15s ease, background 0.15s ease, transform 0.15s ease;
+    text-align: center;
+}
+
+.delivery-address-add-card-1:hover {
+    border-color: rgba(61, 98, 213, 0.65);
+    background: rgba(61, 98, 213, 0.07);
+    transform: translateY(-1px);
+}
+
+.delivery-address-add-title-1 {
+    margin: 0 0 8px;
+    font-size: 16px;
+    font-weight: 800;
+    color: #3d62d5;
+}
+
+.delivery-address-add-hint-1 {
+    margin: 0;
+    font-size: 13px;
+    color: #6b7280;
+}
+
+.delivery-address-list-1 {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.delivery-address-card-1 {
+    padding: 18px 18px;
+}
+
+@media (max-width: 900px) {
+    .delivery-address-list-1 {
+        grid-template-columns: 1fr;
+    }
+}
+
+.delivery-address-card-top-1 {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 10px;
+}
+
+.delivery-address-card-title-1 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.delivery-address-card-label-text-1 {
+    font-size: 14px;
+    font-weight: 800;
+    color: #1f2937;
+}
+
+.delivery-default-badge-1 {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 12px;
+    font-size: 12px;
+    font-weight: 800;
+    color: #2563eb;
+    background: #dbeafe;
+    border-radius: 999px;
+    white-space: nowrap;
+}
+
+.delivery-address-card-actions-1 {
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    min-width: 120px;
+}
+
+.delivery-set-default-link-1 {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 14px;
+    font-size: 13px;
+    font-weight: 800;
+    color: #3d62d5;
+    background: rgba(61, 98, 213, 0.08);
+    border: 1px solid rgba(61, 98, 213, 0.18);
+    border-radius: 10px;
+    text-decoration: none;
+    transition: background 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+    white-space: nowrap;
+}
+
+.delivery-set-default-link-1:hover {
+    background: rgba(61, 98, 213, 0.12);
+    border-color: rgba(61, 98, 213, 0.35);
+    transform: translateY(-1px);
+}
+
+.delivery-delete-link-1 {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 14px;
+    font-size: 13px;
+    font-weight: 800;
+    color: #dc2626;
+    background: rgba(220, 38, 38, 0.08);
+    border: 1px solid rgba(220, 38, 38, 0.2);
+    border-radius: 10px;
+    text-decoration: none;
+    transition: background 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+    white-space: nowrap;
+}
+
+.delivery-delete-link-1:hover {
+    background: rgba(220, 38, 38, 0.13);
+    border-color: rgba(220, 38, 38, 0.35);
+    transform: translateY(-1px);
+}
+
+.delivery-address-line-1 {
+    font-size: 14px;
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 8px;
+    line-height: 1.35;
+    word-break: break-word;
+    white-space: normal;
+}
+
+.delivery-address-phone-1 {
+    font-size: 13px;
+    color: #4b5563;
+    line-height: 1.4;
+}
+
+.delivery-address-phone-row-1 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    font-size: 13px;
+    color: #4b5563;
+    line-height: 1.4;
+}
+
+.delivery-address-phone-item-1 {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.delivery-address-phone-icon-1 {
+    font-size: 14px;
+    line-height: 1;
+    color: #374151;
+}
+
+.delivery-address-phone-sep-1 {
+    color: #9ca3af;
+    font-weight: 700;
+}
+
+.delivery-address-empty-1 {
+    padding: 22px 22px;
+    text-align: center;
+    border: 1px dashed rgba(0, 0, 0, 0.14);
+    border-radius: 12px;
+    color: #6b7280;
+    font-size: 14px;
+}
+
+/* 浮層弹出 */
+.delivery-modal-overlay-1 {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: rgba(15, 23, 42, 0.42);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 18px;
+}
+
+.delivery-modal-1 {
+    width: min(860px, 100%);
+    max-height: min(80vh, 720px);
+    overflow: auto;
+    background: #ffffff;
+    border-radius: 14px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.delivery-modal-header-1 {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 16px;
+    background: #ffffff;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.delivery-modal-title-1 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 900;
+    color: #111827;
+}
+
+.delivery-modal-close-1 {
+    border: none;
+    background: rgba(0, 0, 0, 0.06);
+    color: #111827;
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 22px;
+    line-height: 1;
+    transition: background 0.15s ease, transform 0.15s ease;
+}
+
+.delivery-modal-close-1:hover {
+    background: rgba(0, 0, 0, 0.1);
+    transform: translateY(-1px);
+}
+
+/* 送貨地址彈窗內表單卡片：上方直角、下方圓角 */
+.delivery-modal-1 .delivery-address-form-card-1 {
+    border-radius: 0 0 12px 12px;
+}
+

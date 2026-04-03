@@ -247,3 +247,57 @@ class EditProfileForm(FlaskForm):
         d = (field.data or '').strip()
         if d and r and d not in HK_DISTRICTS.get(r, ()):
             raise ValidationError('請選擇與區域相符的地區。')
+
+
+class DeliveryAddressForm(FlaskForm):
+    """送貨地址「新增」：對應 app.models.UserAddress。"""
+
+    addr_unit = StringField(
+        '單位',
+        validators=[Optional(), Length(max=64)],
+        render_kw={'placeholder': '例如：03號／A室'},
+    )
+    addr_floor = StringField(
+        '樓層',
+        validators=[Optional(), Length(max=32)],
+        render_kw={'placeholder': '例如：9樓'},
+    )
+    addr_building_street = StringField(
+        '大廈、屋苑或街道',
+        validators=[Optional(), Length(max=512)],
+    )
+    addr_region = SelectField(
+        '區域',
+        choices=[('', '請選擇')] + [(r, r) for r in HK_REGIONS],
+        validators=[Optional()],
+    )
+    addr_district = SelectField(
+        '地區',
+        choices=[('', '請選擇')],
+        validators=[Optional()],
+    )
+    home_phone = StringField(
+        '手提電話號碼',
+        validators=[Optional(), Length(max=32)],
+        description='送貨地址聯絡用（存於收貨地址）',
+    )
+    home_tel = StringField(
+        '住宅電話號碼',
+        validators=[Optional(), Length(max=32)],
+        render_kw={'placeholder': '選填'},
+    )
+    submit = SubmitField('儲存', render_kw={'class': 'account-profile-submit-1'})
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        reg = (self.addr_region.data or '').strip()
+        if reg in HK_DISTRICTS:
+            self.addr_district.choices = [('', '請選擇')] + [(d, d) for d in HK_DISTRICTS[reg]]
+        else:
+            self.addr_district.choices = [('', '請選擇')]
+
+    def validate_addr_district(self, field):
+        r = (self.addr_region.data or '').strip()
+        d = (field.data or '').strip()
+        if d and r and d not in HK_DISTRICTS.get(r, ()):
+            raise ValidationError('請選擇與區域相符的地區。')

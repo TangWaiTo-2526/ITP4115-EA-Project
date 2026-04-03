@@ -25,7 +25,19 @@ moment = Moment(app)
 
 
 def get_locale():
-    return request.accept_languages.best_match(app.config['LANGUAGES'])
+    # 優先辨識瀏覽器語言：中文語系做明確分流
+    accepted = [lang.lower() for lang, _q in request.accept_languages]
+    for lang in accepted:
+        if not lang.startswith('zh'):
+            continue
+        # 簡中：zh-CN / zh-SG / zh-Hans
+        if ('hans' in lang) or lang.startswith('zh-cn') or lang.startswith('zh-sg'):
+            return 'zh_Hans'
+        # 其餘中文（zh / zh-TW / zh-HK / zh-MO / zh-Hant）統一走繁中 catalog（zh）
+        return 'zh'
+
+    # 其餘語言使用 Babel 既有 best_match
+    return request.accept_languages.best_match(app.config['LANGUAGES']) or 'zh'
 
 
 babel = Babel(app, locale_selector=get_locale)

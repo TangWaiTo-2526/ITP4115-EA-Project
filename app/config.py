@@ -40,4 +40,4 @@ class Config(object):
     MAIL_PASSWORD = _env_password('MAIL_PASSWORD')
     MAIL_DEFAULT_SENDER = os.environ.get('MAIL_DEFAULT_SENDER', 'pns@vtcit.top')
     ADMINS = [MAIL_DEFAULT_SENDER]
-    LANGUAGES = ['en', 'es', 'zh']
+    LANGUAGES = ['en', 'es', 'zh', 'zh_Hans']

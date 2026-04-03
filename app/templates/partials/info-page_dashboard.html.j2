@@ -3,13 +3,13 @@
     {# 1 積分與會員卡區 #}
     <div class="account-dash-block-points-1">
         <div class="account-dash-points-bar-1">
-            <span class="account-dash-greet-1">您好，{{ user.username }}</span>
+            <span class="account-dash-greet-1">{{ _('您好，') }}{{ user.username }}</span>
         </div>
         <div class="account-dash-points-inner-1">
             <div class="account-dash-points-left-1">
                 <div class="account-dash-points-headline-1">
                     <div class="account-dash-points-stat-1">
-                        <p class="account-dash-points-label-1">積分</p>
+                        <p class="account-dash-points-label-1">{{ _('積分') }}</p>
                         <p class="account-dash-points-value-1">
                             <span class="account-dash-points-num-1">833</span>
                         </p>
@@ -22,7 +22,7 @@
                         </p>
                     </div>
                 </div>
-                <p class="account-dash-points-note-1"><span class="account-dash-points-note-num-1">93 積分</span> 將在2027年10月01日到期</p>
+                <p class="account-dash-points-note-1"><span class="account-dash-points-note-num-1">{{ _('93 積分') }}</span> {{ _('將在2027年10月01日到期') }}</p>
             </div>
         </div>
         {# 會員卡示意：定位基準為 account-dash-block-points-1 #}
@@ -45,15 +45,15 @@
 
     {# 2 電子優惠券／電子禮券 #}
     <div class="account-dash-block-white-1">
-        <h2 class="account-dash-heading-1">電子優惠券／電子禮券</h2>
+        <h2 class="account-dash-heading-1">{{ _('電子優惠券／電子禮券') }}</h2>
         <div class="account-dash-panel-1 account-dash-panel-empty-1">
-            <p>尚未有電子優惠券／電子禮券</p>
+            <p>{{ _('尚未有電子優惠券／電子禮券') }}</p>
         </div>
     </div>
 
     {# 3 電子印花 #}
     <div class="account-dash-block-white-1">
-        <h2 class="account-dash-heading-1">電子印花</h2>
+        <h2 class="account-dash-heading-1">{{ _('電子印花') }}</h2>
         <div class="account-dash-stamps-1">
             <div class="account-dash-stamp-1">
                 <img
@@ -64,10 +64,10 @@
                     alt=""
                     decoding="async"
                 />
-                <span class="account-dash-stamp-title-1">花王電子印花</span>
+                <span class="account-dash-stamp-title-1">{{ _('花王電子印花') }}</span>
                 <span class="account-dash-stamp-count-1 account-dash-stamp-count-zero-1">× 0</span>
                 <div class="account-dash-stamp-dates-1">
-                    <span class="account-dash-stamp-date-label-1">派发日期:</span>
+                    <span class="account-dash-stamp-date-label-1">{{ _('派發日期:') }}</span>
                     <span class="account-dash-stamp-date-1">2025/05/01 - 2026/03/31</span>
                 </div>
             </div>
@@ -80,10 +80,10 @@
                     alt=""
                     decoding="async"
                 />
-                <span class="account-dash-stamp-title-1">網購店取即日取貨</span>
+                <span class="account-dash-stamp-title-1">{{ _('網購店取即日取貨') }}</span>
                 <span class="account-dash-stamp-count-1 account-dash-stamp-count-zero-1">× 0</span>
                 <div class="account-dash-stamp-dates-1">
-                    <span class="account-dash-stamp-date-label-1">派发日期:</span>
+                    <span class="account-dash-stamp-date-label-1">{{ _('派發日期:') }}</span>
                     <span class="account-dash-stamp-date-1">2025/11/14 - 2026/12/31</span>
                 </div>
             </div>
@@ -96,10 +96,10 @@
                     alt=""
                     decoding="async"
                 />
-                <span class="account-dash-stamp-title-1">Staub 電子印花</span>
+                <span class="account-dash-stamp-title-1">{{ _('Staub 電子印花') }}</span>
                 <span class="account-dash-stamp-count-1">× 17</span>
                 <div class="account-dash-stamp-dates-1">
-                    <span class="account-dash-stamp-date-label-1">派发日期:</span>
+                    <span class="account-dash-stamp-date-label-1">{{ _('派發日期:') }}</span>
                     <span class="account-dash-stamp-date-1">2026/01/09 - 2026/04/23</span>
                 </div>
             </div>
@@ -110,20 +110,20 @@
     <div class="account-dash-split-1">
         <div class="account-dash-split-col-1 account-dash-split-col-white-1">
             <div class="account-dash-heading-row-1">
-                <h2 class="account-dash-heading-1">返貨通知</h2>
-                <a href="#" class="account-dash-view-all-1">查看所有</a>
+                <h2 class="account-dash-heading-1">{{ _('返貨通知') }}</h2>
+                <a href="#" class="account-dash-view-all-1">{{ _('查看所有') }}</a>
             </div>
             <div class="account-dash-panel-1 account-dash-panel-empty-1">
-                <p>尚未有貨品</p>
+                <p>{{ _('尚未有貨品') }}</p>
             </div>
         </div>
         <div class="account-dash-split-col-1 account-dash-split-col-white-1">
             <div class="account-dash-heading-row-1">
-                <h2 class="account-dash-heading-1">再次購買</h2>
-                <a href="#" class="account-dash-view-all-1">查看所有</a>
+                <h2 class="account-dash-heading-1">{{ _('再次購買') }}</h2>
+                <a href="#" class="account-dash-view-all-1">{{ _('查看所有') }}</a>
             </div>
             <div class="account-dash-panel-1 account-dash-panel-empty-1">
-                <p>尚未有貨品</p>
+                <p>{{ _('尚未有貨品') }}</p>
             </div>
         </div>
     </div>

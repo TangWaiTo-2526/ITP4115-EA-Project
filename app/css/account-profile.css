@@ -55,6 +55,8 @@
     align-items: stretch;
     gap: 0;
     max-width: 100%;
+    border-radius: 10px;
+    overflow: hidden;
 }
 
 .account-profile-tel-prefix-1 {
@@ -72,7 +74,7 @@
 }
 
 .account-profile-tel-input-1 {
-    border-radius: 0 10px 10px 0 !important;
+    border-radius: 0 10px 10px 0;
     flex: 1;
     min-width: 0;
 }
@@ -87,6 +89,11 @@
 
 .account-profile-field-narrow-1 {
     max-width: min(100%, 360px);
+}
+
+/* Grid 內的窄欄位不要限制 max-width */
+.account-profile-grid-1 .account-profile-field-narrow-1 {
+    max-width: 100%;
 }
 
 .account-profile-field-1 {
@@ -120,6 +127,10 @@
     border: 1px solid rgba(0, 0, 0, 0.06);
     border-radius: 10px;
     transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.account-profile-tel-row-1 .account-profile-tel-input-1 {
+    border-radius: 0 10px 10px 0;
 }
 
 .account-profile-input-1:focus,

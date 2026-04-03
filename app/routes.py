@@ -17,10 +17,11 @@ from app.forms import (
     RegisterExtraForm,
     ResendVerifyForm,
     EditProfileForm,
+    DeliveryAddressForm,
     ResetPasswordRequestForm,
     ResetPasswordForm,
 )
-from app.models import User, UserAddress, Membership, RegistrationVerificationCode
+from app.models import User, UserAddress, Membership, MembershipPointsLog, RegistrationVerificationCode
 from app.email import send_password_reset_email, send_registration_verification_email
 from app.hk_address import HK_DISTRICTS
 
@@ -89,11 +90,18 @@ def _save_profile_and_address(form, user):
     home_ph = (form.home_phone.data or '').strip()
 
     has_addr = any([unit, floor, building, region, district, home_ph])
-    addr = user.addresses.order_by(UserAddress.create_time.asc()).first()
+    existing_addrs = user.addresses.order_by(UserAddress.create_time.asc()).all()
+    addr = next((a for a in existing_addrs if a.is_default), None) or (existing_addrs[0] if existing_addrs else None)
 
     if not has_addr:
         if addr:
             db.session.delete(addr)
+            # 刪除預設地址後，若仍有其他地址，接續預設
+            remaining = [a for a in existing_addrs if a.user_address_uuid != addr.user_address_uuid]
+            if remaining:
+                for a in remaining:
+                    a.is_default = False
+                remaining[0].is_default = True
         return
 
     line = ' '.join(x for x in [region, district, building, floor, unit] if x).strip() or '-'
@@ -103,6 +111,11 @@ def _save_profile_and_address(form, user):
         db.session.add(addr)
     else:
         addr.user_address = line
+
+    # 個人資料頁的「送貨地址」視為預設地址：清掉其他預設標記，並標記目前 addr
+    for a in existing_addrs:
+        a.is_default = False
+    addr.is_default = True
 
     addr.unit = unit or None
     addr.floor = floor or None
@@ -540,4 +553,163 @@ def edit_profile():
         title='個人資料',
         form=form,
         hk_districts=HK_DISTRICTS,
+        addresses=current_user.addresses.order_by(UserAddress.create_time.desc()).all(),
     )
+
+
+@app.route('/delivery_address', methods=['GET'])
+@login_required
+def delivery_address():
+    addresses = current_user.addresses.order_by(UserAddress.create_time.desc()).all()
+    if addresses:
+        defaults = [a for a in addresses if a.is_default]
+        # 舊資料可能沒有預設、或不小心出現多個預設：兜底保證只保留一筆
+        if len(defaults) != 1:
+            for a in addresses:
+                a.is_default = False
+            addresses[0].is_default = True
+            db.session.commit()
+    form = DeliveryAddressForm()
+    form.home_phone.data = (current_user.phone_number or '').strip()
+    return render_template(
+        'partials/info-page_delivery-address.html.j2',
+        title='送貨地址',
+        addresses=addresses,
+        form=form,
+        hk_districts=HK_DISTRICTS,
+    )
+
+
+@app.route('/membership_points', methods=['GET'])
+@login_required
+def membership_points():
+    membership = current_user.membership_row
+    if membership is None:
+        membership = Membership(user_uuid=current_user.user_uuid, membership_point=0)
+        db.session.add(membership)
+        db.session.commit()
+
+    logs = current_user.points_logs.order_by(MembershipPointsLog.transaction_time.desc()).all()
+    hkd_equivalent = int(membership.membership_point // 50)
+    expiring_points = min(membership.membership_point, 93)
+    expiry_date = datetime(2027, 10, 1)
+
+    return render_template(
+        'partials/info-page_membership-points.html.j2',
+        title='易賞錢積分',
+        membership=membership,
+        points_logs=logs,
+        hkd_equivalent=hkd_equivalent,
+        expiring_points=expiring_points,
+        expiry_date=expiry_date,
+    )
+
+
+@app.route('/digital_coupons', methods=['GET'])
+@login_required
+def digital_coupons():
+    return render_template(
+        'partials/info-page_digital-coupons.html.j2',
+        title='電子優惠券／電子禮券',
+    )
+
+
+@app.route('/my_credit_cards', methods=['GET'])
+@login_required
+def my_credit_cards():
+    return render_template(
+        'partials/info-page_credit-cards.html.j2',
+        title='我的信用卡',
+    )
+
+
+@app.route('/delivery_address/add', methods=['POST'])
+@login_required
+def delivery_address_add():
+    form = DeliveryAddressForm()
+    if form.validate_on_submit():
+        unit = (form.addr_unit.data or '').strip()
+        floor = (form.addr_floor.data or '').strip()
+        building = (form.addr_building_street.data or '').strip()
+        region = (form.addr_region.data or '').strip()
+        district = (form.addr_district.data or '').strip()
+        home_phone = (form.home_phone.data or '').strip()
+        home_tel = (form.home_tel.data or '').strip()
+
+        line = ' '.join(
+            x for x in [region, district, building, floor, unit] if x
+        ).strip() or '-'
+
+        addr = UserAddress(
+            user_uuid=current_user.user_uuid,
+            user_address=line,
+            unit=unit or None,
+            floor=floor or None,
+            building_street=building or None,
+            region=region or None,
+            district=district or None,
+            phone_number=home_phone or None,
+            home_phone=home_tel or None,
+        )
+
+        existing_count = current_user.addresses.count()
+        has_default = current_user.addresses.filter(UserAddress.is_default.is_(True)).count() > 0
+        # 第一個地址預設為預設地址；若舊資料沒有預設標記，新增後自動設為預設
+        if existing_count == 0 or not has_default:
+            addr.is_default = True
+
+        db.session.add(addr)
+        db.session.commit()
+        flash('地址已儲存。')
+        return redirect(url_for('delivery_address'))
+
+    flash('請檢查輸入資料。')
+    return redirect(url_for('delivery_address'))
+
+
+@app.route('/delivery_address/set_default/<user_address_uuid>', methods=['GET'])
+@login_required
+def delivery_address_set_default(user_address_uuid):
+    # 僅允許設定為自己的地址
+    addresses = current_user.addresses.all()
+    target = None
+    for a in addresses:
+        if str(a.user_address_uuid) == str(user_address_uuid):
+            target = a
+            break
+    if target is None:
+        return redirect(url_for('delivery_address'))
+
+    for a in addresses:
+        a.is_default = False
+    target.is_default = True
+    db.session.commit()
+    flash('已設定預設送貨地址。')
+    return redirect(url_for('delivery_address'))
+
+
+@app.route('/delivery_address/delete/<user_address_uuid>', methods=['GET'])
+@login_required
+def delivery_address_delete(user_address_uuid):
+    addresses = current_user.addresses.order_by(UserAddress.create_time.desc()).all()
+    target = None
+    for a in addresses:
+        if str(a.user_address_uuid) == str(user_address_uuid):
+            target = a
+            break
+    if target is None:
+        return redirect(url_for('delivery_address'))
+
+    was_default = bool(target.is_default)
+    db.session.delete(target)
+    db.session.flush()
+
+    remaining = current_user.addresses.order_by(UserAddress.create_time.desc()).all()
+    if remaining and (was_default or not any(a.is_default for a in remaining)):
+        for a in remaining:
+            a.is_default = False
+        remaining[0].is_default = True
+
+    db.session.commit()
+    flash('地址已刪除。')
+    return redirect(url_for('delivery_address'))

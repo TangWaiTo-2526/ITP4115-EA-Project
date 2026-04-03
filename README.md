@@ -1,8 +1,56 @@
+
+
+# 開發快速提醒
+
+## 1) 如何運行 Flask Website
+
+在專案根目錄執行：
+
+```bash
+python -m flask --app run.py run --debug
+```
+
+預設網址：`http://127.0.0.1:5000`
+
+## 2) 如何重新啟動 Docker
+
+啟動全部服務（背景執行）：
+
+```bash
+docker compose up -d
+```
+
+重新啟動全部服務：
+
+```bash
+docker compose restart
+```
+
+只重啟資料庫與 pgAdmin：
+
+```bash
+docker compose restart postgres pgadmin
+```
+
+停止並移除服務（不刪 volume）：
+
+```bash
+docker compose down
+```
+
+## 3) 如何重新編譯 translations
+
+在專案根目錄執行：
+
+```bash
+pybabel compile -d app/translations
+```
+
+如果更新過 `messages.po`，重新編譯後會產生/更新 `messages.mo`。
+
 # 資料庫表設計
 
 ## 表結構總覽
-
-以下 `user`、`user_address` 欄位與 Alembic 遷移 `a3c1d9f4b210_create_shop_user`、`f6b2a0c81d7e_create_shop_user_address` 及 `app.models` 一致。
 
 | 表（Table） | 说明 | 字段（Columns） |
 | --- | --- | --- |
@@ -10,6 +58,7 @@
 | `user_address` | 用戶收貨地址 | `user_address_uuid`, `user_uuid`, `user_address`, `unit`, `floor`, `building_street`, `region`, `district`, `phone_number`, `home_phone`, `create_time` |
 | `registration_verification_code` | 註冊驗證碼 | `id`, `client_ip`, `code`, `mail`, `created_at`, `expires_at`, `last_sent_at`, `consumed_at` |
 | `membership` | 會員促銷/積分 | `user_uuid`, `membership_point`, `create_time` |
+| `membership_points_log` | 會員積分交易紀錄 | `points_log_uuid`, `user_uuid`, `transaction_time`, `retailer`, `store_name`, `transaction_amount_hkd`, `base_points`, `extra_points`, `redeemed_points`, `create_time` |
 | `cart` | 購物車表 | `user_uuid`, `product_details_uuid`, `create_time` |
 | `orders` | 訂單主表 | `order_uuid`, `user_uuid`, `order_status`, `receiver_name`, `receiver_phone`, `receiver_address_snapshot`, `total_price`, `create_time` |
 | `order_items` | 訂單明細表 | `order_item_uuid`, `order_uuid`, `product_details_uuid`, `quantity`, `unit_price`, `line_total`, `create_time` |
@@ -22,6 +71,7 @@
 - user_address: PK = user_address_uuid；索引 `ix_user_address_user_uuid`
 - registration_verification_code: PK = id
 - membership: PK = user_uuid
+- membership_points_log: PK = points_log_uuid；索引 `ix_membership_points_log_user_uuid`、`ix_membership_points_log_transaction_time`
 - cart: PK = user_uuid, product_details_uuid
 - orders: PK = order_uuid
 - order_items: PK = order_item_uuid
@@ -30,6 +80,7 @@
 
 - user_address.user_uuid -> user.user_uuid
 - membership.user_uuid -> user.user_uuid
+- membership_points_log.user_uuid -> user.user_uuid（`ON DELETE CASCADE`）
 - orders.user_uuid -> user.user_uuid
 - order_items.order_uuid -> orders.order_uuid
 - order_items.product_details_uuid -> product_details.product_categories_uuid
@@ -86,6 +137,19 @@
 - 用戶唯一識別符（`user_uuid`）: `55f7d0f9-fba6-4833-b113-8f55e069c5b6`
 - 會員積分（`membership_point`）: `1200`
 - 建立日期（`create_time`）: `2026:01:01:11:11:11`
+
+### 會員積分交易紀錄（`membership_points_log`）
+
+- 積分日誌唯一識別符（`points_log_uuid`）: `2b8f5e4a-9f3d-4b18-9f44-0e73c9d1a8b2`
+- 用戶唯一識別符（`user_uuid`）: `55f7d0f9-fba6-4833-b113-8f55e069c5b6`
+- 交易時間（`transaction_time`）: `2026:01:08:15:45:00`
+- 商戶（`retailer`）: `PARKnSHOP`
+- 門市名稱（`store_name`）: `尖沙咀店`
+- 交易金額（港幣，`transaction_amount_hkd`）: `238.50`
+- 基本積分（`base_points`）: `238`
+- 額外積分（`extra_points`）: `20`
+- 兌換積分（`redeemed_points`）: `100`（可空）
+- 建立日期（`create_time`）: `2026:01:08:15:46:00`
 
 ### 購物車表（`cart`）
 

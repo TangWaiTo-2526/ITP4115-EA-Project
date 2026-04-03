@@ -43,9 +43,20 @@
                         </a>
                         <div class="header-nav-2-account-panel" role="menu" aria-label="{{ _('Account menu') }}">
                             {% if current_user.is_anonymous %}
-                            <a role="menuitem" class="header-nav-2-account-item" href="{{ url_for('login') }}">{{ _('Sign In') }}</a>
-                            <a role="menuitem" class="header-nav-2-account-item" href="{{ url_for('register') }}">{{ _('Register') }}</a>
-                            <a role="menuitem" class="header-nav-2-account-item" href="{{ url_for('reset_password_request') }}">{{ _('Forgot password') }}</a>
+                            <div class="header-nav-2-account-main">
+                                <a role="menuitem" class="header-nav-2-account-item header-nav-2-account-item--with-icon" href="{{ url_for('login') }}">
+                                    <i class="fa-regular fa-user header-nav-2-account-ico" aria-hidden="true"></i>
+                                    <span>{{ _('Sign In') }}</span>
+                                </a>
+                                <a role="menuitem" class="header-nav-2-account-item header-nav-2-account-item--with-icon" href="{{ url_for('register') }}">
+                                    <i class="fa-solid fa-box header-nav-2-account-ico" aria-hidden="true"></i>
+                                    <span>{{ _('Register') }}</span>
+                                </a>
+                                <a role="menuitem" class="header-nav-2-account-item header-nav-2-account-item--with-icon" href="{{ url_for('reset_password_request') }}">
+                                    <i class="fa-solid fa-clock-rotate-left header-nav-2-account-ico" aria-hidden="true"></i>
+                                    <span>{{ _('Forgot password') }}</span>
+                                </a>
+                            </div>
                             {% else %}
                             <div class="header-nav-2-account-main">
                                 <a role="menuitem" class="header-nav-2-account-item header-nav-2-account-item--with-icon" href="{{ url_for('user', username=current_user.username) }}">
@@ -153,8 +164,11 @@
 
                 <div class="footer-div3-links-row-1">
                     <div class="footer-div3-col-1">
-                        <p class="footer-div3-title-1">關於我們</p>
-                        <div class="footer-div3-col-inner-1">
+                        <button type="button" class="footer-div3-acc-btn-1" aria-expanded="false">
+                            <span class="footer-div3-title-1">關於我們</span>
+                            <i class="fa-solid fa-plus footer-div3-acc-ico-1" aria-hidden="true"></i>
+                        </button>
+                        <div class="footer-div3-col-inner-1 footer-div3-acc-panel-1">
                             <div class="footer-div3-stack-1">
                                 <a class="footer-div3-link-muted-1" href="https://www.pns.hk/zh-hk/aboutParknshop">關於百佳</a>
                                 <a class="footer-div3-link-muted-1" href="https://www.aswatson.com/">企業資訊</a>
@@ -169,8 +183,11 @@
                     </div>
 
                     <div class="footer-div3-col-1">
-                        <p class="footer-div3-title-1">網上購物</p>
-                        <div class="footer-div3-col-inner-1">
+                        <button type="button" class="footer-div3-acc-btn-1" aria-expanded="false">
+                            <span class="footer-div3-title-1">網上購物</span>
+                            <i class="fa-solid fa-plus footer-div3-acc-ico-1" aria-hidden="true"></i>
+                        </button>
+                        <div class="footer-div3-col-inner-1 footer-div3-acc-panel-1">
                             <div class="footer-div3-stack-1">
                                 <a class="footer-div3-link-muted-1" href="https://www.pns.hk/zh-hk/aboutParknshop">網上購物流程</a>
                                 <a class="footer-div3-link-muted-1" href="https://www.aswatson.com/">易賞錢</a>
@@ -184,8 +201,11 @@
                     </div>
 
                     <div class="footer-div3-col-1">
-                        <p class="footer-div3-title-1">客戶服務</p>
-                        <div class="footer-div3-col-inner-1">
+                        <button type="button" class="footer-div3-acc-btn-1" aria-expanded="false">
+                            <span class="footer-div3-title-1">客戶服務</span>
+                            <i class="fa-solid fa-plus footer-div3-acc-ico-1" aria-hidden="true"></i>
+                        </button>
+                        <div class="footer-div3-col-inner-1 footer-div3-acc-panel-1">
                             <div class="footer-div3-stack-1">
                                 <a class="footer-div3-link-muted-1" href="https://www.pns.hk/zh-hk/contactUs">聯絡我們</a>
                                 <a class="footer-div3-link-muted-1" href="https://www.pns.hk/zh-hk/FAQ">常見問題</a>
@@ -228,4 +248,55 @@
     <script src="https://kit.fontawesome.com/e89b1ee830.js" crossorigin="anonymous"></script>
     {{ moment.include_moment() }}
     {{ moment.lang(g.locale) }}
+    <script>
+        (function () {
+            var mobileMq = window.matchMedia('(max-width: 900px)');
+            var cols = document.querySelectorAll('.footer-div3-links-row-1 .footer-div3-col-1');
+            if (!cols.length) return;
+
+            function closeAll() {
+                cols.forEach(function (col) {
+                    col.classList.remove('is-open');
+                    var btn = col.querySelector('.footer-div3-acc-btn-1');
+                    if (btn) btn.setAttribute('aria-expanded', 'false');
+                });
+            }
+
+            function desktopReset() {
+                cols.forEach(function (col) {
+                    col.classList.remove('is-open');
+                    var btn = col.querySelector('.footer-div3-acc-btn-1');
+                    if (btn) btn.setAttribute('aria-expanded', 'true');
+                });
+            }
+
+            cols.forEach(function (col) {
+                var btn = col.querySelector('.footer-div3-acc-btn-1');
+                if (!btn) return;
+                btn.addEventListener('click', function () {
+                    if (!mobileMq.matches) return;
+                    var opening = !col.classList.contains('is-open');
+                    closeAll();
+                    col.classList.toggle('is-open', opening);
+                    btn.setAttribute('aria-expanded', opening ? 'true' : 'false');
+                });
+            });
+
+            function syncState() {
+                if (mobileMq.matches) {
+                    closeAll();
+                } else {
+                    desktopReset();
+                }
+            }
+
+            if (mobileMq.addEventListener) {
+                mobileMq.addEventListener('change', syncState);
+            } else if (mobileMq.addListener) {
+                mobileMq.addListener(syncState);
+            }
+
+            syncState();
+        })();
+    </script>
 {% endblock %}
