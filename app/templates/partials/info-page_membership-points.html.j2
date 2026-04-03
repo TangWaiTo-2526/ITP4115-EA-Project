@@ -1,0 +1,144 @@
+{% extends "base.html.j2" %}
+
+{% block styles %}
+    {{ super() }}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/account-layout.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/account-breadcrumb.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/account-sidebar.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/account-membership-points.css') }}">
+{% endblock %}
+
+{% block app_content %}
+{% set account_breadcrumb_items = [
+    {'text': _('Home'), 'href': url_for('index')},
+    {'text': _('My account'), 'href': url_for('user', username=current_user.username)},
+    {'text': _('易賞錢積分')},
+] %}
+
+<table class="table account-layout-table-1">
+    <tr>
+        <td class="account-layout-bc-cell-1" colspan="2">
+            {% include 'partials/info-page_breadcrumb.html.j2' %}
+        </td>
+    </tr>
+    <tr>
+        <td class="account-layout-nav-cell-1" width="272">
+            {% include 'partials/info-page_sidebar.html.j2' %}
+        </td>
+        <td class="account-layout-main-1">
+            <div class="membership-points-wrap-1">
+                <div class="membership-points-desktop-1">
+                    <h1 class="membership-points-title-1">{{ _('積分查詢') }}</h1>
+
+                    <section class="membership-points-hero-1" aria-label="{{ _('積分總覽') }}">
+                        <div class="membership-points-hero-main-1">
+                            <div class="membership-points-stat-1">
+                                <p class="membership-points-label-1">{{ _('積分') }}</p>
+                                <p class="membership-points-value-1">{{ membership.membership_point }}</p>
+                            </div>
+                            <div class="membership-points-eq-1" aria-hidden="true">=</div>
+                            <div class="membership-points-stat-1">
+                                <p class="membership-points-label-1">HK$</p>
+                                <p class="membership-points-value-1">{{ hkd_equivalent }}</p>
+                            </div>
+                        </div>
+                        <p class="membership-points-note-1">
+                            <span class="membership-points-note-num-1">{{ expiring_points }} {{ _('積分') }}</span>
+                            {{ _('將在') }}{{ expiry_date.strftime('%Y年%m月%d日') }}{{ _('到期') }}
+                        </p>
+                    </section>
+
+                    <section class="membership-points-table-wrap-1" aria-label="{{ _('積分交易紀錄') }}">
+                        <table class="membership-points-table-1">
+                            <thead>
+                                <tr>
+                                    <th>{{ _('交易日期') }}</th>
+                                    <th>{{ _('基本積分') }}</th>
+                                    <th>{{ _('額外積分') }}</th>
+                                    <th>{{ _('零售商') }}</th>
+                                    <th>{{ _('門市／描述') }}</th>
+                                    <th>{{ _('交易金額 HK$') }}</th>
+                                    <th>{{ _('已兌換積分') }}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if points_logs %}
+                                    {% for row in points_logs %}
+                                        <tr>
+                                            <td>{{ row.transaction_time.strftime('%Y年%m月%d日 %H:%M') }}</td>
+                                            <td>{{ row.base_points }}</td>
+                                            <td>{{ row.extra_points }}</td>
+                                            <td>{{ row.retailer }}</td>
+                                            <td>{{ row.store_name }}</td>
+                                            <td>{{ '%.2f'|format(row.transaction_amount_hkd|float) }}</td>
+                                            <td>{{ row.redeemed_points if row.redeemed_points is not none else _('N/A') }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                {% else %}
+                                    <tr>
+                                        <td colspan="7" class="membership-points-empty-1">{{ _('尚未有積分交易紀錄') }}</td>
+                                    </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </section>
+                </div>
+
+                <div class="membership-points-mobile-1">
+                    <h1 class="membership-points-mobile-title-1">{{ _('積分查詢') }}</h1>
+
+                    <section class="membership-points-mobile-hero-1" aria-label="{{ _('積分總覽（行動版）') }}">
+                        <div class="membership-points-mobile-hero-main-1">
+                            <div class="membership-points-mobile-stat-1">
+                                <p class="membership-points-mobile-label-1">{{ _('積分') }}</p>
+                                <p class="membership-points-mobile-value-1">{{ membership.membership_point }}</p>
+                            </div>
+                            <span class="membership-points-mobile-eq-1" aria-hidden="true">=</span>
+                            <div class="membership-points-mobile-stat-1">
+                                <p class="membership-points-mobile-label-1">HK$</p>
+                                <p class="membership-points-mobile-value-1">{{ hkd_equivalent }}</p>
+                            </div>
+                        </div>
+                        <p class="membership-points-mobile-note-1">
+                            <span class="membership-points-mobile-note-num-1">{{ expiring_points }} {{ _('積分') }}</span>
+                            {{ _('將在') }}{{ expiry_date.strftime('%Y年%m月%d日') }}{{ _('到期') }}
+                        </p>
+                    </section>
+
+                    <section class="membership-points-mobile-activity-1" aria-label="{{ _('Recent Activity') }}">
+                        <div class="membership-points-mobile-activity-head-1">
+                            <h2 class="membership-points-mobile-activity-title-1">{{ _('Recent Activity') }}</h2>
+                        </div>
+
+                        <div class="membership-points-mobile-activity-list-1">
+                            {% if points_logs %}
+                                {% for row in points_logs %}
+                                    {% set delta = (row.base_points or 0) + (row.extra_points or 0) - (row.redeemed_points or 0) %}
+                                    <article class="membership-points-mobile-item-1">
+                                        <div class="membership-points-mobile-item-left-1">
+                                            <div class="membership-points-mobile-item-icon-1">
+                                                <i class="fa-solid fa-receipt" aria-hidden="true"></i>
+                                            </div>
+                                            <div class="membership-points-mobile-item-meta-1">
+                                                <p class="membership-points-mobile-item-retailer-1">{{ row.retailer }}</p>
+                                                <p class="membership-points-mobile-item-sub-1">{{ row.transaction_time.strftime('%Y/%m/%d %H:%M') }} ・ {{ row.store_name }}</p>
+                                                <p class="membership-points-mobile-item-amount-1">{{ _('交易 HK$') }} {{ '%.2f'|format(row.transaction_amount_hkd|float) }}</p>
+                                            </div>
+                                        </div>
+                                        <div class="membership-points-mobile-item-right-1">
+                                            <p class="membership-points-mobile-item-delta-1{% if delta < 0 %} is-negative{% endif %}">{% if delta >= 0 %}+{% endif %}{{ delta }}</p>
+                                            <p class="membership-points-mobile-item-unit-1">{{ _('points') }}</p>
+                                        </div>
+                                    </article>
+                                {% endfor %}
+                            {% else %}
+                                <div class="membership-points-mobile-empty-1">{{ _('尚未有積分交易紀錄') }}</div>
+                            {% endif %}
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </td>
+    </tr>
+</table>
+{% endblock %}

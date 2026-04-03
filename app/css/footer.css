@@ -2,7 +2,7 @@
 .footer-div1-wrap-1 {
     max-width: 1100px;
     margin: 0 auto;
-    padding: 0 15px 50px;
+    padding: 0 15px;
 }
 
 /* 全站內容區 flash：與登入頁 login-div1-flash 同系——水平置中、自上方滑入 → 停留 → 滑出（login.css 僅在登入頁載入，故 keyframes 在此重複一份） */
@@ -301,4 +301,151 @@
 
 .footer-div4-inline-link-1:hover {
     color: #c5c5c5;
+}
+
+.footer-div3-acc-btn-1 {
+    width: 100%;
+    border: 0;
+    background: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0;
+    cursor: default;
+}
+
+.footer-div3-acc-btn-1 .footer-div3-title-1 {
+    margin: 22px 0;
+}
+
+.footer-div3-acc-ico-1 {
+    display: none !important;
+    color: #d2d2d2;
+    font-size: 14px;
+}
+
+@media (max-width: 900px) {
+    .footer-div3-mid-1 {
+        height: auto;
+        padding: 16px 0 10px;
+    }
+
+    .footer-div3-inner-1 {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+        padding: 0 16px;
+        white-space: normal;
+    }
+
+    .footer-div3-download-1 {
+        margin: 0;
+    }
+
+    .footer-div3-title-1 {
+        margin: 14px 0;
+    }
+
+    .footer-div3-row-1 {
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .footer-div3-badges-1 {
+        gap: 8px;
+        align-items: flex-start;
+    }
+
+    .footer-div3-links-row-1 {
+        margin: 8px 0 0;
+        width: 100%;
+        gap: 0;
+        flex-direction: column;
+    }
+
+    .footer-div3-col-1 {
+        width: 100%;
+        border-top: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .footer-div3-acc-btn-1 {
+        cursor: pointer;
+        padding: 0;
+        min-height: 46px;
+    }
+
+    .footer-div3-acc-btn-1 .footer-div3-title-1 {
+        margin: 0;
+        font-size: 16px;
+        line-height: 46px;
+    }
+
+    .footer-div3-acc-ico-1 {
+        display: inline-block !important;
+        transition: transform 0.2s ease;
+    }
+
+    .footer-div3-col-1.is-open .footer-div3-acc-ico-1 {
+        transform: rotate(45deg);
+    }
+
+    .footer-div3-col-inner-1 {
+        display: none;
+        padding: 0 0 12px;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .footer-div3-col-1.is-open .footer-div3-col-inner-1 {
+        display: flex;
+    }
+
+    .footer-div3-stack-1 {
+        gap: 8px;
+    }
+
+    .footer-div2-banner-1 {
+        height: auto;
+        min-height: 56px;
+        padding: 8px 0;
+    }
+
+    .footer-div2-inner-1 {
+        width: 100%;
+        padding: 0 14px;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .footer-div2-img-1 {
+        height: 46px;
+    }
+
+    .footer-div2-text-1 {
+        font-size: 14px;
+        line-height: 1.25;
+        text-align: center;
+    }
+
+    .footer-div2-text-accent-1,
+    .footer-div2-text-dark-1 {
+        display: none;
+    }
+
+    .footer-div2-text-1::before {
+        content: "易賞錢 App 立即註冊儲積分換禮品！";
+        color: rgb(31, 31, 31);
+        font-weight: 700;
+    }
+
+    .footer-div4-inner-1 {
+        padding: 12px 16px;
+        gap: 10px;
+    }
+
+    .footer-div4-links-1 {
+        margin-left: 0;
+        width: 100%;
+        justify-content: center;
+    }
 }

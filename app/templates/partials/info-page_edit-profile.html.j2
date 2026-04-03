@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/account-breadcrumb.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/account-sidebar.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/account-profile.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/account-delivery-address.css') }}">
 {% endblock %}
 
 {% block app_content %}
@@ -114,55 +115,34 @@
                     </section>
 
                     <section class="account-profile-card-1" aria-labelledby="profile-card-delivery">
-                        <h2 id="profile-card-delivery" class="account-profile-card-title-1">{{ _('Delivery address') }}</h2>
+                        <h2 id="profile-card-delivery" class="account-profile-card-title-1">{{ _('送貨地址') }}</h2>
 
-                    <div class="account-profile-grid-1 account-profile-grid-cols-2-1">
-                        <div class="account-profile-field-1">
-                            {{ form.addr_unit.label(class='account-profile-label-1') }}
-                            {{ form.addr_unit(class='account-profile-input-1') }}
-                            {% for e in form.addr_unit.errors %}<span class="account-profile-error-1">{{ e }}</span>{% endfor %}
-                        </div>
-                        <div class="account-profile-field-1">
-                            {{ form.addr_floor.label(class='account-profile-label-1') }}
-                            {{ form.addr_floor(class='account-profile-input-1') }}
-                            {% for e in form.addr_floor.errors %}<span class="account-profile-error-1">{{ e }}</span>{% endfor %}
-                        </div>
-                    </div>
+                        {% if addresses %}
+                            {% set default_addr = (addresses | selectattr('is_default') | list | first) %}
+                            {% if default_addr %}
+                                <section class="account-profile-card-1 delivery-address-card-1">
+                                    <div class="delivery-address-card-top-1">
+                                        <div class="delivery-address-card-label-1">
+                                            <span class="delivery-address-card-label-text-1">{{ _('送貨地址') }}</span>
+                                            <span class="delivery-default-badge-1">{{ _('預設') }}</span>
+                                        </div>
+                                    </div>
 
-                    <div class="account-profile-field-1 account-profile-field-full-1">
-                        {{ form.addr_building_street.label(class='account-profile-label-1') }}
-                        {{ form.addr_building_street(class='account-profile-input-1') }}
-                        {% for e in form.addr_building_street.errors %}<span class="account-profile-error-1">{{ e }}</span>{% endfor %}
-                    </div>
-
-                    <div class="account-profile-grid-1 account-profile-grid-cols-2-1">
-                        <div class="account-profile-field-1">
-                            {{ form.addr_region.label(class='account-profile-label-1') }}
-                            {{ form.addr_region(class='account-profile-input-1 account-profile-select-1', id='addr_region') }}
-                            {% for e in form.addr_region.errors %}<span class="account-profile-error-1">{{ e }}</span>{% endfor %}
-                        </div>
-                        <div class="account-profile-field-1">
-                            {{ form.addr_district.label(class='account-profile-label-1') }}
-                            {{ form.addr_district(class='account-profile-input-1 account-profile-select-1', id='addr_district') }}
-                            {% for e in form.addr_district.errors %}<span class="account-profile-error-1">{{ e }}</span>{% endfor %}
-                        </div>
-                    </div>
-
-                    <div class="account-profile-field-1 account-profile-field-narrow-1">
-                        {{ form.home_phone.label(class='account-profile-label-1') }}
-                        <div class="account-profile-tel-row-1">
-                            <span class="account-profile-tel-prefix-1" aria-hidden="true">+852</span>
-                            {{ form.home_phone(class='account-profile-input-1 account-profile-tel-input-1', placeholder='選填') }}
-                        </div>
-                        {% for e in form.home_phone.errors %}<span class="account-profile-error-1">{{ e }}</span>{% endfor %}
-                    </div>
-
-                    <div class="account-profile-field-1 account-profile-field-full-1">
-                        <span class="account-profile-label-1">{{ _('Contact method') }}</span>
-                        <p class="account-profile-hint-1">
-                            *{{ _('Direct marketing info will be sent to your phone via instant messaging apps, e.g. WhatsApp.') }}
-                        </p>
-                    </div>
+                                    <div class="delivery-address-line-1">{{ default_addr.formatted_line() }}</div>
+                                    <div class="delivery-address-phone-1">
+                                        {{ _('住宅電話號碼：+852') }} {{ default_addr.home_phone or '—' }}
+                                    </div>
+                                </section>
+                            {% else %}
+                                <div class="delivery-address-empty-1">
+                                    {{ _('尚未設定預設送貨地址') }}
+                                </div>
+                            {% endif %}
+                        {% else %}
+                            <div class="delivery-address-empty-1">
+                                {{ _('尚未有送貨地址') }}
+                            </div>
+                        {% endif %}
                     </section>
 
                     <div class="account-profile-actions-1">
@@ -188,7 +168,7 @@
         districtSel.innerHTML = '';
         var opt0 = document.createElement('option');
         opt0.value = '';
-        opt0.textContent = '請選擇';
+        opt0.textContent = '{{ _("請選擇") }}';
         districtSel.appendChild(opt0);
         list.forEach(function (d) {
             var o = document.createElement('option');

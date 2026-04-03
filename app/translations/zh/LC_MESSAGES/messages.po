@@ -44,7 +44,7 @@ msgstr ""
 
 #: routes.py:74 templates/login.html.j2:4
 msgid "Sign In"
-msgstr ""
+msgstr "登入"
 
 #: routes.py:93
 msgid "Congratulations, you are now a registered user!"
@@ -52,7 +52,7 @@ msgstr ""
 
 #: routes.py:95 templates/register.html.j2:4
 msgid "Register"
-msgstr ""
+msgstr "註冊"
 
 #: routes.py:108
 msgid "Check your email for the instructions to reset your password"
@@ -236,4 +236,20 @@ msgstr "直接促銷的資訊會透過即時通訊應用程式發送至您的電
 #: templates/partials/info-page_edit-profile.html.j2
 msgid "I am interested in receiving promotions from the following brands:"
 msgstr "我有興趣收到經由以下品牌發出之推廣、優惠、折扣或其他相關通訊："
+
+#: templates/partials/info-page_membership-points.html.j2
+msgid "Recent Activity"
+msgstr "近期活動"
+
+#: templates/partials/info-page_membership-points.html.j2
+msgid "points"
+msgstr "積分"
+
+#: templates/partials/info-page_membership-points.html.j2
+msgid "交易 HK$"
+msgstr "交易 HK$"
+
+#: templates/partials/info-page_membership-points.html.j2
+msgid "N/A"
+msgstr "不適用"
 

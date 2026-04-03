@@ -1,0 +1,306 @@
+.membership-points-wrap-1 {
+    max-width: 900px;
+}
+
+.membership-points-mobile-1 {
+    display: none;
+}
+
+.membership-points-title-1 {
+    margin: 0 0 16px;
+    font-size: 22px;
+    font-weight: 900;
+    color: #1f2937;
+    letter-spacing: -0.02em;
+}
+
+.membership-points-hero-1 {
+    border-radius: 10px;
+    padding: 34px 24px 36px;
+    background:
+        linear-gradient(12deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02) 45%),
+        linear-gradient(104deg, #3f64d8 0%, #4f74e2 56%, #5f84ef 100%);
+    color: #ffffff;
+    margin-bottom: 20px;
+}
+
+.membership-points-hero-main-1 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 26px;
+    width: calc(100% - 50px);
+    margin: 0 auto;
+}
+
+.membership-points-stat-1 {
+    text-align: center;
+}
+
+.membership-points-label-1 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.membership-points-value-1 {
+    margin: 6px 0 0;
+    font-size: 50px;
+    font-weight: 900;
+    line-height: 1;
+}
+
+.membership-points-eq-1 {
+    font-size: 30px;
+    font-weight: 900;
+    line-height: 1;
+}
+
+.membership-points-note-1 {
+    margin: 28px 0 0;
+    text-align: center;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.membership-points-note-num-1 {
+    font-weight: 900;
+}
+
+.membership-points-table-wrap-1 {
+    background: #ffffff;
+    border-radius: 10px;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+}
+
+.membership-points-table-1 {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.membership-points-table-1 th,
+.membership-points-table-1 td {
+    padding: 14px 16px;
+    text-align: left;
+    font-size: 14px;
+    color: #1f2937;
+}
+
+.membership-points-table-1 thead th {
+    font-size: 14px;
+    font-weight: 800;
+    color: #1e3a8a;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    background: #f8fafc;
+}
+
+.membership-points-table-1 tbody tr:not(:last-child) td {
+    border-bottom: 1px dashed rgba(0, 0, 0, 0.14);
+}
+
+.membership-points-empty-1 {
+    text-align: center;
+    color: #6b7280;
+}
+
+.membership-points-mobile-title-1 {
+    margin: 0 0 14px;
+    font-size: 22px;
+    font-weight: 800;
+    color: #0f172a;
+    letter-spacing: -0.02em;
+}
+
+.membership-points-mobile-hero-1 {
+    border-radius: 14px;
+    padding: 20px 16px;
+    background: linear-gradient(130deg, #2f5fc2 0%, #3f6fdd 55%, #5a84ee 100%);
+    color: #fff;
+    box-shadow: 0 12px 24px rgba(30, 58, 138, 0.18);
+}
+
+.membership-points-mobile-hero-main-1 {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 14px;
+}
+
+.membership-points-mobile-stat-1 {
+    text-align: center;
+}
+
+.membership-points-mobile-label-1 {
+    margin: 0;
+    font-size: 12px;
+    font-weight: 700;
+    opacity: 0.88;
+}
+
+.membership-points-mobile-value-1 {
+    margin: 4px 0 0;
+    font-size: 40px;
+    font-weight: 900;
+    line-height: 1;
+}
+
+.membership-points-mobile-eq-1 {
+    font-size: 28px;
+    font-weight: 900;
+    line-height: 1;
+    transform: translateY(-4px);
+}
+
+.membership-points-mobile-note-1 {
+    margin: 14px 0 0;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.membership-points-mobile-note-num-1 {
+    font-weight: 900;
+}
+
+.membership-points-mobile-activity-1 {
+    margin-top: 20px;
+}
+
+.membership-points-mobile-activity-head-1 {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.membership-points-mobile-activity-title-1 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 800;
+    color: #0f172a;
+}
+
+.membership-points-mobile-activity-list-1 {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.membership-points-mobile-item-1 {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
+    gap: 10px;
+}
+
+.membership-points-mobile-item-left-1 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+}
+
+.membership-points-mobile-item-icon-1 {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: #eff6ff;
+    color: #1d4ed8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.membership-points-mobile-item-meta-1 {
+    min-width: 0;
+}
+
+.membership-points-mobile-item-retailer-1 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 800;
+    color: #0f172a;
+}
+
+.membership-points-mobile-item-sub-1,
+.membership-points-mobile-item-amount-1 {
+    margin: 2px 0 0;
+    font-size: 11px;
+    color: #64748b;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.membership-points-mobile-item-right-1 {
+    text-align: right;
+    flex-shrink: 0;
+}
+
+.membership-points-mobile-item-delta-1 {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 900;
+    color: #16a34a;
+}
+
+.membership-points-mobile-item-delta-1.is-negative {
+    color: #dc2626;
+}
+
+.membership-points-mobile-item-unit-1 {
+    margin: 2px 0 0;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #94a3b8;
+}
+
+.membership-points-mobile-empty-1 {
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    background: #fff;
+    padding: 20px 12px;
+    text-align: center;
+    font-size: 13px;
+    color: #6b7280;
+}
+
+@media (max-width: 1024px) {
+    .membership-points-title-1 {
+        font-size: 22px;
+    }
+
+    .membership-points-value-1 {
+        font-size: 48px;
+    }
+
+    .membership-points-note-1 {
+        font-size: 18px;
+    }
+
+    .membership-points-table-wrap-1 {
+        overflow-x: auto;
+    }
+
+    .membership-points-table-1 {
+        min-width: 760px;
+    }
+}
+
+@media (max-width: 768px) {
+    .membership-points-desktop-1 {
+        display: none;
+    }
+
+    .membership-points-mobile-1 {
+        display: block;
+    }
+}

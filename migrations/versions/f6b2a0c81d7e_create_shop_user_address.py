@@ -23,6 +23,7 @@ def upgrade():
         sa.Column('user_address_uuid', postgresql.UUID(as_uuid=True), nullable=False),
         sa.Column('user_uuid', postgresql.UUID(as_uuid=True), nullable=False),
         sa.Column('user_address', sa.Text(), nullable=False),
+        sa.Column('is_default', sa.Boolean(), nullable=False, server_default=sa.text('false')),
         sa.Column('unit', sa.String(length=64), nullable=True),
         sa.Column('floor', sa.String(length=32), nullable=True),
         sa.Column('building_street', sa.String(length=512), nullable=True),
@@ -35,8 +36,15 @@ def upgrade():
         sa.PrimaryKeyConstraint('user_address_uuid'),
     )
     op.create_index('ix_user_address_user_uuid', 'user_address', ['user_uuid'], unique=False)
+    op.create_index(
+        'ix_user_address_user_uuid_is_default',
+        'user_address',
+        ['user_uuid', 'is_default'],
+        unique=False,
+    )
 
 
 def downgrade():
+    op.drop_index('ix_user_address_user_uuid_is_default', table_name='user_address')
     op.drop_index('ix_user_address_user_uuid', table_name='user_address')
     op.drop_table('user_address')

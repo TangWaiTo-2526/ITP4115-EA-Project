@@ -5,6 +5,7 @@ import uuid
 
 from app import app, db, login
 import jwt
+import sqlalchemy as sa
 
 from flask_login import UserMixin
 from sqlalchemy.dialects import postgresql
@@ -43,6 +44,9 @@ class User(UserMixin, db.Model):
     )
     membership_row = db.relationship(
         'Membership', back_populates='user', uselist=False, cascade='all, delete-orphan'
+    )
+    points_logs = db.relationship(
+        'MembershipPointsLog', back_populates='user', lazy='dynamic', cascade='all, delete-orphan'
     )
 
     def get_id(self):
@@ -129,6 +133,8 @@ class UserAddress(db.Model):
     district = db.Column(db.String(64), nullable=True)
     phone_number = db.Column(db.String(32), nullable=True)
     home_phone = db.Column(db.String(32), nullable=True)
+    # 仅一個地址會被標記為預設（由應用邏輯維護）
+    is_default = db.Column(db.Boolean, nullable=False, default=False, server_default=sa.text('false'))
     create_time = db.Column(db.DateTime, nullable=False, server_default=db.func.now())
 
     def formatted_line(self) -> str:
@@ -177,6 +183,31 @@ class Membership(db.Model):
 
     def __repr__(self) -> str:
         return f'<Membership user={self.user_uuid} points={self.membership_point}>'
+
+
+class MembershipPointsLog(db.Model):
+    __tablename__ = 'membership_points_log'
+
+    points_log_uuid = db.Column(postgresql.UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    user_uuid = db.Column(
+        postgresql.UUID(as_uuid=True),
+        db.ForeignKey('user.user_uuid', ondelete='CASCADE'),
+        nullable=False,
+        index=True,
+    )
+    user = db.relationship('User', back_populates='points_logs')
+
+    transaction_time = db.Column(db.DateTime, nullable=False, server_default=db.func.now(), index=True)
+    retailer = db.Column(db.String(64), nullable=False)
+    store_name = db.Column(db.String(128), nullable=False)
+    transaction_amount_hkd = db.Column(db.Numeric(10, 2), nullable=False)
+    base_points = db.Column(db.Integer, nullable=False, default=0)
+    extra_points = db.Column(db.Integer, nullable=False, default=0)
+    redeemed_points = db.Column(db.Integer, nullable=True)
+    create_time = db.Column(db.DateTime, nullable=False, server_default=db.func.now())
+
+    def __repr__(self) -> str:
+        return f'<MembershipPointsLog {self.points_log_uuid} user={self.user_uuid}>'
 
 
 class ProductCategory(db.Model):
