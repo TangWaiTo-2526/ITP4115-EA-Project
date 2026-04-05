@@ -6,7 +6,7 @@ from urllib.parse import urlparse
 from sqlalchemy import func, or_
 from werkzeug.security import generate_password_hash
 
-from flask import render_template, flash, redirect, url_for, request, g, session
+from flask import render_template, flash, redirect, url_for, request, g, session, abort
 from flask_login import login_user, logout_user, current_user, login_required
 from flask_babel import _, get_locale
 from app import app, db
@@ -21,7 +21,16 @@ from app.forms import (
     ResetPasswordRequestForm,
     ResetPasswordForm,
 )
-from app.models import User, UserAddress, Membership, MembershipPointsLog, RegistrationVerificationCode
+from app.models import (
+    User,
+    UserAddress,
+    Membership,
+    MembershipPointsLog,
+    RegistrationVerificationCode,
+    ProductCategory,
+    ProductDetail,
+)
+from app.category_catalog import build_browse_page
 from app.email import send_password_reset_email, send_registration_verification_email
 from app.hk_address import HK_DISTRICTS
 
@@ -252,9 +261,105 @@ def _send_reg_code_or_flash(mail, user_name, code):
     return True
 
 
+@app.template_global()
+def browse_url(section, slug):
+    return url_for('category_browse', section=section, slug=slug)
+
+
+@app.template_global()
+def product_image_url(image_path):
+    if not image_path:
+        return ''
+    s = str(image_path).strip()
+    if s.startswith('http://') or s.startswith('https://'):
+        return s
+    return url_for('static', filename=s)
+
+
+@app.context_processor
+def inject_maternity_nav():
+    try:
+        from app.maternity_nav import build_maternity_mega_nav
+
+        return {'maternity_nav': build_maternity_mega_nav()}
+    except Exception:
+        app.logger.exception('母嬰導航載入失敗')
+        return {'maternity_nav': None}
+
+
 @app.before_request
 def before_request():
     g.locale = str(get_locale())
+
+
+@app.route('/catalog/category/<int:category_id>', methods=['GET'])
+def catalog_category(category_id):
+    cat = db.session.get(ProductCategory, category_id)
+    if cat is None:
+        abort(404)
+
+    supplier_id = request.args.get('supplier_id', type=int)
+
+    chain: list[ProductCategory] = []
+    node: ProductCategory | None = cat
+    while node is not None:
+        chain.append(node)
+        pid = node.parent_id
+        node = db.session.get(ProductCategory, pid) if pid is not None else None
+    chain.reverse()
+
+    breadcrumbs = [{'label': _('首頁'), 'url': url_for('index')}]
+    for i, c in enumerate(chain):
+        last = i == len(chain) - 1
+        breadcrumbs.append(
+            {
+                'label': c.product_categories_name,
+                'url': None if last else url_for('catalog_category', category_id=c.product_categories_id),
+            }
+        )
+
+    q = ProductDetail.query.filter(ProductDetail.product_categories_id == category_id)
+    if supplier_id is not None:
+        q = q.filter(ProductDetail.supplier_id == supplier_id)
+    rows = q.order_by(ProductDetail.product_name.asc()).limit(120).all()
+
+    products = []
+    for i, p in enumerate(rows):
+        img = product_image_url(p.image_path)
+        products.append(
+            {
+                'name': p.product_name,
+                'unit': p.specification or '',
+                'price': float(p.price),
+                'discount_price': float(p.discount_price) if p.discount_price is not None else None,
+                'img_mod': (i % 8) + 1,
+                'image_url': img,
+            }
+        )
+
+    title = f'{cat.product_categories_name} - PNS'
+    filter_note = ''
+    if supplier_id is not None:
+        filter_note = _('（已依品牌篩選）')
+
+    return render_template(
+        'catalog_category.html.j2',
+        title=title,
+        browse_title=cat.product_categories_name,
+        browse_description=_('此分類從資料庫載入的商品。') + filter_note,
+        breadcrumbs=breadcrumbs,
+        products=products,
+        supplier_id=supplier_id,
+        category_id=category_id,
+    )
+
+
+@app.route('/browse/<section>/<slug>', methods=['GET'])
+def category_browse(section, slug):
+    ctx = build_browse_page(section, slug)
+    if ctx is None:
+        abort(404)
+    return render_template('category_browse.html.j2', **ctx)
 
 
 @app.route('/', methods=['GET'])

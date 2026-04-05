@@ -1,0 +1,61 @@
+{% extends "base.html.j2" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block styles %}
+    {{ super() }}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/category_browse.css') }}">
+{% endblock %}
+
+{% block app_content %}
+<div class="browse-page">
+    <nav class="browse-breadcrumb" aria-label="{{ _('麵包屑') }}">
+        {% for bc in breadcrumbs %}
+            {% if bc.url %}
+                <a href="{{ bc.url }}">{{ bc.label }}</a>
+            {% else %}
+                <span>{{ bc.label }}</span>
+            {% endif %}
+            {% if not loop.last %}<span class="browse-breadcrumb-sep" aria-hidden="true">&gt;</span>{% endif %}
+        {% endfor %}
+    </nav>
+
+    <header class="browse-frame browse-frame--muted">
+        <h1 class="browse-title">{{ browse_title }}</h1>
+        <p class="browse-desc">{{ browse_description }}</p>
+        {% if supplier_id is not none %}
+        <p class="browse-desc browse-desc--filter">
+            <a href="{{ url_for('catalog_category', category_id=category_id) }}">{{ _('清除品牌篩選') }}</a>
+        </p>
+        {% endif %}
+    </header>
+
+    <section class="browse-products browse-products--catalog" aria-label="{{ _('商品列表') }}">
+        {% if not products %}
+        <p class="browse-empty">{{ _('此分類暫無商品。') }}</p>
+        {% endif %}
+        {% for product in products %}
+            <article class="browse-product">
+                <div class="browse-product-img-wrap browse-product-img-wrap--{{ product.img_mod }}{% if product.image_url %} browse-product-img-wrap--photo{% endif %}" role="img" aria-label="">
+                    {% if product.image_url %}
+                    <img class="browse-product-photo" src="{{ product.image_url }}" alt="" loading="lazy" decoding="async">
+                    {% endif %}
+                </div>
+                <div class="browse-product-body">
+                    <h3 class="browse-product-name">{{ product.name }}</h3>
+                    <p class="browse-product-unit">{{ product.unit }}</p>
+                    {% if product.discount_price is not none %}
+                    <p class="browse-product-price browse-product-price--sale">
+                        <span class="browse-product-price-current">${{ '%.2f'|format(product.discount_price) }}</span>
+                        <span class="browse-product-price-was">${{ '%.2f'|format(product.price) }}</span>
+                    </p>
+                    {% else %}
+                    <p class="browse-product-price">${{ '%.2f'|format(product.price) }}</p>
+                    {% endif %}
+                    <button type="button" class="browse-product-cart">{{ _('加入購物車') }}</button>
+                </div>
+            </article>
+        {% endfor %}
+    </section>
+</div>
+{% endblock %}

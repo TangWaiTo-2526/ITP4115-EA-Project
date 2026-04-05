@@ -18,15 +18,18 @@ depends_on = None
 
 
 def upgrade():
-    # 创建货物详情表：关联分类 + 供应商，记录商品名称、说明、价格、创建时间
+    # 创建货物详情表：关联分类 + 供应商，记录商品名稱、規格、圖片、說明、價格、建立時間
     op.create_table(
         'product_details',
         sa.Column('product_categories_uuid', postgresql.UUID(as_uuid=True), nullable=False),
         sa.Column('product_categories_id', sa.Integer(), nullable=False),
         sa.Column('supplier_id', sa.Integer(), nullable=False),
         sa.Column('product_name', sa.String(length=128), nullable=False),
+        sa.Column('specification', sa.String(length=128), nullable=True),
+        sa.Column('image_path', sa.String(length=255), nullable=True),
         sa.Column('product_details', sa.Text(), nullable=True),
         sa.Column('price', sa.Numeric(10, 2), nullable=False),
+        sa.Column('discount_price', sa.Numeric(10, 2), nullable=True),
         sa.Column('create_time', sa.DateTime(), nullable=False, server_default=sa.text('now()')),
         sa.ForeignKeyConstraint(['product_categories_id'], ['product_categories.product_categories_id'], ondelete='CASCADE'),
         sa.ForeignKeyConstraint(['supplier_id'], ['supplier.supplier_id'], ondelete='CASCADE'),
