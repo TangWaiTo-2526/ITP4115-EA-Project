@@ -449,42 +449,42 @@ body {
     z-index: 1;
 }
 
-.header-nav-3-link.is-active:not(:hover):not(:focus-visible) {
+.header-nav-3-link.is-active:not(:hover):not(:focus-visible):not(.header-nav-3-food-trigger):not(.header-nav-3-maternity-trigger):not(.header-nav-3-personal-trigger):not(.header-nav-3-home-trigger):not(.header-nav-3-pet-trigger) {
     color: #ffffff;
 }
 
-.header-nav-3-link.is-active:not(:hover):not(:focus-visible) .header-nav-3-label {
+.header-nav-3-link.is-active:not(:hover):not(:focus-visible):not(.header-nav-3-food-trigger):not(.header-nav-3-maternity-trigger):not(.header-nav-3-personal-trigger):not(.header-nav-3-home-trigger):not(.header-nav-3-pet-trigger) .header-nav-3-label {
     color: #ffffff;
 }
 
-.header-nav-3-link.is-active:not(:hover):not(:focus-visible) .header-nav-3-chevron {
+.header-nav-3-link.is-active:not(:hover):not(:focus-visible):not(.header-nav-3-food-trigger):not(.header-nav-3-maternity-trigger):not(.header-nav-3-personal-trigger):not(.header-nav-3-home-trigger):not(.header-nav-3-pet-trigger) .header-nav-3-chevron {
     color: #ffffff;
     opacity: 1;
 }
 
-.header-nav-3-link.is-active:not(:hover):not(:focus-visible)::before {
+.header-nav-3-link.is-active:not(:hover):not(:focus-visible):not(.header-nav-3-food-trigger):not(.header-nav-3-maternity-trigger):not(.header-nav-3-personal-trigger):not(.header-nav-3-home-trigger):not(.header-nav-3-pet-trigger)::before {
     opacity: 1;
     background: #3879ff;
 }
 
-.header-nav-3-link.is-active:hover,
-.header-nav-3-link.is-active:focus-visible {
+.header-nav-3-link.is-active:hover:not(.header-nav-3-food-trigger):not(.header-nav-3-maternity-trigger):not(.header-nav-3-personal-trigger):not(.header-nav-3-home-trigger):not(.header-nav-3-pet-trigger),
+.header-nav-3-link.is-active:focus-visible:not(.header-nav-3-food-trigger):not(.header-nav-3-maternity-trigger):not(.header-nav-3-personal-trigger):not(.header-nav-3-home-trigger):not(.header-nav-3-pet-trigger) {
     color: #ffffff;
 }
 
-.header-nav-3-link.is-active:hover .header-nav-3-label,
-.header-nav-3-link.is-active:focus-visible .header-nav-3-label {
+.header-nav-3-link.is-active:hover:not(.header-nav-3-food-trigger):not(.header-nav-3-maternity-trigger):not(.header-nav-3-personal-trigger):not(.header-nav-3-home-trigger):not(.header-nav-3-pet-trigger) .header-nav-3-label,
+.header-nav-3-link.is-active:focus-visible:not(.header-nav-3-food-trigger):not(.header-nav-3-maternity-trigger):not(.header-nav-3-personal-trigger):not(.header-nav-3-home-trigger):not(.header-nav-3-pet-trigger) .header-nav-3-label {
     color: #ffffff;
 }
 
-.header-nav-3-link.is-active:hover .header-nav-3-chevron,
-.header-nav-3-link.is-active:focus-visible .header-nav-3-chevron {
+.header-nav-3-link.is-active:hover:not(.header-nav-3-food-trigger):not(.header-nav-3-maternity-trigger):not(.header-nav-3-personal-trigger):not(.header-nav-3-home-trigger):not(.header-nav-3-pet-trigger) .header-nav-3-chevron,
+.header-nav-3-link.is-active:focus-visible:not(.header-nav-3-food-trigger):not(.header-nav-3-maternity-trigger):not(.header-nav-3-personal-trigger):not(.header-nav-3-home-trigger):not(.header-nav-3-pet-trigger) .header-nav-3-chevron {
     color: #ffffff;
     opacity: 1;
 }
 
-.header-nav-3-link.is-active:hover::before,
-.header-nav-3-link.is-active:focus-visible::before {
+.header-nav-3-link.is-active:hover:not(.header-nav-3-food-trigger):not(.header-nav-3-maternity-trigger):not(.header-nav-3-personal-trigger):not(.header-nav-3-home-trigger):not(.header-nav-3-pet-trigger)::before,
+.header-nav-3-link.is-active:focus-visible:not(.header-nav-3-food-trigger):not(.header-nav-3-maternity-trigger):not(.header-nav-3-personal-trigger):not(.header-nav-3-home-trigger):not(.header-nav-3-pet-trigger)::before {
     opacity: 1;
     background: #3879ff;
 }
@@ -642,6 +642,50 @@ body {
 .header-nav-3-mega-viewall:focus-visible {
     color: #292d84;
     outline: none;
+}
+
+.header-nav-3-mega-subsection {
+    margin-bottom: 18px;
+}
+
+.header-nav-3-mega-subsection:last-of-type {
+    margin-bottom: 0;
+}
+
+.header-nav-3-mega-subhead {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 10px;
+}
+
+.header-nav-3-mega-subtitle {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 700;
+    color: #2c3138;
+}
+
+.header-nav-3-mega-viewall--subsection {
+    font-size: 12px;
+}
+
+.header-nav-3-mega-card--maternity-fallback {
+    min-height: 120px;
+}
+
+.header-nav-3-mega-main--full {
+    flex: 1;
+}
+
+.header-nav-3-mega-empty {
+    margin: 0;
+    padding: 20px 16px;
+    text-align: center;
+    color: #5c6370;
+    font-size: 14px;
+    line-height: 1.5;
 }
 
 .header-nav-3-mega-products {
@@ -866,43 +910,149 @@ body {
     opacity: 1;
 }
 
-/* 展開時「食品及飲品」：藍底白字（參考 PNS） */
+/* 首頁預設：食品及飲品為目前分類（淺灰標籤；展開狀態由下段統一規則覆蓋） */
+.header-nav-3-link.header-nav-3-food-trigger.is-active {
+    z-index: 2;
+    color: #1f1f1f;
+}
+
+.header-nav-3-link.header-nav-3-food-trigger.is-active .header-nav-3-label {
+    color: #1f1f1f;
+}
+
+.header-nav-3-link.header-nav-3-food-trigger.is-active .header-nav-3-chevron {
+    opacity: 1;
+    color: #1f1f1f;
+    transform: none;
+}
+
+.header-nav-3-link.header-nav-3-food-trigger.is-active::before {
+    opacity: 1;
+    clip-path: none;
+    border-radius: 10px 10px 0 0;
+    top: 5px;
+    bottom: 0;
+    height: auto;
+    width: calc(100% + 14px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: #e8e8e8;
+    box-shadow: none;
+}
+
+/* 所有 mega 主分類：展開／觸碰時淺灰頂圓角標籤、深色字、箭咀向上（統一 PNS 風格） */
+.header-nav-3-food-trigger .header-nav-3-chevron,
+.header-nav-3-maternity-trigger .header-nav-3-chevron,
+.header-nav-3-personal-trigger .header-nav-3-chevron,
+.header-nav-3-home-trigger .header-nav-3-chevron,
+.header-nav-3-pet-trigger .header-nav-3-chevron {
+    transition: transform 0.2s ease, color 0.2s ease, opacity 0.2s ease;
+}
+
 .header-nav-3:has(.header-nav-3-food-trigger:hover) .header-nav-3-food-trigger,
 .header-nav-3:has(.header-nav-3-food-trigger:focus-visible) .header-nav-3-food-trigger,
 .header-nav-3:has(.header-nav-3-mega-panel--food:hover) .header-nav-3-food-trigger,
-.header-nav-3:has(.header-nav-3-mega-panel--food:focus-within) .header-nav-3-food-trigger {
+.header-nav-3:has(.header-nav-3-mega-panel--food:focus-within) .header-nav-3-food-trigger,
+.header-nav-3:has(.header-nav-3-maternity-trigger:hover) .header-nav-3-maternity-trigger,
+.header-nav-3:has(.header-nav-3-maternity-trigger:focus-visible) .header-nav-3-maternity-trigger,
+.header-nav-3:has(.header-nav-3-mega-panel--maternity:hover) .header-nav-3-maternity-trigger,
+.header-nav-3:has(.header-nav-3-mega-panel--maternity:focus-within) .header-nav-3-maternity-trigger,
+.header-nav-3:has(.header-nav-3-personal-trigger:hover) .header-nav-3-personal-trigger,
+.header-nav-3:has(.header-nav-3-personal-trigger:focus-visible) .header-nav-3-personal-trigger,
+.header-nav-3:has(.header-nav-3-mega-panel--personal:hover) .header-nav-3-personal-trigger,
+.header-nav-3:has(.header-nav-3-mega-panel--personal:focus-within) .header-nav-3-personal-trigger,
+.header-nav-3:has(.header-nav-3-home-trigger:hover) .header-nav-3-home-trigger,
+.header-nav-3:has(.header-nav-3-home-trigger:focus-visible) .header-nav-3-home-trigger,
+.header-nav-3:has(.header-nav-3-mega-panel--home:hover) .header-nav-3-home-trigger,
+.header-nav-3:has(.header-nav-3-mega-panel--home:focus-within) .header-nav-3-home-trigger,
+.header-nav-3:has(.header-nav-3-pet-trigger:hover) .header-nav-3-pet-trigger,
+.header-nav-3:has(.header-nav-3-pet-trigger:focus-visible) .header-nav-3-pet-trigger,
+.header-nav-3:has(.header-nav-3-mega-panel--pet:hover) .header-nav-3-pet-trigger,
+.header-nav-3:has(.header-nav-3-mega-panel--pet:focus-within) .header-nav-3-pet-trigger {
     z-index: 2;
-    color: #ffffff;
+    color: #1f1f1f;
     text-decoration: none;
 }
 
 .header-nav-3:has(.header-nav-3-food-trigger:hover) .header-nav-3-food-trigger .header-nav-3-label,
 .header-nav-3:has(.header-nav-3-food-trigger:focus-visible) .header-nav-3-food-trigger .header-nav-3-label,
 .header-nav-3:has(.header-nav-3-mega-panel--food:hover) .header-nav-3-food-trigger .header-nav-3-label,
-.header-nav-3:has(.header-nav-3-mega-panel--food:focus-within) .header-nav-3-food-trigger .header-nav-3-label {
-    color: #ffffff;
+.header-nav-3:has(.header-nav-3-mega-panel--food:focus-within) .header-nav-3-food-trigger .header-nav-3-label,
+.header-nav-3:has(.header-nav-3-maternity-trigger:hover) .header-nav-3-maternity-trigger .header-nav-3-label,
+.header-nav-3:has(.header-nav-3-maternity-trigger:focus-visible) .header-nav-3-maternity-trigger .header-nav-3-label,
+.header-nav-3:has(.header-nav-3-mega-panel--maternity:hover) .header-nav-3-maternity-trigger .header-nav-3-label,
+.header-nav-3:has(.header-nav-3-mega-panel--maternity:focus-within) .header-nav-3-maternity-trigger .header-nav-3-label,
+.header-nav-3:has(.header-nav-3-personal-trigger:hover) .header-nav-3-personal-trigger .header-nav-3-label,
+.header-nav-3:has(.header-nav-3-personal-trigger:focus-visible) .header-nav-3-personal-trigger .header-nav-3-label,
+.header-nav-3:has(.header-nav-3-mega-panel--personal:hover) .header-nav-3-personal-trigger .header-nav-3-label,
+.header-nav-3:has(.header-nav-3-mega-panel--personal:focus-within) .header-nav-3-personal-trigger .header-nav-3-label,
+.header-nav-3:has(.header-nav-3-home-trigger:hover) .header-nav-3-home-trigger .header-nav-3-label,
+.header-nav-3:has(.header-nav-3-home-trigger:focus-visible) .header-nav-3-home-trigger .header-nav-3-label,
+.header-nav-3:has(.header-nav-3-mega-panel--home:hover) .header-nav-3-home-trigger .header-nav-3-label,
+.header-nav-3:has(.header-nav-3-mega-panel--home:focus-within) .header-nav-3-home-trigger .header-nav-3-label,
+.header-nav-3:has(.header-nav-3-pet-trigger:hover) .header-nav-3-pet-trigger .header-nav-3-label,
+.header-nav-3:has(.header-nav-3-pet-trigger:focus-visible) .header-nav-3-pet-trigger .header-nav-3-label,
+.header-nav-3:has(.header-nav-3-mega-panel--pet:hover) .header-nav-3-pet-trigger .header-nav-3-label,
+.header-nav-3:has(.header-nav-3-mega-panel--pet:focus-within) .header-nav-3-pet-trigger .header-nav-3-label {
+    color: #1f1f1f;
 }
 
 .header-nav-3:has(.header-nav-3-food-trigger:hover) .header-nav-3-food-trigger::before,
 .header-nav-3:has(.header-nav-3-food-trigger:focus-visible) .header-nav-3-food-trigger::before,
 .header-nav-3:has(.header-nav-3-mega-panel--food:hover) .header-nav-3-food-trigger::before,
-.header-nav-3:has(.header-nav-3-mega-panel--food:focus-within) .header-nav-3-food-trigger::before {
+.header-nav-3:has(.header-nav-3-mega-panel--food:focus-within) .header-nav-3-food-trigger::before,
+.header-nav-3:has(.header-nav-3-maternity-trigger:hover) .header-nav-3-maternity-trigger::before,
+.header-nav-3:has(.header-nav-3-maternity-trigger:focus-visible) .header-nav-3-maternity-trigger::before,
+.header-nav-3:has(.header-nav-3-mega-panel--maternity:hover) .header-nav-3-maternity-trigger::before,
+.header-nav-3:has(.header-nav-3-mega-panel--maternity:focus-within) .header-nav-3-maternity-trigger::before,
+.header-nav-3:has(.header-nav-3-personal-trigger:hover) .header-nav-3-personal-trigger::before,
+.header-nav-3:has(.header-nav-3-personal-trigger:focus-visible) .header-nav-3-personal-trigger::before,
+.header-nav-3:has(.header-nav-3-mega-panel--personal:hover) .header-nav-3-personal-trigger::before,
+.header-nav-3:has(.header-nav-3-mega-panel--personal:focus-within) .header-nav-3-personal-trigger::before,
+.header-nav-3:has(.header-nav-3-home-trigger:hover) .header-nav-3-home-trigger::before,
+.header-nav-3:has(.header-nav-3-home-trigger:focus-visible) .header-nav-3-home-trigger::before,
+.header-nav-3:has(.header-nav-3-mega-panel--home:hover) .header-nav-3-home-trigger::before,
+.header-nav-3:has(.header-nav-3-mega-panel--home:focus-within) .header-nav-3-home-trigger::before,
+.header-nav-3:has(.header-nav-3-pet-trigger:hover) .header-nav-3-pet-trigger::before,
+.header-nav-3:has(.header-nav-3-pet-trigger:focus-visible) .header-nav-3-pet-trigger::before,
+.header-nav-3:has(.header-nav-3-mega-panel--pet:hover) .header-nav-3-pet-trigger::before,
+.header-nav-3:has(.header-nav-3-mega-panel--pet:focus-within) .header-nav-3-pet-trigger::before {
     opacity: 1;
     clip-path: none;
-    border-radius: 999px;
-    height: 72%;
-    bottom: 6px;
-    width: calc(100% + 16px);
-    background: #3879ff;
+    border-radius: 10px 10px 0 0;
+    top: 5px;
+    bottom: 0;
+    height: auto;
+    width: calc(100% + 14px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: #e8e8e8;
     box-shadow: none;
 }
 
 .header-nav-3:has(.header-nav-3-food-trigger:hover) .header-nav-3-food-trigger .header-nav-3-chevron,
 .header-nav-3:has(.header-nav-3-food-trigger:focus-visible) .header-nav-3-food-trigger .header-nav-3-chevron,
 .header-nav-3:has(.header-nav-3-mega-panel--food:hover) .header-nav-3-food-trigger .header-nav-3-chevron,
-.header-nav-3:has(.header-nav-3-mega-panel--food:focus-within) .header-nav-3-food-trigger .header-nav-3-chevron {
+.header-nav-3:has(.header-nav-3-mega-panel--food:focus-within) .header-nav-3-food-trigger .header-nav-3-chevron,
+.header-nav-3:has(.header-nav-3-maternity-trigger:hover) .header-nav-3-maternity-trigger .header-nav-3-chevron,
+.header-nav-3:has(.header-nav-3-maternity-trigger:focus-visible) .header-nav-3-maternity-trigger .header-nav-3-chevron,
+.header-nav-3:has(.header-nav-3-mega-panel--maternity:hover) .header-nav-3-maternity-trigger .header-nav-3-chevron,
+.header-nav-3:has(.header-nav-3-mega-panel--maternity:focus-within) .header-nav-3-maternity-trigger .header-nav-3-chevron,
+.header-nav-3:has(.header-nav-3-personal-trigger:hover) .header-nav-3-personal-trigger .header-nav-3-chevron,
+.header-nav-3:has(.header-nav-3-personal-trigger:focus-visible) .header-nav-3-personal-trigger .header-nav-3-chevron,
+.header-nav-3:has(.header-nav-3-mega-panel--personal:hover) .header-nav-3-personal-trigger .header-nav-3-chevron,
+.header-nav-3:has(.header-nav-3-mega-panel--personal:focus-within) .header-nav-3-personal-trigger .header-nav-3-chevron,
+.header-nav-3:has(.header-nav-3-home-trigger:hover) .header-nav-3-home-trigger .header-nav-3-chevron,
+.header-nav-3:has(.header-nav-3-home-trigger:focus-visible) .header-nav-3-home-trigger .header-nav-3-chevron,
+.header-nav-3:has(.header-nav-3-mega-panel--home:hover) .header-nav-3-home-trigger .header-nav-3-chevron,
+.header-nav-3:has(.header-nav-3-mega-panel--home:focus-within) .header-nav-3-home-trigger .header-nav-3-chevron,
+.header-nav-3:has(.header-nav-3-pet-trigger:hover) .header-nav-3-pet-trigger .header-nav-3-chevron,
+.header-nav-3:has(.header-nav-3-pet-trigger:focus-visible) .header-nav-3-pet-trigger .header-nav-3-chevron,
+.header-nav-3:has(.header-nav-3-mega-panel--pet:hover) .header-nav-3-pet-trigger .header-nav-3-chevron,
+.header-nav-3:has(.header-nav-3-mega-panel--pet:focus-within) .header-nav-3-pet-trigger .header-nav-3-chevron {
     opacity: 1;
-    color: #ffffff;
+    color: #1f1f1f;
+    transform: rotate(180deg);
 }
 
 /* 個人護理、健康 mega */
@@ -921,44 +1071,6 @@ body {
 .header-nav-3:has(.header-nav-3-mega-panel--personal:hover) .header-nav-3-mega-panel--personal .header-nav-3-mega-caret,
 .header-nav-3:has(.header-nav-3-mega-panel--personal:focus-within) .header-nav-3-mega-panel--personal .header-nav-3-mega-caret {
     opacity: 1;
-}
-
-.header-nav-3:has(.header-nav-3-personal-trigger:hover) .header-nav-3-personal-trigger,
-.header-nav-3:has(.header-nav-3-personal-trigger:focus-visible) .header-nav-3-personal-trigger,
-.header-nav-3:has(.header-nav-3-mega-panel--personal:hover) .header-nav-3-personal-trigger,
-.header-nav-3:has(.header-nav-3-mega-panel--personal:focus-within) .header-nav-3-personal-trigger {
-    z-index: 2;
-    color: #ffffff;
-    text-decoration: none;
-}
-
-.header-nav-3:has(.header-nav-3-personal-trigger:hover) .header-nav-3-personal-trigger .header-nav-3-label,
-.header-nav-3:has(.header-nav-3-personal-trigger:focus-visible) .header-nav-3-personal-trigger .header-nav-3-label,
-.header-nav-3:has(.header-nav-3-mega-panel--personal:hover) .header-nav-3-personal-trigger .header-nav-3-label,
-.header-nav-3:has(.header-nav-3-mega-panel--personal:focus-within) .header-nav-3-personal-trigger .header-nav-3-label {
-    color: #ffffff;
-}
-
-.header-nav-3:has(.header-nav-3-personal-trigger:hover) .header-nav-3-personal-trigger::before,
-.header-nav-3:has(.header-nav-3-personal-trigger:focus-visible) .header-nav-3-personal-trigger::before,
-.header-nav-3:has(.header-nav-3-mega-panel--personal:hover) .header-nav-3-personal-trigger::before,
-.header-nav-3:has(.header-nav-3-mega-panel--personal:focus-within) .header-nav-3-personal-trigger::before {
-    opacity: 1;
-    clip-path: none;
-    border-radius: 999px;
-    height: 72%;
-    bottom: 6px;
-    width: calc(100% + 16px);
-    background: #3879ff;
-    box-shadow: none;
-}
-
-.header-nav-3:has(.header-nav-3-personal-trigger:hover) .header-nav-3-personal-trigger .header-nav-3-chevron,
-.header-nav-3:has(.header-nav-3-personal-trigger:focus-visible) .header-nav-3-personal-trigger .header-nav-3-chevron,
-.header-nav-3:has(.header-nav-3-mega-panel--personal:hover) .header-nav-3-personal-trigger .header-nav-3-chevron,
-.header-nav-3:has(.header-nav-3-mega-panel--personal:focus-within) .header-nav-3-personal-trigger .header-nav-3-chevron {
-    opacity: 1;
-    color: #ffffff;
 }
 
 .header-nav-3-mega-side--personal {
@@ -1058,44 +1170,6 @@ body {
     opacity: 1;
 }
 
-.header-nav-3:has(.header-nav-3-home-trigger:hover) .header-nav-3-home-trigger,
-.header-nav-3:has(.header-nav-3-home-trigger:focus-visible) .header-nav-3-home-trigger,
-.header-nav-3:has(.header-nav-3-mega-panel--home:hover) .header-nav-3-home-trigger,
-.header-nav-3:has(.header-nav-3-mega-panel--home:focus-within) .header-nav-3-home-trigger {
-    z-index: 2;
-    color: #ffffff;
-    text-decoration: none;
-}
-
-.header-nav-3:has(.header-nav-3-home-trigger:hover) .header-nav-3-home-trigger .header-nav-3-label,
-.header-nav-3:has(.header-nav-3-home-trigger:focus-visible) .header-nav-3-home-trigger .header-nav-3-label,
-.header-nav-3:has(.header-nav-3-mega-panel--home:hover) .header-nav-3-home-trigger .header-nav-3-label,
-.header-nav-3:has(.header-nav-3-mega-panel--home:focus-within) .header-nav-3-home-trigger .header-nav-3-label {
-    color: #ffffff;
-}
-
-.header-nav-3:has(.header-nav-3-home-trigger:hover) .header-nav-3-home-trigger::before,
-.header-nav-3:has(.header-nav-3-home-trigger:focus-visible) .header-nav-3-home-trigger::before,
-.header-nav-3:has(.header-nav-3-mega-panel--home:hover) .header-nav-3-home-trigger::before,
-.header-nav-3:has(.header-nav-3-mega-panel--home:focus-within) .header-nav-3-home-trigger::before {
-    opacity: 1;
-    clip-path: none;
-    border-radius: 999px;
-    height: 72%;
-    bottom: 6px;
-    width: calc(100% + 16px);
-    background: #0d9a94;
-    box-shadow: none;
-}
-
-.header-nav-3:has(.header-nav-3-home-trigger:hover) .header-nav-3-home-trigger .header-nav-3-chevron,
-.header-nav-3:has(.header-nav-3-home-trigger:focus-visible) .header-nav-3-home-trigger .header-nav-3-chevron,
-.header-nav-3:has(.header-nav-3-mega-panel--home:hover) .header-nav-3-home-trigger .header-nav-3-chevron,
-.header-nav-3:has(.header-nav-3-mega-panel--home:focus-within) .header-nav-3-home-trigger .header-nav-3-chevron {
-    opacity: 1;
-    color: #ffffff;
-}
-
 .header-nav-3-mega-side--home {
     background: #ffffff;
 }
@@ -1191,44 +1265,6 @@ body {
 .header-nav-3:has(.header-nav-3-mega-panel--pet:hover) .header-nav-3-mega-panel--pet .header-nav-3-mega-caret,
 .header-nav-3:has(.header-nav-3-mega-panel--pet:focus-within) .header-nav-3-mega-panel--pet .header-nav-3-mega-caret {
     opacity: 1;
-}
-
-.header-nav-3:has(.header-nav-3-pet-trigger:hover) .header-nav-3-pet-trigger,
-.header-nav-3:has(.header-nav-3-pet-trigger:focus-visible) .header-nav-3-pet-trigger,
-.header-nav-3:has(.header-nav-3-mega-panel--pet:hover) .header-nav-3-pet-trigger,
-.header-nav-3:has(.header-nav-3-mega-panel--pet:focus-within) .header-nav-3-pet-trigger {
-    z-index: 2;
-    color: #ffffff;
-    text-decoration: none;
-}
-
-.header-nav-3:has(.header-nav-3-pet-trigger:hover) .header-nav-3-pet-trigger .header-nav-3-label,
-.header-nav-3:has(.header-nav-3-pet-trigger:focus-visible) .header-nav-3-pet-trigger .header-nav-3-label,
-.header-nav-3:has(.header-nav-3-mega-panel--pet:hover) .header-nav-3-pet-trigger .header-nav-3-label,
-.header-nav-3:has(.header-nav-3-mega-panel--pet:focus-within) .header-nav-3-pet-trigger .header-nav-3-label {
-    color: #ffffff;
-}
-
-.header-nav-3:has(.header-nav-3-pet-trigger:hover) .header-nav-3-pet-trigger::before,
-.header-nav-3:has(.header-nav-3-pet-trigger:focus-visible) .header-nav-3-pet-trigger::before,
-.header-nav-3:has(.header-nav-3-mega-panel--pet:hover) .header-nav-3-pet-trigger::before,
-.header-nav-3:has(.header-nav-3-mega-panel--pet:focus-within) .header-nav-3-pet-trigger::before {
-    opacity: 1;
-    clip-path: none;
-    border-radius: 999px;
-    height: 72%;
-    bottom: 6px;
-    width: calc(100% + 16px);
-    background: #d35400;
-    box-shadow: none;
-}
-
-.header-nav-3:has(.header-nav-3-pet-trigger:hover) .header-nav-3-pet-trigger .header-nav-3-chevron,
-.header-nav-3:has(.header-nav-3-pet-trigger:focus-visible) .header-nav-3-pet-trigger .header-nav-3-chevron,
-.header-nav-3:has(.header-nav-3-mega-panel--pet:hover) .header-nav-3-pet-trigger .header-nav-3-chevron,
-.header-nav-3:has(.header-nav-3-mega-panel--pet:focus-within) .header-nav-3-pet-trigger .header-nav-3-chevron {
-    opacity: 1;
-    color: #ffffff;
 }
 
 .header-nav-3-mega-side--pet {
@@ -1381,38 +1417,6 @@ body {
 .header-nav-3-mega-brand--food:focus-visible {
     background: #ffffff;
     border-color: rgba(61, 98, 213, 0.4);
-}
-
-/* 展開時「母嬰」：圓角粉紅底（近似 PNS） */
-.header-nav-3:has(.header-nav-3-maternity-trigger:hover) .header-nav-3-maternity-trigger,
-.header-nav-3:has(.header-nav-3-maternity-trigger:focus-visible) .header-nav-3-maternity-trigger,
-.header-nav-3:has(.header-nav-3-mega-panel--maternity:hover) .header-nav-3-maternity-trigger,
-.header-nav-3:has(.header-nav-3-mega-panel--maternity:focus-within) .header-nav-3-maternity-trigger {
-    z-index: 2;
-    color: #c2185b;
-    text-decoration: none;
-}
-
-.header-nav-3:has(.header-nav-3-maternity-trigger:hover) .header-nav-3-maternity-trigger::before,
-.header-nav-3:has(.header-nav-3-maternity-trigger:focus-visible) .header-nav-3-maternity-trigger::before,
-.header-nav-3:has(.header-nav-3-mega-panel--maternity:hover) .header-nav-3-maternity-trigger::before,
-.header-nav-3:has(.header-nav-3-mega-panel--maternity:focus-within) .header-nav-3-maternity-trigger::before {
-    opacity: 1;
-    clip-path: none;
-    border-radius: 999px;
-    height: 72%;
-    bottom: 6px;
-    width: calc(100% + 16px);
-    background: linear-gradient(180deg, #fff5f9 0%, #ffd6e8 55%, #ffc2df 100%);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.65);
-}
-
-.header-nav-3:has(.header-nav-3-maternity-trigger:hover) .header-nav-3-maternity-trigger .header-nav-3-chevron,
-.header-nav-3:has(.header-nav-3-maternity-trigger:focus-visible) .header-nav-3-maternity-trigger .header-nav-3-chevron,
-.header-nav-3:has(.header-nav-3-mega-panel--maternity:hover) .header-nav-3-maternity-trigger .header-nav-3-chevron,
-.header-nav-3:has(.header-nav-3-mega-panel--maternity:focus-within) .header-nav-3-maternity-trigger .header-nav-3-chevron {
-    opacity: 1;
-    color: #ad1457;
 }
 
 @media (max-width: 900px) {

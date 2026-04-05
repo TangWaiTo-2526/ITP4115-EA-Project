@@ -217,8 +217,20 @@ class ProductCategory(db.Model):
 
     product_categories_id = db.Column(db.Integer, primary_key=True)
     product_categories_name = db.Column(db.String(128), nullable=False)
+    parent_id = db.Column(
+        db.Integer,
+        db.ForeignKey('product_categories.product_categories_id', ondelete='CASCADE'),
+        nullable=True,
+        index=True,
+    )
+    level = db.Column(db.Integer, nullable=False, server_default='1')
     create_time = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
+    parent = db.relationship(
+        'ProductCategory',
+        remote_side=[product_categories_id],
+        backref=db.backref('children', lazy='dynamic'),
+    )
     products = db.relationship('ProductDetail', backref='category', lazy='dynamic')
 
     def __repr__(self) -> str:
@@ -256,8 +268,11 @@ class ProductDetail(db.Model):
         db.Integer, db.ForeignKey('supplier.supplier_id'), nullable=False
     )
     product_name = db.Column(db.String(128), nullable=False)
+    specification = db.Column(db.String(128), nullable=True)
+    image_path = db.Column(db.String(255), nullable=True)
     product_details = db.Column(db.Text, nullable=True)
     price = db.Column(db.Numeric(10, 2), nullable=False)
+    discount_price = db.Column(db.Numeric(10, 2), nullable=True)
     create_time = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
     def __repr__(self) -> str:

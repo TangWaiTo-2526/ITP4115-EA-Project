@@ -1,0 +1,143 @@
+from __future__ import annotations
+
+from datetime import datetime
+from decimal import Decimal
+from pathlib import Path
+from pprint import pformat
+from typing import Any
+from uuid import UUID
+
+from app import db
+from app.models import ProductCategory, ProductDetail, Supplier
+
+_BACKUP_DIR = Path(__file__).resolve().parent
+
+
+def _backup_data_path() -> Path:
+    """讀寫備份時優先使用 product_backup_data.py；若不存在則用無副檔名 product_backup_data。"""
+    py_path = _BACKUP_DIR / 'product_backup_data.py'
+    raw_path = _BACKUP_DIR / 'product_backup_data'
+    if py_path.is_file():
+        return py_path
+    return raw_path
+
+
+BACKUP_PATH = _backup_data_path()  # 模組載入時的快照；讀取請用 _backup_data_path()
+BACKUP_KEYS = ('SUPPLIER_BACKUP_DATA', 'PRODUCT_CATEGORY_BACKUP_DATA', 'PRODUCT_BACKUP_DATA')
+
+
+def _to_python_value(value: Any):
+    if isinstance(value, UUID):
+        return str(value)
+    if isinstance(value, Decimal):
+        return str(value)
+    if isinstance(value, datetime):
+        return value.isoformat()
+    return value
+
+
+def _normalize_record(record: dict[str, Any]) -> dict[str, Any]:
+    return {key: _to_python_value(value) for key, value in record.items()}
+
+
+def load_backup_payload() -> dict[str, list[dict[str, Any]]]:
+    payload = {key: [] for key in BACKUP_KEYS}
+    path = _backup_data_path()
+    if not path.exists():
+        return payload
+
+    namespace: dict[str, Any] = {}
+    exec(path.read_text(encoding='utf-8'), namespace)
+    for key in BACKUP_KEYS:
+        payload[key] = list(namespace.get(key, []))
+    return payload
+
+
+def write_backup_payload(payload: dict[str, list[dict[str, Any]]]) -> None:
+    rendered_sections = []
+    for key in BACKUP_KEYS:
+        rendered_sections.append(f'{key} = {pformat(payload.get(key, []), width=100, sort_dicts=False)}')
+
+    contents = (
+        'from __future__ import annotations\n\n'
+        '# Auto-generated product backup data.\n'
+        '# 匯入資料庫：python migrations/database_data/import_product_backup_data.py\n\n'
+        + '\n\n'.join(rendered_sections)
+        + '\n'
+    )
+    out = _BACKUP_DIR / 'product_backup_data.py'
+    out.write_text(contents, encoding='utf-8')
+
+
+def _upsert_by_key(records: list[dict[str, Any]], record: dict[str, Any], key_name: str) -> None:
+    key_value = record[key_name]
+    for idx, existing in enumerate(records):
+        if existing.get(key_name) == key_value:
+            records[idx] = record
+            return
+    records.append(record)
+
+
+def append_product_backup(*, supplier_data: dict[str, Any], category_rows: list[dict[str, Any]], product_data: dict[str, Any]) -> None:
+    payload = load_backup_payload()
+
+    normalized_supplier = _normalize_record(supplier_data)
+    _upsert_by_key(payload['SUPPLIER_BACKUP_DATA'], normalized_supplier, 'supplier_id')
+
+    for row in category_rows:
+        normalized_category = _normalize_record(row)
+        _upsert_by_key(payload['PRODUCT_CATEGORY_BACKUP_DATA'], normalized_category, 'product_categories_id')
+
+    normalized_product = _normalize_record(product_data)
+    _upsert_by_key(payload['PRODUCT_BACKUP_DATA'], normalized_product, 'product_uuid')
+
+    write_backup_payload(payload)
+
+
+def sync_product_backup_from_database() -> None:
+    payload = {key: [] for key in BACKUP_KEYS}
+
+    suppliers = Supplier.query.order_by(Supplier.supplier_id.asc()).all()
+    for supplier in suppliers:
+        payload['SUPPLIER_BACKUP_DATA'].append(
+            _normalize_record(
+                {
+                    'supplier_id': supplier.supplier_id,
+                    'supplier_name': supplier.supplier_name,
+                    'supplier_png': supplier.supplier_png,
+                }
+            )
+        )
+
+    categories = ProductCategory.query.order_by(ProductCategory.product_categories_id.asc()).all()
+    for category in categories:
+        payload['PRODUCT_CATEGORY_BACKUP_DATA'].append(
+            _normalize_record(
+                {
+                    'product_categories_id': category.product_categories_id,
+                    'product_categories_name': category.product_categories_name,
+                    'parent_id': category.parent_id,
+                    'level': category.level,
+                }
+            )
+        )
+
+    products = ProductDetail.query.order_by(ProductDetail.create_time.asc()).all()
+    for product in products:
+        payload['PRODUCT_BACKUP_DATA'].append(
+            _normalize_record(
+                {
+                    'product_uuid': product.product_categories_uuid,
+                    'product_categories_id': product.product_categories_id,
+                    'supplier_id': product.supplier_id,
+                    'product_name': product.product_name,
+                    'specification': product.specification,
+                    'image_path': product.image_path,
+                    'product_details': product.product_details,
+                    'price': product.price,
+                    'discount_price': product.discount_price,
+                }
+            )
+        )
+
+    write_backup_payload(payload)
