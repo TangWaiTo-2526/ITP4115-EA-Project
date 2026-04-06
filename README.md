@@ -48,6 +48,22 @@ pybabel compile -d app/translations
 
 如果更新過 `messages.po`，重新編譯後會產生/更新 `messages.mo`。
 
+## 4) 新增購物車與結帳功能
+
+本專案已新增「購物車」與「訂單結帳」功能，包含：
+
+- 會員登入後可將商品加入購物車
+- 購物車資料會儲存在 `cart` 表，並與使用者綁定
+- 可在 `/cart` 檢視購物車內容
+- 可在 `/checkout` 提交訂單並建立 `orders` / `order_items` 紀錄
+- 結帳完成後購物車會自動清空
+
+如需啟用新資料庫表，請執行：
+
+```bash
+python -m flask --app run.py db upgrade
+```
+
 # 資料庫表設計
 
 ## 表結構總覽

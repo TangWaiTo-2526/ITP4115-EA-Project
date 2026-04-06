@@ -48,6 +48,8 @@ class User(UserMixin, db.Model):
     points_logs = db.relationship(
         'MembershipPointsLog', back_populates='user', lazy='dynamic', cascade='all, delete-orphan'
     )
+    cart_items = db.relationship('Cart', back_populates='user', lazy='dynamic', cascade='all, delete-orphan')
+    orders = db.relationship('Order', back_populates='user', lazy='dynamic', cascade='all, delete-orphan')
 
     def get_id(self):
         return str(self.user_uuid)
@@ -274,9 +276,84 @@ class ProductDetail(db.Model):
     price = db.Column(db.Numeric(10, 2), nullable=False)
     discount_price = db.Column(db.Numeric(10, 2), nullable=True)
     create_time = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    cart_entries = db.relationship('Cart', back_populates='product', lazy='dynamic', cascade='all, delete-orphan')
 
     def __repr__(self) -> str:
         return f'<ProductDetail {self.product_name} ({self.product_categories_uuid})>'
+
+
+class Cart(db.Model):
+    __tablename__ = 'cart'
+
+    user_uuid = db.Column(
+        postgresql.UUID(as_uuid=True),
+        db.ForeignKey('user.user_uuid', ondelete='CASCADE'),
+        primary_key=True,
+    )
+    product_details_uuid = db.Column(
+        postgresql.UUID(as_uuid=True),
+        db.ForeignKey('product_details.product_categories_uuid', ondelete='CASCADE'),
+        primary_key=True,
+    )
+    create_time = db.Column(db.DateTime, nullable=False, server_default=db.func.now())
+
+    user = db.relationship('User', back_populates='cart_items')
+    product = db.relationship('ProductDetail', back_populates='cart_entries')
+
+    def __repr__(self) -> str:
+        return f'<Cart user={self.user_uuid} product={self.product_details_uuid}>'
+
+
+class Order(db.Model):
+    __tablename__ = 'orders'
+
+    order_uuid = db.Column(postgresql.UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    user_uuid = db.Column(
+        postgresql.UUID(as_uuid=True),
+        db.ForeignKey('user.user_uuid', ondelete='CASCADE'),
+        nullable=False,
+        index=True,
+    )
+    order_status = db.Column(db.String(64), nullable=False)
+    receiver_name = db.Column(db.String(128), nullable=False)
+    receiver_phone = db.Column(db.String(32), nullable=False)
+    receiver_address_snapshot = db.Column(db.Text, nullable=False)
+    total_price = db.Column(db.Numeric(10, 2), nullable=False)
+    create_time = db.Column(db.DateTime, nullable=False, server_default=db.func.now())
+
+    user = db.relationship('User', back_populates='orders')
+    items = db.relationship('OrderItem', back_populates='order', lazy='dynamic', cascade='all, delete-orphan')
+
+    def __repr__(self) -> str:
+        return f'<Order {self.order_uuid} user={self.user_uuid} total={self.total_price}>'
+
+
+class OrderItem(db.Model):
+    __tablename__ = 'order_items'
+
+    order_item_uuid = db.Column(postgresql.UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    order_uuid = db.Column(
+        postgresql.UUID(as_uuid=True),
+        db.ForeignKey('orders.order_uuid', ondelete='CASCADE'),
+        nullable=False,
+        index=True,
+    )
+    product_details_uuid = db.Column(
+        postgresql.UUID(as_uuid=True),
+        db.ForeignKey('product_details.product_categories_uuid', ondelete='CASCADE'),
+        nullable=False,
+        index=True,
+    )
+    quantity = db.Column(db.Integer, nullable=False, default=1)
+    unit_price = db.Column(db.Numeric(10, 2), nullable=False)
+    line_total = db.Column(db.Numeric(10, 2), nullable=False)
+    create_time = db.Column(db.DateTime, nullable=False, server_default=db.func.now())
+
+    order = db.relationship('Order', back_populates='items')
+    product = db.relationship('ProductDetail')
+
+    def __repr__(self) -> str:
+        return f'<OrderItem {self.order_item_uuid} order={self.order_uuid} product={self.product_details_uuid}>'
 
 
 class Delivery(db.Model):

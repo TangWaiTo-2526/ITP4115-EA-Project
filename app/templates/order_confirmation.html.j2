@@ -1,0 +1,51 @@
+{% extends 'base.html.j2' %}
+
+{% block title %}訂單已確認{% endblock %}
+
+{% block app_content %}
+<div class="order-confirmation-page">
+    <div class="page-header">
+        <h1>訂單已確認</h1>
+        <p>感謝您的訂購，您的訂單編號為 <strong>{{ order.order_uuid }}</strong>。</p>
+    </div>
+
+    <section class="order-confirmation-details">
+        <div class="order-confirmation-summary">
+            <p><strong>訂單狀態：</strong>{{ order.order_status }}</p>
+            <p><strong>收貨姓名：</strong>{{ order.receiver_name }}</p>
+            <p><strong>收貨電話：</strong>{{ order.receiver_phone }}</p>
+            <p><strong>送貨地址：</strong>{{ order.receiver_address_snapshot }}</p>
+            <p><strong>訂單總額：</strong>${{ '%.2f'|format(order.total_price) }}</p>
+        </div>
+
+        <div class="order-confirmation-items">
+            <h2>商品明細</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>商品</th>
+                        <th>數量</th>
+                        <th>單價</th>
+                        <th>金額</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in items %}
+                    <tr>
+                        <td>{{ item.name }}</td>
+                        <td>{{ item.quantity }}</td>
+                        <td>${{ '%.2f'|format(item.unit_price) }}</td>
+                        <td>${{ '%.2f'|format(item.line_total) }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <div class="order-confirmation-actions">
+        <a class="btn btn-primary" href="{{ url_for('index') }}">繼續購物</a>
+        <a class="btn btn-secondary-sm" href="{{ url_for('cart') }}">返回購物車</a>
+    </div>
+</div>
+{% endblock %}

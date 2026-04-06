@@ -2,6 +2,7 @@ import os
 import random
 import secrets
 import time
+import uuid
 from datetime import datetime, timedelta, timezone
 from urllib.parse import urlparse
 
@@ -21,6 +22,7 @@ from flask import (
     session,
     abort,
     current_app,
+    jsonify,
 )
 from flask_login import login_user, logout_user, current_user, login_required
 from flask_babel import _, get_locale
@@ -45,6 +47,9 @@ from app.models import (
     ProductCategory,
     ProductDetail,
     Supplier,
+    Cart,
+    Order,
+    OrderItem,
 )
 from app.category_catalog import build_browse_page
 from app.maternity_nav import _collect_descendant_category_ids
@@ -281,6 +286,14 @@ def _send_reg_code_or_flash(mail, user_name, code):
 @app.template_global()
 def browse_url(section, slug):
     return url_for('category_browse', section=section, slug=slug)
+
+
+@app.context_processor
+def inject_cart_count():
+    cart_count = 0
+    if current_user.is_authenticated:
+        cart_count = Cart.query.filter_by(user_uuid=current_user.user_uuid).count()
+    return {'cart_count': cart_count}
 
 
 @app.template_global()
@@ -636,6 +649,146 @@ def category_browse(section, slug):
     if ctx is None:
         abort(404)
     return render_template('category_browse.html.j2', **ctx)
+
+
+@app.route('/cart', methods=['GET'])
+@login_required
+def cart():
+    cart_rows = (
+        Cart.query.filter_by(user_uuid=current_user.user_uuid)
+        .join(ProductDetail, ProductDetail.product_categories_uuid == Cart.product_details_uuid)
+        .all()
+    )
+    cart_items = []
+    total_price = 0.0
+    for row in cart_rows:
+        product = row.product
+        if product is None:
+            continue
+        price = float(product.discount_price if product.discount_price is not None else product.price)
+        cart_items.append(
+            {
+                'product_uuid': str(product.product_categories_uuid),
+                'name': product.product_name,
+                'image_url': product_image_url(product.image_path),
+                'unit_price': price,
+                'line_total': price,
+            }
+        )
+        total_price += price
+    return render_template('cart.html.j2', cart_items=cart_items, total_price=total_price)
+
+
+@app.route('/cart/add', methods=['POST'])
+@login_required
+def add_cart():
+    data = request.get_json(silent=True) or request.form
+    product_uuid = (data.get('product_uuid') or data.get('product_uuid') or '').strip()
+    if not product_uuid:
+        return jsonify({'status': 'error', 'message': '缺少 product_uuid'}), 400
+    try:
+        product_id = uuid.UUID(product_uuid)
+    except ValueError:
+        return jsonify({'status': 'error', 'message': '無效的商品識別'}), 400
+    product = db.session.get(ProductDetail, product_id)
+    if product is None:
+        return jsonify({'status': 'error', 'message': '找不到商品'}), 404
+    existing = db.session.get(Cart, (current_user.user_uuid, product.product_categories_uuid))
+    if existing is None:
+        db.session.add(Cart(user_uuid=current_user.user_uuid, product_details_uuid=product.product_categories_uuid))
+        db.session.commit()
+    cart_count = Cart.query.filter_by(user_uuid=current_user.user_uuid).count()
+    return jsonify({'status': 'ok', 'cart_count': cart_count})
+
+
+@app.route('/cart/remove', methods=['POST'])
+@login_required
+def cart_remove():
+    data = request.get_json(silent=True) or request.form
+    product_uuid = (data.get('product_uuid') or '').strip()
+    if not product_uuid:
+        return jsonify({'status': 'error', 'message': '缺少 product_uuid'}), 400
+    try:
+        product_id = uuid.UUID(product_uuid)
+    except ValueError:
+        return jsonify({'status': 'error', 'message': '無效的商品識別'}), 400
+    row = db.session.get(Cart, (current_user.user_uuid, product_id))
+    if row:
+        db.session.delete(row)
+        db.session.commit()
+    cart_count = Cart.query.filter_by(user_uuid=current_user.user_uuid).count()
+    if request.is_json:
+        return jsonify({'status': 'ok', 'cart_count': cart_count})
+    return redirect(url_for('cart'))
+
+
+@app.route('/checkout', methods=['GET', 'POST'])
+@login_required
+def checkout():
+    cart_rows = (
+        Cart.query.filter_by(user_uuid=current_user.user_uuid)
+        .join(ProductDetail, ProductDetail.product_categories_uuid == Cart.product_details_uuid)
+        .all()
+    )
+    if not cart_rows:
+        flash('您的購物車目前沒有商品。')
+        return redirect(url_for('cart'))
+    selected_address = current_user.addresses.order_by(UserAddress.create_time.asc()).first()
+    receiver_name = current_user.username
+    receiver_phone = current_user.phone_number or ''
+    receiver_address = selected_address.formatted_line() if selected_address else '尚未設定送貨地址'
+    total_price = 0.0
+    items = []
+    for row in cart_rows:
+        product = row.product
+        if product is None:
+            continue
+        price = float(product.discount_price if product.discount_price is not None else product.price)
+        items.append(
+            {
+                'product_uuid': str(product.product_categories_uuid),
+                'name': product.product_name,
+                'image_url': product_image_url(product.image_path),
+                'unit_price': price,
+                'quantity': 1,
+                'line_total': price,
+            }
+        )
+        total_price += price
+    if request.method == 'POST':
+        if not receiver_phone or not receiver_address:
+            flash('請先於個人資料頁設定電話與送貨地址。')
+            return redirect(url_for('delivery_address'))
+        order = Order(
+            user_uuid=current_user.user_uuid,
+            order_status='paid',
+            receiver_name=receiver_name,
+            receiver_phone=receiver_phone,
+            receiver_address_snapshot=receiver_address,
+            total_price=total_price,
+        )
+        db.session.add(order)
+        db.session.flush()
+        for item in items:
+            order_item = OrderItem(
+                order_uuid=order.order_uuid,
+                product_details_uuid=uuid.UUID(item['product_uuid']),
+                quantity=item['quantity'],
+                unit_price=item['unit_price'],
+                line_total=item['line_total'],
+            )
+            db.session.add(order_item)
+        Cart.query.filter_by(user_uuid=current_user.user_uuid).delete(synchronize_session=False)
+        db.session.commit()
+        return render_template('order_confirmation.html.j2', order=order, items=items)
+    return render_template(
+        'checkout.html.j2',
+        items=items,
+        total_price=total_price,
+        receiver_name=receiver_name,
+        receiver_phone=receiver_phone,
+        receiver_address=receiver_address,
+    )
 
 
 @app.route('/', methods=['GET'])
