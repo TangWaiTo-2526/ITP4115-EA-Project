@@ -38,10 +38,10 @@
 
                 <nav class="header-nav-2-nav" aria-label="{{ _('Header actions') }}">
                     <div class="header-nav-2-account">
-                        <a class="header-nav-2-icon-link header-nav-2-account-trigger" href="{% if current_user.is_anonymous %}{{ url_for('login') }}{% else %}{{ url_for('user', username=current_user.username) }}{% endif %}" aria-haspopup="true" aria-label="{{ _('Account') }}">
+                        <a class="header-nav-2-icon-link header-nav-2-account-trigger" href="{% if current_user.is_anonymous %}{{ url_for('login') }}{% else %}{{ url_for('user', username=current_user.username) }}{% endif %}" aria-haspopup="true" aria-expanded="false" aria-label="{{ _('Account') }}">
                             <i class="fa-regular fa-user header-nav-2-icon" aria-hidden="true"></i>
                         </a>
-                        <div class="header-nav-2-account-panel" role="menu" aria-label="{{ _('Account menu') }}">
+                        <div class="header-nav-2-account-panel" role="menu" aria-label="{{ _('Account menu') }}" aria-hidden="true">
                             {% if current_user.is_anonymous %}
                             <div class="header-nav-2-account-main">
                                 <a role="menuitem" class="header-nav-2-account-item header-nav-2-account-item--with-icon" href="{{ url_for('login') }}">
@@ -61,19 +61,19 @@
                             <div class="header-nav-2-account-main">
                                 <a role="menuitem" class="header-nav-2-account-item header-nav-2-account-item--with-icon" href="{{ url_for('user', username=current_user.username) }}">
                                     <i class="fa-regular fa-user header-nav-2-account-ico" aria-hidden="true"></i>
-                                    <span>我的帳戶</span>
+                                    <span>{{ _('My account') }}</span>
                                 </a>
                                 <a role="menuitem" class="header-nav-2-account-item header-nav-2-account-item--with-icon" href="#">
                                     <i class="fa-solid fa-box header-nav-2-account-ico" aria-hidden="true"></i>
-                                    <span>訂單紀錄</span>
+                                    <span>{{ _('Order history') }}</span>
                                 </a>
                                 <a role="menuitem" class="header-nav-2-account-item header-nav-2-account-item--with-icon" href="#">
                                     <i class="fa-solid fa-clock-rotate-left header-nav-2-account-ico" aria-hidden="true"></i>
-                                    <span>再次購買</span>
+                                    <span>{{ _('Buy again') }}</span>
                                 </a>
                             </div>
                             <div class="header-nav-2-account-footer">
-                                <a role="menuitem" class="header-nav-2-account-item header-nav-2-account-item--logout" href="{{ url_for('logout') }}">登出</a>
+                                <a role="menuitem" class="header-nav-2-account-item header-nav-2-account-item--logout" href="{{ url_for('logout') }}">{{ _('Logout') }}</a>
                             </div>
                             {% endif %}
                         </div>
@@ -92,11 +92,21 @@
 
         <nav class="header-nav-3" aria-label="{{ _('主選單') }}">
             <div class="header-shell-inner header-nav-3-inner">
+                <div class="header-nav-3-item header-nav-3-item--food">
                 <a class="header-nav-3-link header-nav-3-food-trigger{% if request.endpoint in ('index',) %} is-active{% endif %}" href="#" aria-haspopup="true" aria-expanded="false" id="header-nav-food-trigger"><span class="header-nav-3-label">{{ _('食品及飲品') }}</span><i class="fa-solid fa-chevron-down header-nav-3-chevron" aria-hidden="true"></i></a>
+                </div>
+                <div class="header-nav-3-item header-nav-3-item--maternity">
                 <a class="header-nav-3-link header-nav-3-maternity-trigger" href="#" aria-haspopup="true" aria-expanded="false" id="header-nav-maternity-trigger"><span class="header-nav-3-label">{{ _('母嬰') }}</span><i class="fa-solid fa-chevron-down header-nav-3-chevron" aria-hidden="true"></i></a>
+                </div>
+                <div class="header-nav-3-item header-nav-3-item--personal">
                 <a class="header-nav-3-link header-nav-3-personal-trigger" href="#" aria-haspopup="true" aria-expanded="false" id="header-nav-personal-trigger"><span class="header-nav-3-label">{{ _('個人護理、健康') }}</span><i class="fa-solid fa-chevron-down header-nav-3-chevron" aria-hidden="true"></i></a>
+                </div>
+                <div class="header-nav-3-item header-nav-3-item--home">
                 <a class="header-nav-3-link header-nav-3-home-trigger" href="#" aria-haspopup="true" aria-expanded="false" id="header-nav-home-trigger"><span class="header-nav-3-label">{{ _('家居生活') }}</span><i class="fa-solid fa-chevron-down header-nav-3-chevron" aria-hidden="true"></i></a>
+                </div>
+                <div class="header-nav-3-item header-nav-3-item--pet">
                 <a class="header-nav-3-link header-nav-3-pet-trigger" href="#" aria-haspopup="true" aria-expanded="false" id="header-nav-pet-trigger"><span class="header-nav-3-label">{{ _('寵物區') }}</span><i class="fa-solid fa-chevron-down header-nav-3-chevron" aria-hidden="true"></i></a>
+                </div>
                 <a class="header-nav-3-link header-nav-3-link--with-img" href="https://www.pns.hk/zh-hk/%E5%B0%88%E6%9C%89%E5%93%81%E7%89%8C/c/own-brands" target="_blank" rel="noopener noreferrer">
                     <img class="header-nav-3-thumb" src="{{ url_for('static', filename='png/icon_exclusive.avif') }}" width="72" height="22" alt="" decoding="async">
                     <span class="header-nav-3-label">{{ _('獨家產品') }}</span>
@@ -115,6 +125,7 @@
                 </a>
             </div>
             <div class="header-nav-3-mega-panel header-nav-3-mega-panel--maternity" role="region" aria-label="{{ _('母嬰') }}" id="header-nav-maternity-panel" aria-labelledby="header-nav-maternity-trigger" aria-hidden="true">
+                <div class="header-nav-3-mega-hover-bridge" aria-hidden="true"></div>
                 <span class="header-nav-3-mega-caret" aria-hidden="true"></span>
                 <div class="header-shell-inner header-nav-3-mega-shell">
                     {% if maternity_nav and maternity_nav.tabs %}
@@ -144,7 +155,7 @@
                                         </div>
                                         <div class="header-nav-3-mega-products" role="list">
                                             {% for link in section.links %}
-                                            <a class="header-nav-3-mega-product" href="{{ link.url }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--{{ link.visual_ix }}" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">{{ link.name }}</span></a>
+                                            <a class="header-nav-3-mega-product" href="{{ link.url }}" role="listitem"><span class="header-nav-3-mega-product-label">{{ link.name }}</span></a>
                                             {% endfor %}
                                         </div>
                                     </div>
@@ -180,255 +191,73 @@
                 </div>
             </div>
             <div class="header-nav-3-mega-panel header-nav-3-mega-panel--food" role="region" aria-label="{{ _('食品及飲品') }}" id="header-nav-food-panel" aria-labelledby="header-nav-food-trigger" aria-hidden="true">
+                <div class="header-nav-3-mega-hover-bridge" aria-hidden="true"></div>
                 <span class="header-nav-3-mega-caret" aria-hidden="true"></span>
                 <div class="header-shell-inner header-nav-3-mega-shell">
+                    {% if food_nav and food_nav.tabs %}
                     <div class="header-nav-3-mega-card header-nav-3-mega-card--food">
                         <aside class="header-nav-3-mega-side" aria-label="{{ _('食品分類') }}">
                             <ul class="header-nav-3-mega-side-list" role="tablist" aria-orientation="vertical">
-                                <li><button type="button" class="header-nav-3-mega-tab is-active" data-food-tab="fd-drink">飲品、即沖飲品</button></li>
-                                <li><button type="button" class="header-nav-3-mega-tab" data-food-tab="fd-grain">米、麵、油、烘焙</button></li>
-                                <li><button type="button" class="header-nav-3-mega-tab" data-food-tab="fd-preserved">罐頭、醃漬食品、乾貨</button></li>
-                                <li><button type="button" class="header-nav-3-mega-tab" data-food-tab="fd-sauce">調味料、醬料、湯</button></li>
-                                <li><button type="button" class="header-nav-3-mega-tab" data-food-tab="fd-snack">零食、餅乾、甜品</button></li>
-                                <li><button type="button" class="header-nav-3-mega-tab" data-food-tab="fd-frozen">冷凍、急凍食品</button></li>
-                                <li><button type="button" class="header-nav-3-mega-tab" data-food-tab="fd-produce">水果、蔬菜</button></li>
-                                <li><button type="button" class="header-nav-3-mega-tab" data-food-tab="fd-breakfast">早餐、果醬</button></li>
-                                <li><button type="button" class="header-nav-3-mega-tab" data-food-tab="fd-voucher">電子禮券、產品換領券</button></li>
-                                <li><button type="button" class="header-nav-3-mega-tab" data-food-tab="fd-catering">美食預訂／到會</button></li>
+                                {% for tab in food_nav.tabs %}
+                                <li><button type="button" class="header-nav-3-mega-tab{% if loop.first %} is-active{% endif %}" data-food-tab="{{ tab.tab_key }}" role="tab" aria-selected="{{ 'true' if loop.first else 'false' }}">{{ tab.name }}</button></li>
+                                {% endfor %}
                             </ul>
                         </aside>
                         <div class="header-nav-3-mega-main header-nav-3-mega-main--food">
-                            <div class="header-nav-3-mega-pane is-active" data-food-pane="fd-drink" role="tabpanel" aria-label="飲品、即沖飲品">
+                            {% for tab in food_nav.tabs %}
+                            <div class="header-nav-3-mega-pane{% if loop.first %} is-active{% endif %}" data-food-pane="{{ tab.tab_key }}" role="tabpanel" aria-label="{{ tab.name }}"{% if not loop.first %} aria-hidden="true"{% endif %}>
                                 <div class="header-nav-3-mega-pane-head">
-                                    <h2 class="header-nav-3-mega-title">飲品、即沖飲品</h2>
-                                    <a class="header-nav-3-mega-viewall" href="#">查看所有</a>
+                                    <h2 class="header-nav-3-mega-title">{{ tab.name }}</h2>
+                                    <a class="header-nav-3-mega-viewall" href="{{ tab.view_all_url }}">{{ _('查看所有') }}</a>
                                 </div>
-                                <div class="header-nav-3-mega-products header-nav-3-mega-products--food" role="list">
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--food" href="#" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--2" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">酒精飲品</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--food" href="#" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--7" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">水</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--food" href="#" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--3" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">汽水</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--food" href="#" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--4" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">即飲茶類</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--food" href="#" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--8" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">咖啡</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--food" href="#" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--5" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">奶茶</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--food" href="#" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--6" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">奶類</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--food" href="#" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--1" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">乳酪飲料</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--food" href="#" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--2" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">植物奶</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--food" href="#" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--7" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">大豆飲品</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--food" href="#" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--3" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">沖調飲品</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--food" href="#" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--4" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">熱飲</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--food" href="#" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--8" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">果汁</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--food" href="#" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--5" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">椰子水</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--food" href="#" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--6" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">運動及能量飲品</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--food" href="#" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--1" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">草本及健康飲品</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--food" href="#" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--2" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">原箱飲品</span></a>
-                                </div>
+                                {% for section in tab.sections %}
+                                    {% if section.title %}
+                                    <div class="header-nav-3-mega-subsection">
+                                        <div class="header-nav-3-mega-subhead">
+                                            <h3 class="header-nav-3-mega-subtitle">{{ section.title }}</h3>
+                                            {% if section.view_all_url %}
+                                            <a class="header-nav-3-mega-viewall header-nav-3-mega-viewall--subsection" href="{{ section.view_all_url }}">{{ _('查看所有') }}</a>
+                                            {% endif %}
+                                        </div>
+                                        <div class="header-nav-3-mega-products header-nav-3-mega-products--food" role="list">
+                                            {% for link in section.links %}
+                                            <a class="header-nav-3-mega-product header-nav-3-mega-product--food" href="{{ link.url }}" role="listitem"><span class="header-nav-3-mega-product-label">{{ link.name }}</span></a>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                    {% else %}
+                                    <div class="header-nav-3-mega-products header-nav-3-mega-products--food" role="list">
+                                        {% for link in section.links %}
+                                        <a class="header-nav-3-mega-product header-nav-3-mega-product--food" href="{{ link.url }}" role="listitem"><span class="header-nav-3-mega-product-label">{{ link.name }}</span></a>
+                                        {% endfor %}
+                                    </div>
+                                    {% endif %}
+                                {% endfor %}
+                                {% if tab.brands %}
                                 <div class="header-nav-3-mega-brands">
-                                    <h3 class="header-nav-3-mega-brands-title">熱選品牌</h3>
+                                    <h3 class="header-nav-3-mega-brands-title">{{ _('熱選品牌') }}</h3>
                                     <div class="header-nav-3-mega-brand-row">
-                                        <a class="header-nav-3-mega-brand header-nav-3-mega-brand--food" href="#">維他奶</a>
-                                        <a class="header-nav-3-mega-brand header-nav-3-mega-brand--food" href="#">雀巢</a>
-                                        <a class="header-nav-3-mega-brand header-nav-3-mega-brand--food" href="#">可口可樂</a>
-                                        <a class="header-nav-3-mega-brand header-nav-3-mega-brand--food" href="#">玉泉</a>
-                                        <a class="header-nav-3-mega-brand header-nav-3-mega-brand--food" href="#">道地</a>
-                                        <a class="header-nav-3-mega-brand header-nav-3-mega-brand--food" href="#">陽光</a>
+                                        {% for b in tab.brands %}
+                                        <a class="header-nav-3-mega-brand header-nav-3-mega-brand--food" href="{{ b.url }}">{{ b.name }}</a>
+                                        {% endfor %}
                                     </div>
                                 </div>
+                                {% endif %}
                             </div>
-                            <div class="header-nav-3-mega-pane" data-food-pane="fd-grain" role="tabpanel" aria-label="米、麵、油、烘焙">
-                                <div class="header-nav-3-mega-pane-head">
-                                    <h2 class="header-nav-3-mega-title">米、麵、油、烘焙</h2>
-                                    <a class="header-nav-3-mega-viewall" href="#">查看所有</a>
-                                </div>
-                                <div class="header-nav-3-mega-products header-nav-3-mega-products--food" role="list">
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--food" href="#" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--3" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">米</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--food header-nav-3-mega-product--food-span-2" href="#" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--6" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">即食麵／飯、粉麵、意大利粉</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--food" href="#" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--7" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">油</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--food header-nav-3-mega-product--food-span-3" href="#" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--8" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">麵粉、烘焙用料、梳打粉</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--food" href="#" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--4" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">原箱優惠</span></a>
-                                </div>
-                                <div class="header-nav-3-mega-brands">
-                                    <h3 class="header-nav-3-mega-brands-title">熱選品牌</h3>
-                                    <div class="header-nav-3-mega-brand-row">
-                                        <a class="header-nav-3-mega-brand header-nav-3-mega-brand--food" href="#">金象</a>
-                                        <a class="header-nav-3-mega-brand header-nav-3-mega-brand--food" href="#">刀嘜</a>
-                                        <a class="header-nav-3-mega-brand header-nav-3-mega-brand--food" href="#">美極</a>
-                                        <a class="header-nav-3-mega-brand header-nav-3-mega-brand--food" href="#">出前一丁</a>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="header-nav-3-mega-pane" data-food-pane="fd-preserved" role="tabpanel" aria-label="罐頭、醃漬食品、乾貨">
-                                <div class="header-nav-3-mega-pane-head">
-                                    <h2 class="header-nav-3-mega-title">罐頭、醃漬食品、乾貨</h2>
-                                    <a class="header-nav-3-mega-viewall" href="#">查看所有</a>
-                                </div>
-                                <div class="header-nav-3-mega-products header-nav-3-mega-products--food" role="list">
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--food header-nav-3-mega-product--food-span-4" href="#" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--5" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">罐頭、醃製食品</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--food header-nav-3-mega-product--food-span-4" href="#" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--7" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">南北貨、花膠海味、湯料罐頭、醃漬食品、乾貨</span></a>
-                                </div>
-                                <div class="header-nav-3-mega-brands">
-                                    <h3 class="header-nav-3-mega-brands-title">熱選品牌</h3>
-                                    <div class="header-nav-3-mega-brand-row">
-                                        <a class="header-nav-3-mega-brand header-nav-3-mega-brand--food" href="#">梅林</a>
-                                        <a class="header-nav-3-mega-brand header-nav-3-mega-brand--food" href="#">地捫</a>
-                                        <a class="header-nav-3-mega-brand header-nav-3-mega-brand--food" href="#">鷹金錢</a>
-                                        <a class="header-nav-3-mega-brand header-nav-3-mega-brand--food" href="#">元寶</a>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="header-nav-3-mega-pane" data-food-pane="fd-sauce" role="tabpanel" aria-label="調味料、醬料、湯">
-                                <div class="header-nav-3-mega-pane-head">
-                                    <h2 class="header-nav-3-mega-title">調味料、醬料、湯</h2>
-                                    <a class="header-nav-3-mega-viewall" href="#">查看所有</a>
-                                </div>
-                                <div class="header-nav-3-mega-products header-nav-3-mega-products--food" role="list">
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--food" href="#" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--4" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">鹽、糖、其他調味料</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--food" href="#" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--5" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">豉油、生抽</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--food" href="#" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--6" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">醬料</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--food" href="#" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--7" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">日韓醬料</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--food" href="#" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--8" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">湯底、湯料、即沖湯品</span></a>
-                                </div>
-                                <div class="header-nav-3-mega-brands">
-                                    <h3 class="header-nav-3-mega-brands-title">熱選品牌</h3>
-                                    <div class="header-nav-3-mega-brand-row">
-                                        <a class="header-nav-3-mega-brand header-nav-3-mega-brand--food" href="#">李錦記</a>
-                                        <a class="header-nav-3-mega-brand header-nav-3-mega-brand--food" href="#">淘大</a>
-                                        <a class="header-nav-3-mega-brand header-nav-3-mega-brand--food" href="#">史雲生</a>
-                                        <a class="header-nav-3-mega-brand header-nav-3-mega-brand--food" href="#">萬字</a>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="header-nav-3-mega-pane" data-food-pane="fd-snack" role="tabpanel" aria-label="零食、餅乾、甜品">
-                                <div class="header-nav-3-mega-pane-head">
-                                    <h2 class="header-nav-3-mega-title">零食、餅乾、甜品</h2>
-                                    <a class="header-nav-3-mega-viewall" href="#">查看所有</a>
-                                </div>
-                                <div class="header-nav-3-mega-products header-nav-3-mega-products--food" role="list">
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--food" href="#" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--1" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">日韓零食</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--food" href="#" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--2" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">餅乾、曲奇</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--food" href="#" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--3" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">薯片、蝦片、爆谷</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--food" href="#" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--4" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">朱古力、糖果、香口膠</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--food" href="#" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--5" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">穀物棒、能量棒</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--food" href="#" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--6" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">果乾、果仁、紫菜</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--food" href="#" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--7" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">即食雞胸、魚肉腸、肉乾</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--food" href="#" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--8" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">蛋卷、糕點、鳳梨酥</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--food" href="#" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--1" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">布甸、啫喱、糖水</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--food" href="#" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--2" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">原箱優惠</span></a>
-                                </div>
-                                <div class="header-nav-3-mega-brands">
-                                    <h3 class="header-nav-3-mega-brands-title">熱選品牌</h3>
-                                    <div class="header-nav-3-mega-brand-row">
-                                        <a class="header-nav-3-mega-brand header-nav-3-mega-brand--food" href="#">卡樂B</a>
-                                        <a class="header-nav-3-mega-brand header-nav-3-mega-brand--food" href="#">奧利奧</a>
-                                        <a class="header-nav-3-mega-brand header-nav-3-mega-brand--food" href="#">健達</a>
-                                        <a class="header-nav-3-mega-brand header-nav-3-mega-brand--food" href="#">瑞士蓮</a>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="header-nav-3-mega-pane" data-food-pane="fd-frozen" role="tabpanel" aria-label="冷凍、急凍食品">
-                                <div class="header-nav-3-mega-pane-head">
-                                    <h2 class="header-nav-3-mega-title">冷凍、急凍食品</h2>
-                                    <a class="header-nav-3-mega-viewall" href="#">查看所有</a>
-                                </div>
-                                <div class="header-nav-3-mega-products header-nav-3-mega-products--food" role="list">
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--food" href="#" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--7" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">冷凍、急凍海鮮</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--food" href="#" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--5" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">冷凍、急凍肉類</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--food" href="#" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--4" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">冰鮮肉類、海鮮</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--food" href="#" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--6" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">植物肉、素食食品</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--food" href="#" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--8" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">丸類、冷盤美食</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--food" href="#" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--1" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">餃子、雲吞</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--food" href="#" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--2" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">點心、湯丸</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--food" href="#" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--3" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">急凍蔬果類</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--food" href="#" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--7" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">薄餅、急凍小食</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--food" href="#" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--5" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">急凍麵食、年糕</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--food" href="#" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--4" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">蛋類</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--food" href="#" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--6" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">冷凍飲品</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--food" href="#" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--8" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">乳製品</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--food" href="#" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--1" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">豆腐豆製品</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--food" href="#" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--2" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">雪糕、蛋糕、冷凍甜品</span></a>
-                                </div>
-                                <div class="header-nav-3-mega-brands">
-                                    <h3 class="header-nav-3-mega-brands-title">熱選品牌</h3>
-                                    <div class="header-nav-3-mega-brand-row">
-                                        <a class="header-nav-3-mega-brand header-nav-3-mega-brand--food" href="#">灣仔碼頭</a>
-                                        <a class="header-nav-3-mega-brand header-nav-3-mega-brand--food" href="#">哈根達斯</a>
-                                        <a class="header-nav-3-mega-brand header-nav-3-mega-brand--food" href="#">維記</a>
-                                        <a class="header-nav-3-mega-brand header-nav-3-mega-brand--food" href="#">公仔</a>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="header-nav-3-mega-pane" data-food-pane="fd-produce" role="tabpanel" aria-label="水果、蔬菜">
-                                <div class="header-nav-3-mega-pane-head">
-                                    <h2 class="header-nav-3-mega-title">水果、蔬菜</h2>
-                                    <a class="header-nav-3-mega-viewall" href="#">查看所有</a>
-                                </div>
-                                <div class="header-nav-3-mega-products header-nav-3-mega-products--food" role="list">
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--food" href="#" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--4" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">水果</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--food" href="#" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--5" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">蔬菜</span></a>
-                                </div>
-                                <div class="header-nav-3-mega-brands">
-                                    <h3 class="header-nav-3-mega-brands-title">熱選品牌</h3>
-                                    <div class="header-nav-3-mega-brand-row">
-                                        <a class="header-nav-3-mega-brand header-nav-3-mega-brand--food" href="#">佳沛</a>
-                                        <a class="header-nav-3-mega-brand header-nav-3-mega-brand--food" href="#">Driscoll's</a>
-                                        <a class="header-nav-3-mega-brand header-nav-3-mega-brand--food" href="#">有機認證</a>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="header-nav-3-mega-pane" data-food-pane="fd-breakfast" role="tabpanel" aria-label="早餐、果醬">
-                                <div class="header-nav-3-mega-pane-head">
-                                    <h2 class="header-nav-3-mega-title">早餐、果醬</h2>
-                                    <a class="header-nav-3-mega-viewall" href="#">查看所有</a>
-                                </div>
-                                <div class="header-nav-3-mega-products header-nav-3-mega-products--food" role="list">
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--food" href="#" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--3" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">麵包糕點</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--food" href="#" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--6" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">麥片、穀類早餐</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--food" href="#" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--5" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">果醬、蜜糖、三明治醬</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--food" href="#" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--4" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">奶類、乳酪飲品</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--food" href="#" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--1" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">植物奶、大豆飲品</span></a>
-                                </div>
-                                <div class="header-nav-3-mega-brands">
-                                    <h3 class="header-nav-3-mega-brands-title">熱選品牌</h3>
-                                    <div class="header-nav-3-mega-brand-row">
-                                        <a class="header-nav-3-mega-brand header-nav-3-mega-brand--food" href="#">家樂氏</a>
-                                        <a class="header-nav-3-mega-brand header-nav-3-mega-brand--food" href="#">Smucker's</a>
-                                        <a class="header-nav-3-mega-brand header-nav-3-mega-brand--food" href="#">Nutella</a>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="header-nav-3-mega-pane" data-food-pane="fd-voucher" role="tabpanel" aria-label="電子禮券、產品換領券">
-                                <div class="header-nav-3-mega-pane-head">
-                                    <h2 class="header-nav-3-mega-title">電子禮券、產品換領券</h2>
-                                    <a class="header-nav-3-mega-viewall" href="#">查看所有</a>
-                                </div>
-                                <div class="header-nav-3-mega-products header-nav-3-mega-products--food" role="list">
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--food" href="#" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--1" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">電子禮券</span></a>
-                                </div>
-                            </div>
-                            <div class="header-nav-3-mega-pane" data-food-pane="fd-catering" role="tabpanel" aria-label="美食預訂／到會">
-                                <div class="header-nav-3-mega-pane-head">
-                                    <h2 class="header-nav-3-mega-title">美食預訂／到會</h2>
-                                    <a class="header-nav-3-mega-viewall" href="#">查看所有</a>
-                                </div>
-                                <div class="header-nav-3-mega-products header-nav-3-mega-products--food" role="list">
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--food" href="#" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--6" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">盆菜及燒味</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--food" href="#" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--5" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">日式到會</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--food" href="#" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--4" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">大閘蟹、海鮮到會</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--food" href="#" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--7" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">派對小食到會</span></a>
-                                </div>
-                                <div class="header-nav-3-mega-brands">
-                                    <h3 class="header-nav-3-mega-brands-title">熱門服務</h3>
-                                    <div class="header-nav-3-mega-brand-row">
-                                        <a class="header-nav-3-mega-brand header-nav-3-mega-brand--food" href="#">網上預訂</a>
-                                        <a class="header-nav-3-mega-brand header-nav-3-mega-brand--food" href="#">門市自取</a>
-                                        <a class="header-nav-3-mega-brand header-nav-3-mega-brand--food" href="#">客服專線</a>
-                                    </div>
-                                </div>
-                            </div>
+                            {% endfor %}
                         </div>
                     </div>
+                    {% else %}
+                    <div class="header-nav-3-mega-card header-nav-3-mega-card--food">
+                        <div class="header-nav-3-mega-main header-nav-3-mega-main--food header-nav-3-mega-main--full">
+                            <p class="header-nav-3-mega-empty">{{ _('食品及飲品分類資料尚未載入。請確認已執行資料庫遷移並還原分類與商品資料，且根分類名稱為「食品及飲品」。') }}</p>
+                        </div>
+                    </div>
+                    {% endif %}
                 </div>
             </div>
             <div class="header-nav-3-mega-panel header-nav-3-mega-panel--personal" role="region" aria-label="{{ _('個人護理、健康') }}" id="header-nav-personal-panel" aria-labelledby="header-nav-personal-trigger" aria-hidden="true">
+                <div class="header-nav-3-mega-hover-bridge" aria-hidden="true"></div>
                 <span class="header-nav-3-mega-caret" aria-hidden="true"></span>
                 <div class="header-shell-inner header-nav-3-mega-shell">
                     <div class="header-nav-3-mega-card">
@@ -454,14 +283,14 @@
                                     <a class="header-nav-3-mega-viewall" href="{{ browse_url('personal', 'oral') }}">查看所有</a>
                                 </div>
                                 <div class="header-nav-3-mega-products header-nav-3-mega-products--personal" role="list">
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--personal" href="{{ browse_url('personal', 'oral') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--1" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">牙膏</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--personal" href="{{ browse_url('personal', 'oral') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--2" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">牙刷</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--personal" href="{{ browse_url('personal', 'oral') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--3" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">電動牙刷、水牙線機及配件</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--personal" href="{{ browse_url('personal', 'oral') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--4" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">兒童口腔護理</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--personal" href="{{ browse_url('personal', 'oral') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--5" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">漱口水</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--personal" href="{{ browse_url('personal', 'oral') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--6" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">牙線、牙籤</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--personal" href="{{ browse_url('personal', 'oral') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--7" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">假牙護理</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--personal" href="{{ browse_url('personal', 'oral') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--8" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">其他</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--personal" href="{{ browse_url('personal', 'oral') }}" role="listitem"><span class="header-nav-3-mega-product-label">牙膏</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--personal" href="{{ browse_url('personal', 'oral') }}" role="listitem"><span class="header-nav-3-mega-product-label">牙刷</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--personal" href="{{ browse_url('personal', 'oral') }}" role="listitem"><span class="header-nav-3-mega-product-label">電動牙刷、水牙線機及配件</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--personal" href="{{ browse_url('personal', 'oral') }}" role="listitem"><span class="header-nav-3-mega-product-label">兒童口腔護理</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--personal" href="{{ browse_url('personal', 'oral') }}" role="listitem"><span class="header-nav-3-mega-product-label">漱口水</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--personal" href="{{ browse_url('personal', 'oral') }}" role="listitem"><span class="header-nav-3-mega-product-label">牙線、牙籤</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--personal" href="{{ browse_url('personal', 'oral') }}" role="listitem"><span class="header-nav-3-mega-product-label">假牙護理</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--personal" href="{{ browse_url('personal', 'oral') }}" role="listitem"><span class="header-nav-3-mega-product-label">其他</span></a>
                                 </div>
                                 <div class="header-nav-3-mega-brands">
                                     <h3 class="header-nav-3-mega-brands-title">熱選品牌</h3>
@@ -483,10 +312,10 @@
                                     <a class="header-nav-3-mega-viewall" href="{{ browse_url('personal', 'body') }}">查看所有</a>
                                 </div>
                                 <div class="header-nav-3-mega-products header-nav-3-mega-products--personal" role="list">
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--personal" href="{{ browse_url('personal', 'body') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--2" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">沐浴乳、香皂</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--personal" href="{{ browse_url('personal', 'body') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--3" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">潤膚乳液</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--personal" href="{{ browse_url('personal', 'body') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--4" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">身體磨砂</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--personal" href="{{ browse_url('personal', 'body') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--5" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">止汗香體</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--personal" href="{{ browse_url('personal', 'body') }}" role="listitem"><span class="header-nav-3-mega-product-label">沐浴乳、香皂</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--personal" href="{{ browse_url('personal', 'body') }}" role="listitem"><span class="header-nav-3-mega-product-label">潤膚乳液</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--personal" href="{{ browse_url('personal', 'body') }}" role="listitem"><span class="header-nav-3-mega-product-label">身體磨砂</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--personal" href="{{ browse_url('personal', 'body') }}" role="listitem"><span class="header-nav-3-mega-product-label">止汗香體</span></a>
                                 </div>
                                 <div class="header-nav-3-mega-brands">
                                     <h3 class="header-nav-3-mega-brands-title">熱選品牌</h3>
@@ -504,10 +333,10 @@
                                     <a class="header-nav-3-mega-viewall" href="{{ browse_url('personal', 'hair') }}">查看所有</a>
                                 </div>
                                 <div class="header-nav-3-mega-products header-nav-3-mega-products--personal" role="list">
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--personal" href="{{ browse_url('personal', 'hair') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--6" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">洗髮露</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--personal" href="{{ browse_url('personal', 'hair') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--7" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">護髮素、髮膜</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--personal" href="{{ browse_url('personal', 'hair') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--8" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">染髮產品</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--personal" href="{{ browse_url('personal', 'hair') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--1" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">造型產品</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--personal" href="{{ browse_url('personal', 'hair') }}" role="listitem"><span class="header-nav-3-mega-product-label">洗髮露</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--personal" href="{{ browse_url('personal', 'hair') }}" role="listitem"><span class="header-nav-3-mega-product-label">護髮素、髮膜</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--personal" href="{{ browse_url('personal', 'hair') }}" role="listitem"><span class="header-nav-3-mega-product-label">染髮產品</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--personal" href="{{ browse_url('personal', 'hair') }}" role="listitem"><span class="header-nav-3-mega-product-label">造型產品</span></a>
                                 </div>
                                 <div class="header-nav-3-mega-brands">
                                     <h3 class="header-nav-3-mega-brands-title">熱選品牌</h3>
@@ -525,10 +354,10 @@
                                     <a class="header-nav-3-mega-viewall" href="{{ browse_url('personal', 'handfoot') }}">查看所有</a>
                                 </div>
                                 <div class="header-nav-3-mega-products header-nav-3-mega-products--personal" role="list">
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--personal" href="{{ browse_url('personal', 'handfoot') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--2" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">潤手霜</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--personal" href="{{ browse_url('personal', 'handfoot') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--3" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">護足霜</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--personal" href="{{ browse_url('personal', 'handfoot') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--4" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">指甲護理</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--personal" href="{{ browse_url('personal', 'handfoot') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--5" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">足膜、修護</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--personal" href="{{ browse_url('personal', 'handfoot') }}" role="listitem"><span class="header-nav-3-mega-product-label">潤手霜</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--personal" href="{{ browse_url('personal', 'handfoot') }}" role="listitem"><span class="header-nav-3-mega-product-label">護足霜</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--personal" href="{{ browse_url('personal', 'handfoot') }}" role="listitem"><span class="header-nav-3-mega-product-label">指甲護理</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--personal" href="{{ browse_url('personal', 'handfoot') }}" role="listitem"><span class="header-nav-3-mega-product-label">足膜、修護</span></a>
                                 </div>
                                 <div class="header-nav-3-mega-brands">
                                     <h3 class="header-nav-3-mega-brands-title">熱選品牌</h3>
@@ -546,10 +375,10 @@
                                     <a class="header-nav-3-mega-viewall" href="{{ browse_url('personal', 'women') }}">查看所有</a>
                                 </div>
                                 <div class="header-nav-3-mega-products header-nav-3-mega-products--personal" role="list">
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--personal" href="{{ browse_url('personal', 'women') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--6" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">衛生巾</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--personal" href="{{ browse_url('personal', 'women') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--7" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">護墊</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--personal" href="{{ browse_url('personal', 'women') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--8" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">棉條</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--personal" href="{{ browse_url('personal', 'women') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--1" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">私密護理</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--personal" href="{{ browse_url('personal', 'women') }}" role="listitem"><span class="header-nav-3-mega-product-label">衛生巾</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--personal" href="{{ browse_url('personal', 'women') }}" role="listitem"><span class="header-nav-3-mega-product-label">護墊</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--personal" href="{{ browse_url('personal', 'women') }}" role="listitem"><span class="header-nav-3-mega-product-label">棉條</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--personal" href="{{ browse_url('personal', 'women') }}" role="listitem"><span class="header-nav-3-mega-product-label">私密護理</span></a>
                                 </div>
                                 <div class="header-nav-3-mega-brands">
                                     <h3 class="header-nav-3-mega-brands-title">熱選品牌</h3>
@@ -567,10 +396,10 @@
                                     <a class="header-nav-3-mega-viewall" href="{{ browse_url('personal', 'skin') }}">查看所有</a>
                                 </div>
                                 <div class="header-nav-3-mega-products header-nav-3-mega-products--personal" role="list">
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--personal" href="{{ browse_url('personal', 'skin') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--2" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">面部護理</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--personal" href="{{ browse_url('personal', 'skin') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--3" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">面膜</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--personal" href="{{ browse_url('personal', 'skin') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--4" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">彩妝</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--personal" href="{{ browse_url('personal', 'skin') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--5" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">防曬</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--personal" href="{{ browse_url('personal', 'skin') }}" role="listitem"><span class="header-nav-3-mega-product-label">面部護理</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--personal" href="{{ browse_url('personal', 'skin') }}" role="listitem"><span class="header-nav-3-mega-product-label">面膜</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--personal" href="{{ browse_url('personal', 'skin') }}" role="listitem"><span class="header-nav-3-mega-product-label">彩妝</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--personal" href="{{ browse_url('personal', 'skin') }}" role="listitem"><span class="header-nav-3-mega-product-label">防曬</span></a>
                                 </div>
                                 <div class="header-nav-3-mega-brands">
                                     <h3 class="header-nav-3-mega-brands-title">熱選品牌</h3>
@@ -588,10 +417,10 @@
                                     <a class="header-nav-3-mega-viewall" href="{{ browse_url('personal', 'shave') }}">查看所有</a>
                                 </div>
                                 <div class="header-nav-3-mega-products header-nav-3-mega-products--personal" role="list">
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--personal" href="{{ browse_url('personal', 'shave') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--6" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">剃鬚刀</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--personal" href="{{ browse_url('personal', 'shave') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--7" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">鬚刨泡沫、啫喱</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--personal" href="{{ browse_url('personal', 'shave') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--8" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">鬚後護理</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--personal" href="{{ browse_url('personal', 'shave') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--1" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">電動鬚刨</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--personal" href="{{ browse_url('personal', 'shave') }}" role="listitem"><span class="header-nav-3-mega-product-label">剃鬚刀</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--personal" href="{{ browse_url('personal', 'shave') }}" role="listitem"><span class="header-nav-3-mega-product-label">鬚刨泡沫、啫喱</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--personal" href="{{ browse_url('personal', 'shave') }}" role="listitem"><span class="header-nav-3-mega-product-label">鬚後護理</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--personal" href="{{ browse_url('personal', 'shave') }}" role="listitem"><span class="header-nav-3-mega-product-label">電動鬚刨</span></a>
                                 </div>
                                 <div class="header-nav-3-mega-brands">
                                     <h3 class="header-nav-3-mega-brands-title">熱選品牌</h3>
@@ -609,10 +438,10 @@
                                     <a class="header-nav-3-mega-viewall" href="{{ browse_url('personal', 'intimate') }}">查看所有</a>
                                 </div>
                                 <div class="header-nav-3-mega-products header-nav-3-mega-products--personal" role="list">
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--personal" href="{{ browse_url('personal', 'intimate') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--2" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">安全套</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--personal" href="{{ browse_url('personal', 'intimate') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--3" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">潤滑劑</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--personal" href="{{ browse_url('personal', 'intimate') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--4" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">情趣用品</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--personal" href="{{ browse_url('personal', 'intimate') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--5" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">其他</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--personal" href="{{ browse_url('personal', 'intimate') }}" role="listitem"><span class="header-nav-3-mega-product-label">安全套</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--personal" href="{{ browse_url('personal', 'intimate') }}" role="listitem"><span class="header-nav-3-mega-product-label">潤滑劑</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--personal" href="{{ browse_url('personal', 'intimate') }}" role="listitem"><span class="header-nav-3-mega-product-label">情趣用品</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--personal" href="{{ browse_url('personal', 'intimate') }}" role="listitem"><span class="header-nav-3-mega-product-label">其他</span></a>
                                 </div>
                                 <div class="header-nav-3-mega-brands">
                                     <h3 class="header-nav-3-mega-brands-title">熱選品牌</h3>
@@ -630,10 +459,10 @@
                                     <a class="header-nav-3-mega-viewall" href="{{ browse_url('personal', 'adultcare') }}">查看所有</a>
                                 </div>
                                 <div class="header-nav-3-mega-products header-nav-3-mega-products--personal" role="list">
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--personal" href="{{ browse_url('personal', 'adultcare') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--6" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">成人紙尿片</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--personal" href="{{ browse_url('personal', 'adultcare') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--7" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">護墊</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--personal" href="{{ browse_url('personal', 'adultcare') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--8" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">皮膚護理</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--personal" href="{{ browse_url('personal', 'adultcare') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--1" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">清潔用品</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--personal" href="{{ browse_url('personal', 'adultcare') }}" role="listitem"><span class="header-nav-3-mega-product-label">成人紙尿片</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--personal" href="{{ browse_url('personal', 'adultcare') }}" role="listitem"><span class="header-nav-3-mega-product-label">護墊</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--personal" href="{{ browse_url('personal', 'adultcare') }}" role="listitem"><span class="header-nav-3-mega-product-label">皮膚護理</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--personal" href="{{ browse_url('personal', 'adultcare') }}" role="listitem"><span class="header-nav-3-mega-product-label">清潔用品</span></a>
                                 </div>
                                 <div class="header-nav-3-mega-brands">
                                     <h3 class="header-nav-3-mega-brands-title">熱選品牌</h3>
@@ -651,10 +480,10 @@
                                     <a class="header-nav-3-mega-viewall" href="{{ browse_url('personal', 'pharma') }}">查看所有</a>
                                 </div>
                                 <div class="header-nav-3-mega-products header-nav-3-mega-products--personal" role="list">
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--personal" href="{{ browse_url('personal', 'pharma') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--2" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">成藥</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--personal" href="{{ browse_url('personal', 'pharma') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--3" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">止痛、退燒</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--personal" href="{{ browse_url('personal', 'pharma') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--4" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">腸胃護理</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--personal" href="{{ browse_url('personal', 'pharma') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--5" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">外傷、消毒</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--personal" href="{{ browse_url('personal', 'pharma') }}" role="listitem"><span class="header-nav-3-mega-product-label">成藥</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--personal" href="{{ browse_url('personal', 'pharma') }}" role="listitem"><span class="header-nav-3-mega-product-label">止痛、退燒</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--personal" href="{{ browse_url('personal', 'pharma') }}" role="listitem"><span class="header-nav-3-mega-product-label">腸胃護理</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--personal" href="{{ browse_url('personal', 'pharma') }}" role="listitem"><span class="header-nav-3-mega-product-label">外傷、消毒</span></a>
                                 </div>
                                 <div class="header-nav-3-mega-brands">
                                     <h3 class="header-nav-3-mega-brands-title">熱選品牌</h3>
@@ -672,10 +501,10 @@
                                     <a class="header-nav-3-mega-viewall" href="{{ browse_url('personal', 'health') }}">查看所有</a>
                                 </div>
                                 <div class="header-nav-3-mega-products header-nav-3-mega-products--personal" role="list">
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--personal" href="{{ browse_url('personal', 'health') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--6" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">維他命</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--personal" href="{{ browse_url('personal', 'health') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--7" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">魚油、奧米加</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--personal" href="{{ browse_url('personal', 'health') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--8" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">益生菌</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--personal" href="{{ browse_url('personal', 'health') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--1" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">草本、傳統</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--personal" href="{{ browse_url('personal', 'health') }}" role="listitem"><span class="header-nav-3-mega-product-label">維他命</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--personal" href="{{ browse_url('personal', 'health') }}" role="listitem"><span class="header-nav-3-mega-product-label">魚油、奧米加</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--personal" href="{{ browse_url('personal', 'health') }}" role="listitem"><span class="header-nav-3-mega-product-label">益生菌</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--personal" href="{{ browse_url('personal', 'health') }}" role="listitem"><span class="header-nav-3-mega-product-label">草本、傳統</span></a>
                                 </div>
                                 <div class="header-nav-3-mega-brands">
                                     <h3 class="header-nav-3-mega-brands-title">熱選品牌</h3>
@@ -692,6 +521,7 @@
                 </div>
             </div>
             <div class="header-nav-3-mega-panel header-nav-3-mega-panel--home" role="region" aria-label="{{ _('家居生活') }}" id="header-nav-home-panel" aria-labelledby="header-nav-home-trigger" aria-hidden="true">
+                <div class="header-nav-3-mega-hover-bridge" aria-hidden="true"></div>
                 <span class="header-nav-3-mega-caret" aria-hidden="true"></span>
                 <div class="header-shell-inner header-nav-3-mega-shell">
                     <div class="header-nav-3-mega-card">
@@ -716,13 +546,13 @@
                                     <a class="header-nav-3-mega-viewall" href="{{ browse_url('home', 'tissue') }}">查看所有</a>
                                 </div>
                                 <div class="header-nav-3-mega-products header-nav-3-mega-products--home" role="list">
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--home" href="{{ browse_url('home', 'tissue') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--1" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">廁紙、卷紙</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--home" href="{{ browse_url('home', 'tissue') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--2" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">盒裝／軟抽紙巾、抹手紙</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--home" href="{{ browse_url('home', 'tissue') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--3" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">廚房紙</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--home" href="{{ browse_url('home', 'tissue') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--4" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">迷你紙手巾</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--home" href="{{ browse_url('home', 'tissue') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--5" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">清潔濕紙巾</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--home" href="{{ browse_url('home', 'tissue') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--6" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">個人護理濕紙巾及濕廁紙</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--home" href="{{ browse_url('home', 'tissue') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--7" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">原箱優惠</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--home" href="{{ browse_url('home', 'tissue') }}" role="listitem"><span class="header-nav-3-mega-product-label">廁紙、卷紙</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--home" href="{{ browse_url('home', 'tissue') }}" role="listitem"><span class="header-nav-3-mega-product-label">盒裝／軟抽紙巾、抹手紙</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--home" href="{{ browse_url('home', 'tissue') }}" role="listitem"><span class="header-nav-3-mega-product-label">廚房紙</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--home" href="{{ browse_url('home', 'tissue') }}" role="listitem"><span class="header-nav-3-mega-product-label">迷你紙手巾</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--home" href="{{ browse_url('home', 'tissue') }}" role="listitem"><span class="header-nav-3-mega-product-label">清潔濕紙巾</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--home" href="{{ browse_url('home', 'tissue') }}" role="listitem"><span class="header-nav-3-mega-product-label">個人護理濕紙巾及濕廁紙</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--home" href="{{ browse_url('home', 'tissue') }}" role="listitem"><span class="header-nav-3-mega-product-label">原箱優惠</span></a>
                                 </div>
                                 <div class="header-nav-3-mega-brands">
                                     <h3 class="header-nav-3-mega-brands-title">熱選品牌</h3>
@@ -742,10 +572,10 @@
                                     <a class="header-nav-3-mega-viewall" href="{{ browse_url('home', 'homeclean') }}">查看所有</a>
                                 </div>
                                 <div class="header-nav-3-mega-products header-nav-3-mega-products--home" role="list">
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--home" href="{{ browse_url('home', 'homeclean') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--2" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">多用途清潔劑</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--home" href="{{ browse_url('home', 'homeclean') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--3" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">地板清潔</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--home" href="{{ browse_url('home', 'homeclean') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--4" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">玻璃清潔</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--home" href="{{ browse_url('home', 'homeclean') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--5" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">除塵、抹布</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--home" href="{{ browse_url('home', 'homeclean') }}" role="listitem"><span class="header-nav-3-mega-product-label">多用途清潔劑</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--home" href="{{ browse_url('home', 'homeclean') }}" role="listitem"><span class="header-nav-3-mega-product-label">地板清潔</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--home" href="{{ browse_url('home', 'homeclean') }}" role="listitem"><span class="header-nav-3-mega-product-label">玻璃清潔</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--home" href="{{ browse_url('home', 'homeclean') }}" role="listitem"><span class="header-nav-3-mega-product-label">除塵、抹布</span></a>
                                 </div>
                                 <div class="header-nav-3-mega-brands">
                                     <h3 class="header-nav-3-mega-brands-title">熱選品牌</h3>
@@ -763,10 +593,10 @@
                                     <a class="header-nav-3-mega-viewall" href="{{ browse_url('home', 'kitchenclean') }}">查看所有</a>
                                 </div>
                                 <div class="header-nav-3-mega-products header-nav-3-mega-products--home" role="list">
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--home" href="{{ browse_url('home', 'kitchenclean') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--6" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">洗潔精</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--home" href="{{ browse_url('home', 'kitchenclean') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--7" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">百潔布、海綿</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--home" href="{{ browse_url('home', 'kitchenclean') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--8" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">廚房除油</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--home" href="{{ browse_url('home', 'kitchenclean') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--1" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">垃圾袋</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--home" href="{{ browse_url('home', 'kitchenclean') }}" role="listitem"><span class="header-nav-3-mega-product-label">洗潔精</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--home" href="{{ browse_url('home', 'kitchenclean') }}" role="listitem"><span class="header-nav-3-mega-product-label">百潔布、海綿</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--home" href="{{ browse_url('home', 'kitchenclean') }}" role="listitem"><span class="header-nav-3-mega-product-label">廚房除油</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--home" href="{{ browse_url('home', 'kitchenclean') }}" role="listitem"><span class="header-nav-3-mega-product-label">垃圾袋</span></a>
                                 </div>
                                 <div class="header-nav-3-mega-brands">
                                     <h3 class="header-nav-3-mega-brands-title">熱選品牌</h3>
@@ -784,10 +614,10 @@
                                     <a class="header-nav-3-mega-viewall" href="{{ browse_url('home', 'bathroomclean') }}">查看所有</a>
                                 </div>
                                 <div class="header-nav-3-mega-products header-nav-3-mega-products--home" role="list">
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--home" href="{{ browse_url('home', 'bathroomclean') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--2" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">浴室清潔劑</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--home" href="{{ browse_url('home', 'bathroomclean') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--3" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">潔廁劑</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--home" href="{{ browse_url('home', 'bathroomclean') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--4" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">防霉、除霉</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--home" href="{{ browse_url('home', 'bathroomclean') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--5" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">水龍頭、瓷磚清潔</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--home" href="{{ browse_url('home', 'bathroomclean') }}" role="listitem"><span class="header-nav-3-mega-product-label">浴室清潔劑</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--home" href="{{ browse_url('home', 'bathroomclean') }}" role="listitem"><span class="header-nav-3-mega-product-label">潔廁劑</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--home" href="{{ browse_url('home', 'bathroomclean') }}" role="listitem"><span class="header-nav-3-mega-product-label">防霉、除霉</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--home" href="{{ browse_url('home', 'bathroomclean') }}" role="listitem"><span class="header-nav-3-mega-product-label">水龍頭、瓷磚清潔</span></a>
                                 </div>
                                 <div class="header-nav-3-mega-brands">
                                     <h3 class="header-nav-3-mega-brands-title">熱選品牌</h3>
@@ -805,10 +635,10 @@
                                     <a class="header-nav-3-mega-viewall" href="{{ browse_url('home', 'laundry') }}">查看所有</a>
                                 </div>
                                 <div class="header-nav-3-mega-products header-nav-3-mega-products--home" role="list">
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--home" href="{{ browse_url('home', 'laundry') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--6" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">洗衣液</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--home" href="{{ browse_url('home', 'laundry') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--7" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">洗衣粉</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--home" href="{{ browse_url('home', 'laundry') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--8" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">洗衣珠</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--home" href="{{ browse_url('home', 'laundry') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--1" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">柔順劑、漂白水</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--home" href="{{ browse_url('home', 'laundry') }}" role="listitem"><span class="header-nav-3-mega-product-label">洗衣液</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--home" href="{{ browse_url('home', 'laundry') }}" role="listitem"><span class="header-nav-3-mega-product-label">洗衣粉</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--home" href="{{ browse_url('home', 'laundry') }}" role="listitem"><span class="header-nav-3-mega-product-label">洗衣珠</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--home" href="{{ browse_url('home', 'laundry') }}" role="listitem"><span class="header-nav-3-mega-product-label">柔順劑、漂白水</span></a>
                                 </div>
                                 <div class="header-nav-3-mega-brands">
                                     <h3 class="header-nav-3-mega-brands-title">熱選品牌</h3>
@@ -826,10 +656,10 @@
                                     <a class="header-nav-3-mega-viewall" href="{{ browse_url('home', 'kitchenware') }}">查看所有</a>
                                 </div>
                                 <div class="header-nav-3-mega-products header-nav-3-mega-products--home" role="list">
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--home" href="{{ browse_url('home', 'kitchenware') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--2" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">煮食用具</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--home" href="{{ browse_url('home', 'kitchenware') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--3" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">餐具、碗碟</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--home" href="{{ browse_url('home', 'kitchenware') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--4" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">保鮮、儲存</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--home" href="{{ browse_url('home', 'kitchenware') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--5" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">烘焙用品</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--home" href="{{ browse_url('home', 'kitchenware') }}" role="listitem"><span class="header-nav-3-mega-product-label">煮食用具</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--home" href="{{ browse_url('home', 'kitchenware') }}" role="listitem"><span class="header-nav-3-mega-product-label">餐具、碗碟</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--home" href="{{ browse_url('home', 'kitchenware') }}" role="listitem"><span class="header-nav-3-mega-product-label">保鮮、儲存</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--home" href="{{ browse_url('home', 'kitchenware') }}" role="listitem"><span class="header-nav-3-mega-product-label">烘焙用品</span></a>
                                 </div>
                                 <div class="header-nav-3-mega-brands">
                                     <h3 class="header-nav-3-mega-brands-title">熱選品牌</h3>
@@ -847,10 +677,10 @@
                                     <a class="header-nav-3-mega-viewall" href="{{ browse_url('home', 'appliance') }}">查看所有</a>
                                 </div>
                                 <div class="header-nav-3-mega-products header-nav-3-mega-products--home" role="list">
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--home" href="{{ browse_url('home', 'appliance') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--6" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">小型家電</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--home" href="{{ browse_url('home', 'appliance') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--7" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">廚房電器</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--home" href="{{ browse_url('home', 'appliance') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--8" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">影音配件</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--home" href="{{ browse_url('home', 'appliance') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--1" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">電池、充電</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--home" href="{{ browse_url('home', 'appliance') }}" role="listitem"><span class="header-nav-3-mega-product-label">小型家電</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--home" href="{{ browse_url('home', 'appliance') }}" role="listitem"><span class="header-nav-3-mega-product-label">廚房電器</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--home" href="{{ browse_url('home', 'appliance') }}" role="listitem"><span class="header-nav-3-mega-product-label">影音配件</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--home" href="{{ browse_url('home', 'appliance') }}" role="listitem"><span class="header-nav-3-mega-product-label">電池、充電</span></a>
                                 </div>
                                 <div class="header-nav-3-mega-brands">
                                     <h3 class="header-nav-3-mega-brands-title">熱選品牌</h3>
@@ -868,10 +698,10 @@
                                     <a class="header-nav-3-mega-viewall" href="{{ browse_url('home', 'decor') }}">查看所有</a>
                                 </div>
                                 <div class="header-nav-3-mega-products header-nav-3-mega-products--home" role="list">
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--home" href="{{ browse_url('home', 'decor') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--2" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">收納整理</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--home" href="{{ browse_url('home', 'decor') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--3" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">寢具、毛巾</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--home" href="{{ browse_url('home', 'decor') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--4" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">燈飾、擺設</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--home" href="{{ browse_url('home', 'decor') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--5" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">季節用品</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--home" href="{{ browse_url('home', 'decor') }}" role="listitem"><span class="header-nav-3-mega-product-label">收納整理</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--home" href="{{ browse_url('home', 'decor') }}" role="listitem"><span class="header-nav-3-mega-product-label">寢具、毛巾</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--home" href="{{ browse_url('home', 'decor') }}" role="listitem"><span class="header-nav-3-mega-product-label">燈飾、擺設</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--home" href="{{ browse_url('home', 'decor') }}" role="listitem"><span class="header-nav-3-mega-product-label">季節用品</span></a>
                                 </div>
                                 <div class="header-nav-3-mega-brands">
                                     <h3 class="header-nav-3-mega-brands-title">熱選品牌</h3>
@@ -889,10 +719,10 @@
                                     <a class="header-nav-3-mega-viewall" href="{{ browse_url('home', 'travelgarden') }}">查看所有</a>
                                 </div>
                                 <div class="header-nav-3-mega-products header-nav-3-mega-products--home" role="list">
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--home" href="{{ browse_url('home', 'travelgarden') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--6" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">旅行用品</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--home" href="{{ browse_url('home', 'travelgarden') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--7" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">行李箱、袋</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--home" href="{{ browse_url('home', 'travelgarden') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--8" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">園藝工具</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--home" href="{{ browse_url('home', 'travelgarden') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--1" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">花肥、種植</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--home" href="{{ browse_url('home', 'travelgarden') }}" role="listitem"><span class="header-nav-3-mega-product-label">旅行用品</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--home" href="{{ browse_url('home', 'travelgarden') }}" role="listitem"><span class="header-nav-3-mega-product-label">行李箱、袋</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--home" href="{{ browse_url('home', 'travelgarden') }}" role="listitem"><span class="header-nav-3-mega-product-label">園藝工具</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--home" href="{{ browse_url('home', 'travelgarden') }}" role="listitem"><span class="header-nav-3-mega-product-label">花肥、種植</span></a>
                                 </div>
                                 <div class="header-nav-3-mega-brands">
                                     <h3 class="header-nav-3-mega-brands-title">熱選品牌</h3>
@@ -910,10 +740,10 @@
                                     <a class="header-nav-3-mega-viewall" href="{{ browse_url('home', 'homecare') }}">查看所有</a>
                                 </div>
                                 <div class="header-nav-3-mega-products header-nav-3-mega-products--home" role="list">
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--home" href="{{ browse_url('home', 'homecare') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--2" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">除臭、芳香</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--home" href="{{ browse_url('home', 'homecare') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--3" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">驅蟲、防蟲</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--home" href="{{ browse_url('home', 'homecare') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--4" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">除甲醛、淨化</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--home" href="{{ browse_url('home', 'homecare') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--5" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">其他護理</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--home" href="{{ browse_url('home', 'homecare') }}" role="listitem"><span class="header-nav-3-mega-product-label">除臭、芳香</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--home" href="{{ browse_url('home', 'homecare') }}" role="listitem"><span class="header-nav-3-mega-product-label">驅蟲、防蟲</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--home" href="{{ browse_url('home', 'homecare') }}" role="listitem"><span class="header-nav-3-mega-product-label">除甲醛、淨化</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--home" href="{{ browse_url('home', 'homecare') }}" role="listitem"><span class="header-nav-3-mega-product-label">其他護理</span></a>
                                 </div>
                                 <div class="header-nav-3-mega-brands">
                                     <h3 class="header-nav-3-mega-brands-title">熱選品牌</h3>
@@ -930,6 +760,7 @@
                 </div>
             </div>
             <div class="header-nav-3-mega-panel header-nav-3-mega-panel--pet" role="region" aria-label="{{ _('寵物區') }}" id="header-nav-pet-panel" aria-labelledby="header-nav-pet-trigger" aria-hidden="true">
+                <div class="header-nav-3-mega-hover-bridge" aria-hidden="true"></div>
                 <span class="header-nav-3-mega-caret" aria-hidden="true"></span>
                 <div class="header-shell-inner header-nav-3-mega-shell">
                     <div class="header-nav-3-mega-card">
@@ -950,11 +781,11 @@
                                     <a class="header-nav-3-mega-viewall" href="{{ browse_url('pet', 'cat') }}">查看所有</a>
                                 </div>
                                 <div class="header-nav-3-mega-products header-nav-3-mega-products--pet" role="list">
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--pet" href="{{ browse_url('pet', 'cat') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--1" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">貓食品</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--pet" href="{{ browse_url('pet', 'cat') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--2" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">貓砂</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--pet" href="{{ browse_url('pet', 'cat') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--3" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">貓玩具、配件</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--pet" href="{{ browse_url('pet', 'cat') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--4" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">貓用具、傢俱</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--pet" href="{{ browse_url('pet', 'cat') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--5" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">貓清潔美容</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--pet" href="{{ browse_url('pet', 'cat') }}" role="listitem"><span class="header-nav-3-mega-product-label">貓食品</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--pet" href="{{ browse_url('pet', 'cat') }}" role="listitem"><span class="header-nav-3-mega-product-label">貓砂</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--pet" href="{{ browse_url('pet', 'cat') }}" role="listitem"><span class="header-nav-3-mega-product-label">貓玩具、配件</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--pet" href="{{ browse_url('pet', 'cat') }}" role="listitem"><span class="header-nav-3-mega-product-label">貓用具、傢俱</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--pet" href="{{ browse_url('pet', 'cat') }}" role="listitem"><span class="header-nav-3-mega-product-label">貓清潔美容</span></a>
                                 </div>
                                 <div class="header-nav-3-mega-brands">
                                     <h3 class="header-nav-3-mega-brands-title">熱選品牌</h3>
@@ -976,11 +807,11 @@
                                     <a class="header-nav-3-mega-viewall" href="{{ browse_url('pet', 'dog') }}">查看所有</a>
                                 </div>
                                 <div class="header-nav-3-mega-products header-nav-3-mega-products--pet" role="list">
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--pet" href="{{ browse_url('pet', 'dog') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--6" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">狗糧、狗零食</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--pet" href="{{ browse_url('pet', 'dog') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--7" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">狗玩具、配件</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--pet" href="{{ browse_url('pet', 'dog') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--8" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">狗牽引、項圈</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--pet" href="{{ browse_url('pet', 'dog') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--1" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">狗床、傢俱</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--pet" href="{{ browse_url('pet', 'dog') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--2" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">狗清潔美容</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--pet" href="{{ browse_url('pet', 'dog') }}" role="listitem"><span class="header-nav-3-mega-product-label">狗糧、狗零食</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--pet" href="{{ browse_url('pet', 'dog') }}" role="listitem"><span class="header-nav-3-mega-product-label">狗玩具、配件</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--pet" href="{{ browse_url('pet', 'dog') }}" role="listitem"><span class="header-nav-3-mega-product-label">狗牽引、項圈</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--pet" href="{{ browse_url('pet', 'dog') }}" role="listitem"><span class="header-nav-3-mega-product-label">狗床、傢俱</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--pet" href="{{ browse_url('pet', 'dog') }}" role="listitem"><span class="header-nav-3-mega-product-label">狗清潔美容</span></a>
                                 </div>
                                 <div class="header-nav-3-mega-brands">
                                     <h3 class="header-nav-3-mega-brands-title">熱選品牌</h3>
@@ -998,10 +829,10 @@
                                     <a class="header-nav-3-mega-viewall" href="{{ browse_url('pet', 'other') }}">查看所有</a>
                                 </div>
                                 <div class="header-nav-3-mega-products header-nav-3-mega-products--pet" role="list">
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--pet" href="{{ browse_url('pet', 'other') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--3" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">小動物用品</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--pet" href="{{ browse_url('pet', 'other') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--4" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">鳥類用品</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--pet" href="{{ browse_url('pet', 'other') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--5" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">水族用品</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--pet" href="{{ browse_url('pet', 'other') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--6" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">爬蟲、兩棲</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--pet" href="{{ browse_url('pet', 'other') }}" role="listitem"><span class="header-nav-3-mega-product-label">小動物用品</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--pet" href="{{ browse_url('pet', 'other') }}" role="listitem"><span class="header-nav-3-mega-product-label">鳥類用品</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--pet" href="{{ browse_url('pet', 'other') }}" role="listitem"><span class="header-nav-3-mega-product-label">水族用品</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--pet" href="{{ browse_url('pet', 'other') }}" role="listitem"><span class="header-nav-3-mega-product-label">爬蟲、兩棲</span></a>
                                 </div>
                                 <div class="header-nav-3-mega-brands">
                                     <h3 class="header-nav-3-mega-brands-title">熱選品牌</h3>
@@ -1019,10 +850,10 @@
                                     <a class="header-nav-3-mega-viewall" href="{{ browse_url('pet', 'clean') }}">查看所有</a>
                                 </div>
                                 <div class="header-nav-3-mega-products header-nav-3-mega-products--pet" role="list">
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--pet" href="{{ browse_url('pet', 'clean') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--7" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">去漬、除臭噴霧</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--pet" href="{{ browse_url('pet', 'clean') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--8" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">地板、地毯清潔</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--pet" href="{{ browse_url('pet', 'clean') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--1" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">清潔濕紙巾</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--pet" href="{{ browse_url('pet', 'clean') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--2" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">吸毛、除毛工具</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--pet" href="{{ browse_url('pet', 'clean') }}" role="listitem"><span class="header-nav-3-mega-product-label">去漬、除臭噴霧</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--pet" href="{{ browse_url('pet', 'clean') }}" role="listitem"><span class="header-nav-3-mega-product-label">地板、地毯清潔</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--pet" href="{{ browse_url('pet', 'clean') }}" role="listitem"><span class="header-nav-3-mega-product-label">清潔濕紙巾</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--pet" href="{{ browse_url('pet', 'clean') }}" role="listitem"><span class="header-nav-3-mega-product-label">吸毛、除毛工具</span></a>
                                 </div>
                                 <div class="header-nav-3-mega-brands">
                                     <h3 class="header-nav-3-mega-brands-title">熱選品牌</h3>
@@ -1040,10 +871,10 @@
                                     <a class="header-nav-3-mega-viewall" href="{{ browse_url('pet', 'food') }}">查看所有</a>
                                 </div>
                                 <div class="header-nav-3-mega-products header-nav-3-mega-products--pet" role="list">
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--pet" href="{{ browse_url('pet', 'food') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--3" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">貓糧</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--pet" href="{{ browse_url('pet', 'food') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--4" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">狗糧</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--pet" href="{{ browse_url('pet', 'food') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--5" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">零食、肉泥</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--pet" href="{{ browse_url('pet', 'food') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--6" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">營養保健</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--pet" href="{{ browse_url('pet', 'food') }}" role="listitem"><span class="header-nav-3-mega-product-label">貓糧</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--pet" href="{{ browse_url('pet', 'food') }}" role="listitem"><span class="header-nav-3-mega-product-label">狗糧</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--pet" href="{{ browse_url('pet', 'food') }}" role="listitem"><span class="header-nav-3-mega-product-label">零食、肉泥</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--pet" href="{{ browse_url('pet', 'food') }}" role="listitem"><span class="header-nav-3-mega-product-label">營養保健</span></a>
                                 </div>
                                 <div class="header-nav-3-mega-brands">
                                     <h3 class="header-nav-3-mega-brands-title">熱選品牌</h3>
@@ -1061,10 +892,10 @@
                                     <a class="header-nav-3-mega-viewall" href="{{ browse_url('pet', 'supplies') }}">查看所有</a>
                                 </div>
                                 <div class="header-nav-3-mega-products header-nav-3-mega-products--pet" role="list">
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--pet" href="{{ browse_url('pet', 'supplies') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--7" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">餐具、水具</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--pet" href="{{ browse_url('pet', 'supplies') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--8" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">籠子、運輸籠</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--pet" href="{{ browse_url('pet', 'supplies') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--1" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">訓練、行為</span></a>
-                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--pet" href="{{ browse_url('pet', 'supplies') }}" role="listitem"><span class="header-nav-3-mega-product-visual header-nav-3-mega-product-visual--2" aria-hidden="true"></span><span class="header-nav-3-mega-product-label">健康護理</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--pet" href="{{ browse_url('pet', 'supplies') }}" role="listitem"><span class="header-nav-3-mega-product-label">餐具、水具</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--pet" href="{{ browse_url('pet', 'supplies') }}" role="listitem"><span class="header-nav-3-mega-product-label">籠子、運輸籠</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--pet" href="{{ browse_url('pet', 'supplies') }}" role="listitem"><span class="header-nav-3-mega-product-label">訓練、行為</span></a>
+                                    <a class="header-nav-3-mega-product header-nav-3-mega-product--pet" href="{{ browse_url('pet', 'supplies') }}" role="listitem"><span class="header-nav-3-mega-product-label">健康護理</span></a>
                                 </div>
                                 <div class="header-nav-3-mega-brands">
                                     <h3 class="header-nav-3-mega-brands-title">熱選品牌</h3>
@@ -1266,19 +1097,15 @@
     </script>
     <script>
         (function () {
-            var nav = document.querySelector('.header-nav-3');
-            var trigger = document.querySelector('.header-nav-3-maternity-trigger');
-            var panel = document.querySelector('.header-nav-3-mega-panel--maternity');
-            var navScroll = document.querySelector('.header-nav-3-inner');
-            if (!nav || !trigger || !panel) return;
-
-            var tabs = panel.querySelectorAll('[data-mega-tab]');
-            var panes = panel.querySelectorAll('[data-mega-pane]');
+            var wrap = document.querySelector('.header-nav-2-account');
+            var trigger = wrap && wrap.querySelector('.header-nav-2-account-trigger');
+            var panel = wrap && wrap.querySelector('.header-nav-2-account-panel');
+            if (!wrap || !trigger || !panel) return;
 
             function setOpen(open) {
-                panel.setAttribute('aria-hidden', open ? 'false' : 'true');
+                wrap.classList.toggle('is-open', open);
                 trigger.setAttribute('aria-expanded', open ? 'true' : 'false');
-                if (open) positionMegaCaret();
+                panel.setAttribute('aria-hidden', open ? 'false' : 'true');
             }
 
             function open() {
@@ -1289,468 +1116,232 @@
                 setOpen(false);
             }
 
-            function positionMegaCaret() {
-                var pr = panel.getBoundingClientRect();
-                var tr = trigger.getBoundingClientRect();
-                var cx = tr.left + tr.width / 2 - pr.left;
-                var pad = 20;
-                var clamped = Math.min(Math.max(pad, Math.round(cx)), Math.max(pad, pr.width - pad));
-                panel.style.setProperty('--mega-caret-x', clamped + 'px');
-            }
-
-            function activateMegaTab(id) {
-                tabs.forEach(function (t) {
-                    var on = t.getAttribute('data-mega-tab') === id;
-                    t.classList.toggle('is-active', on);
-                    t.setAttribute('aria-selected', on ? 'true' : 'false');
-                });
-                panes.forEach(function (p) {
-                    var on = p.getAttribute('data-mega-pane') === id;
-                    p.classList.toggle('is-active', on);
-                    p.setAttribute('aria-hidden', on ? 'false' : 'true');
-                });
-            }
-
-            tabs.forEach(function (t) {
-                t.setAttribute('role', 'tab');
-                t.setAttribute('tabindex', '0');
-                t.addEventListener('mouseenter', function () {
-                    activateMegaTab(t.getAttribute('data-mega-tab'));
-                });
-                t.addEventListener('focus', function () {
-                    activateMegaTab(t.getAttribute('data-mega-tab'));
-                });
-            });
-            if (tabs.length) {
-                activateMegaTab(tabs[0].getAttribute('data-mega-tab'));
-            }
-
-            function isInsideMaternityUi(node) {
-                return !!(node && (node === trigger || node === panel || trigger.contains(node) || panel.contains(node)));
+            function isInsideAccountUi(node) {
+                return !!(node && (node === wrap || node === trigger || node === panel || wrap.contains(node)));
             }
 
             function maybeCloseHover(e) {
-                if (isInsideMaternityUi(e.relatedTarget)) return;
+                if (isInsideAccountUi(e.relatedTarget)) return;
                 close();
             }
 
-            trigger.addEventListener('mouseenter', open);
-            panel.addEventListener('mouseenter', open);
-            trigger.addEventListener('mouseleave', maybeCloseHover);
-            panel.addEventListener('mouseleave', maybeCloseHover);
+            wrap.addEventListener('mouseenter', open);
+            wrap.addEventListener('mouseleave', maybeCloseHover);
 
-            window.addEventListener('resize', function () {
-                if (panel.getAttribute('aria-hidden') === 'false') positionMegaCaret();
+            wrap.addEventListener('focusin', function (e) {
+                if (wrap.contains(e.target)) open();
             });
-            if (navScroll) {
-                navScroll.addEventListener('scroll', function () {
-                    if (panel.getAttribute('aria-hidden') === 'false') positionMegaCaret();
-                });
-            }
 
-            nav.addEventListener('focusin', function (e) {
-                if (trigger.contains(e.target) || panel.contains(e.target)) open();
-            });
-            nav.addEventListener('focusout', function (e) {
-                var rel = e.relatedTarget;
-                if (rel && nav.contains(rel)) {
-                    if (trigger.contains(rel) || panel.contains(rel)) return;
-                    close();
-                    return;
-                }
+            wrap.addEventListener('focusout', function (e) {
+                if (isInsideAccountUi(e.relatedTarget)) return;
                 close();
             });
         })();
     </script>
     <script>
         (function () {
+            var hub = (window.__headerNav3Mega = window.__headerNav3Mega || {
+                menus: {},
+                register: function (k, api) { this.menus[k] = api; },
+                closeOthers: function (active) {
+                    Object.keys(this.menus).forEach(function (k) {
+                        if (k !== active && this.menus[k] && this.menus[k].closeImmediate) this.menus[k].closeImmediate();
+                    }, this);
+                },
+                closeAll: function () {
+                    Object.keys(this.menus).forEach(function (k) {
+                        if (this.menus[k] && this.menus[k].closeImmediate) this.menus[k].closeImmediate();
+                    }, this);
+                }
+            });
+            if (!hub._megaDismissDoc) {
+                hub._megaDismissDoc = true;
+                document.addEventListener(
+                    'pointerdown',
+                    function (e) {
+                        var n = document.querySelector('.header-nav-3');
+                        if (n && n.contains(e.target)) return;
+                        hub.closeAll();
+                    },
+                    true
+                );
+                document.addEventListener('keydown', function (e) {
+                    if (e.key === 'Escape') hub.closeAll();
+                });
+            }
+
             var nav = document.querySelector('.header-nav-3');
-            var trigger = document.querySelector('.header-nav-3-food-trigger');
-            var panel = document.querySelector('.header-nav-3-mega-panel--food');
             var navScroll = document.querySelector('.header-nav-3-inner');
-            if (!nav || !trigger || !panel) return;
+            if (!nav) return;
 
-            var tabs = panel.querySelectorAll('[data-food-tab]');
-            var panes = panel.querySelectorAll('[data-food-pane]');
+            /* key, item, trigger, panel, tabAttr, paneAttr */
+            var ROWS = [
+                ['maternity', '.header-nav-3-item--maternity', '.header-nav-3-maternity-trigger', '.header-nav-3-mega-panel--maternity', 'data-mega-tab', 'data-mega-pane'],
+                ['food', '.header-nav-3-item--food', '.header-nav-3-food-trigger', '.header-nav-3-mega-panel--food', 'data-food-tab', 'data-food-pane'],
+                ['personal', '.header-nav-3-item--personal', '.header-nav-3-personal-trigger', '.header-nav-3-mega-panel--personal', 'data-personal-tab', 'data-personal-pane'],
+                ['home', '.header-nav-3-item--home', '.header-nav-3-home-trigger', '.header-nav-3-mega-panel--home', 'data-home-tab', 'data-home-pane'],
+                ['pet', '.header-nav-3-item--pet', '.header-nav-3-pet-trigger', '.header-nav-3-mega-panel--pet', 'data-pet-tab', 'data-pet-pane']
+            ];
 
-            function setOpen(open) {
-                panel.setAttribute('aria-hidden', open ? 'false' : 'true');
-                trigger.setAttribute('aria-expanded', open ? 'true' : 'false');
-                if (open) positionMegaCaret();
+            function hitIn(m, node) {
+                if (!node) return false;
+                if (node === m.item || node === m.trigger || m.item.contains(node)) return true;
+                if (m.bridge && (node === m.bridge || m.bridge.contains(node))) return true;
+                if (m.card && (node === m.card || m.card.contains(node))) return true;
+                return false;
             }
 
-            function open() {
-                setOpen(true);
-            }
+            var megas = [];
+            ROWS.forEach(function (row) {
+                var key = row[0];
+                var item = document.querySelector(row[1]);
+                var trigger = document.querySelector(row[2]);
+                var panel = document.querySelector(row[3]);
+                var shell = panel && panel.querySelector('.header-nav-3-mega-shell');
+                if (!item || !trigger || !panel || !shell) return;
 
-            function close() {
-                setOpen(false);
-            }
+                var tabA = row[4];
+                var paneA = row[5];
+                var m = {
+                    key: key,
+                    item: item,
+                    trigger: trigger,
+                    panel: panel,
+                    card: panel.querySelector('.header-nav-3-mega-card'),
+                    bridge: panel.querySelector('.header-nav-3-mega-hover-bridge'),
+                    tabA: tabA,
+                    paneA: paneA,
+                    tabs: panel.querySelectorAll('[' + tabA + ']'),
+                    panes: panel.querySelectorAll('[' + paneA + ']'),
+                    timer: null
+                };
 
-            function positionMegaCaret() {
-                var pr = panel.getBoundingClientRect();
-                var tr = trigger.getBoundingClientRect();
-                var cx = tr.left + tr.width / 2 - pr.left;
-                var pad = 20;
-                var clamped = Math.min(Math.max(pad, Math.round(cx)), Math.max(pad, pr.width - pad));
-                panel.style.setProperty('--mega-caret-x', clamped + 'px');
-            }
+                function caret() {
+                    var pr = panel.getBoundingClientRect();
+                    var tr = item.getBoundingClientRect();
+                    var cx = tr.left + tr.width / 2 - pr.left;
+                    var pad = 20;
+                    var x = Math.min(Math.max(pad, Math.round(cx)), Math.max(pad, pr.width - pad));
+                    panel.style.setProperty('--mega-caret-x', x + 'px');
+                }
 
-            function activateMegaTab(id) {
-                tabs.forEach(function (t) {
-                    var on = t.getAttribute('data-food-tab') === id;
-                    t.classList.toggle('is-active', on);
-                    t.setAttribute('aria-selected', on ? 'true' : 'false');
+                function setOpen(on) {
+                    panel.classList.toggle('is-open', on);
+                    trigger.classList.toggle('is-open', on);
+                    panel.setAttribute('aria-hidden', on ? 'false' : 'true');
+                    trigger.setAttribute('aria-expanded', on ? 'true' : 'false');
+                    if (on) caret();
+                }
+
+                function clearTimer() {
+                    if (m.timer) {
+                        clearTimeout(m.timer);
+                        m.timer = null;
+                    }
+                }
+
+                function close() {
+                    clearTimer();
+                    setOpen(false);
+                }
+
+                function open() {
+                    clearTimer();
+                    hub.closeOthers(key);
+                    setOpen(true);
+                }
+
+                function scheduleClose() {
+                    clearTimer();
+                    m.timer = setTimeout(close, 320);
+                }
+
+                function onLeave(e) {
+                    if (hitIn(m, e.relatedTarget)) return;
+                    scheduleClose();
+                }
+
+                function activateTab(id) {
+                    m.tabs.forEach(function (t) {
+                        var on = t.getAttribute(tabA) === id;
+                        t.classList.toggle('is-active', on);
+                        t.setAttribute('aria-selected', on ? 'true' : 'false');
+                    });
+                    m.panes.forEach(function (p) {
+                        var on = p.getAttribute(paneA) === id;
+                        p.classList.toggle('is-active', on);
+                        p.setAttribute('aria-hidden', on ? 'false' : 'true');
+                    });
+                }
+
+                m.tabs.forEach(function (tab) {
+                    tab.setAttribute('role', 'tab');
+                    tab.setAttribute('tabindex', '0');
+                    var id = tab.getAttribute(tabA);
+                    tab.addEventListener('mouseenter', function () {
+                        activateTab(id);
+                    });
+                    tab.addEventListener('focus', function () {
+                        activateTab(id);
+                    });
                 });
-                panes.forEach(function (p) {
-                    var on = p.getAttribute('data-food-pane') === id;
-                    p.classList.toggle('is-active', on);
-                    p.setAttribute('aria-hidden', on ? 'false' : 'true');
-                });
-            }
+                if (m.tabs.length) activateTab(m.tabs[0].getAttribute(tabA));
 
-            tabs.forEach(function (t) {
-                t.setAttribute('role', 'tab');
-                t.setAttribute('tabindex', '0');
-                t.addEventListener('mouseenter', function () {
-                    activateMegaTab(t.getAttribute('data-food-tab'));
+                [item, m.bridge, m.card].filter(Boolean).forEach(function (el) {
+                    el.addEventListener('mouseenter', open);
+                    el.addEventListener('mouseleave', onLeave);
                 });
-                t.addEventListener('focus', function () {
-                    activateMegaTab(t.getAttribute('data-food-tab'));
-                });
+
+                hub.register(key, { closeImmediate: close });
+
+                m.close = close;
+                m.open = open;
+                m.clearTimer = clearTimer;
+                m.hitIn = function (n) {
+                    return hitIn(m, n);
+                };
+                m.onPtr = function (e) {
+                    if (!panel.classList.contains('is-open')) return;
+                    if (hitIn(m, e.target)) return;
+                    close();
+                };
+                m.caret = caret;
+                megas.push(m);
             });
-            if (tabs.length) {
-                activateMegaTab(tabs[0].getAttribute('data-food-tab'));
-            }
 
-            function isInsideFoodUi(node) {
-                return !!(node && (node === trigger || node === panel || trigger.contains(node) || panel.contains(node)));
-            }
+            if (!megas.length) return;
 
-            function maybeCloseHover(e) {
-                if (isInsideFoodUi(e.relatedTarget)) return;
-                close();
-            }
-
-            trigger.addEventListener('mouseenter', open);
-            panel.addEventListener('mouseenter', open);
-            trigger.addEventListener('mouseleave', maybeCloseHover);
-            panel.addEventListener('mouseleave', maybeCloseHover);
-
-            window.addEventListener('resize', function () {
-                if (panel.getAttribute('aria-hidden') === 'false') positionMegaCaret();
-            });
-            if (navScroll) {
-                navScroll.addEventListener('scroll', function () {
-                    if (panel.getAttribute('aria-hidden') === 'false') positionMegaCaret();
+            function repositionCarets() {
+                megas.forEach(function (m) {
+                    if (m.panel.getAttribute('aria-hidden') === 'false') m.caret();
                 });
             }
+            window.addEventListener('resize', repositionCarets);
+            if (navScroll) navScroll.addEventListener('scroll', repositionCarets);
+
+            nav.addEventListener(
+                'pointerdown',
+                function (e) {
+                    megas.forEach(function (m) {
+                        m.onPtr(e);
+                    });
+                },
+                true
+            );
 
             nav.addEventListener('focusin', function (e) {
-                if (trigger.contains(e.target) || panel.contains(e.target)) open();
+                megas.forEach(function (m) {
+                    if (m.hitIn(e.target)) m.open();
+                });
             });
+
             nav.addEventListener('focusout', function (e) {
                 var rel = e.relatedTarget;
-                if (rel && nav.contains(rel)) {
-                    if (trigger.contains(rel) || panel.contains(rel)) return;
-                    close();
-                    return;
-                }
-                close();
-            });
-        })();
-    </script>
-    <script>
-        (function () {
-            var nav = document.querySelector('.header-nav-3');
-            var trigger = document.querySelector('.header-nav-3-personal-trigger');
-            var panel = document.querySelector('.header-nav-3-mega-panel--personal');
-            var navScroll = document.querySelector('.header-nav-3-inner');
-            if (!nav || !trigger || !panel) return;
-
-            var tabs = panel.querySelectorAll('[data-personal-tab]');
-            var panes = panel.querySelectorAll('[data-personal-pane]');
-
-            function setOpen(open) {
-                panel.setAttribute('aria-hidden', open ? 'false' : 'true');
-                trigger.setAttribute('aria-expanded', open ? 'true' : 'false');
-                if (open) positionMegaCaret();
-            }
-
-            function open() {
-                setOpen(true);
-            }
-
-            function close() {
-                setOpen(false);
-            }
-
-            function positionMegaCaret() {
-                var pr = panel.getBoundingClientRect();
-                var tr = trigger.getBoundingClientRect();
-                var cx = tr.left + tr.width / 2 - pr.left;
-                var pad = 20;
-                var clamped = Math.min(Math.max(pad, Math.round(cx)), Math.max(pad, pr.width - pad));
-                panel.style.setProperty('--mega-caret-x', clamped + 'px');
-            }
-
-            function activatePersonalTab(id) {
-                tabs.forEach(function (t) {
-                    var on = t.getAttribute('data-personal-tab') === id;
-                    t.classList.toggle('is-active', on);
-                    t.setAttribute('aria-selected', on ? 'true' : 'false');
+                megas.forEach(function (m) {
+                    m.clearTimer();
+                    if (rel && nav.contains(rel) && m.hitIn(rel)) return;
+                    m.close();
                 });
-                panes.forEach(function (p) {
-                    var on = p.getAttribute('data-personal-pane') === id;
-                    p.classList.toggle('is-active', on);
-                    p.setAttribute('aria-hidden', on ? 'false' : 'true');
-                });
-            }
-
-            tabs.forEach(function (t) {
-                t.setAttribute('role', 'tab');
-                t.setAttribute('tabindex', '0');
-                t.addEventListener('mouseenter', function () {
-                    activatePersonalTab(t.getAttribute('data-personal-tab'));
-                });
-                t.addEventListener('focus', function () {
-                    activatePersonalTab(t.getAttribute('data-personal-tab'));
-                });
-            });
-            if (tabs.length) {
-                activatePersonalTab(tabs[0].getAttribute('data-personal-tab'));
-            }
-
-            function isInsidePersonalUi(node) {
-                return !!(node && (node === trigger || node === panel || trigger.contains(node) || panel.contains(node)));
-            }
-
-            function maybeCloseHover(e) {
-                if (isInsidePersonalUi(e.relatedTarget)) return;
-                close();
-            }
-
-            trigger.addEventListener('mouseenter', open);
-            panel.addEventListener('mouseenter', open);
-            trigger.addEventListener('mouseleave', maybeCloseHover);
-            panel.addEventListener('mouseleave', maybeCloseHover);
-
-            window.addEventListener('resize', function () {
-                if (panel.getAttribute('aria-hidden') === 'false') positionMegaCaret();
-            });
-            if (navScroll) {
-                navScroll.addEventListener('scroll', function () {
-                    if (panel.getAttribute('aria-hidden') === 'false') positionMegaCaret();
-                });
-            }
-
-            nav.addEventListener('focusin', function (e) {
-                if (trigger.contains(e.target) || panel.contains(e.target)) open();
-            });
-            nav.addEventListener('focusout', function (e) {
-                var rel = e.relatedTarget;
-                if (rel && nav.contains(rel)) {
-                    if (trigger.contains(rel) || panel.contains(rel)) return;
-                    close();
-                    return;
-                }
-                close();
-            });
-        })();
-    </script>
-    <script>
-        (function () {
-            var nav = document.querySelector('.header-nav-3');
-            var trigger = document.querySelector('.header-nav-3-home-trigger');
-            var panel = document.querySelector('.header-nav-3-mega-panel--home');
-            var navScroll = document.querySelector('.header-nav-3-inner');
-            if (!nav || !trigger || !panel) return;
-
-            var tabs = panel.querySelectorAll('[data-home-tab]');
-            var panes = panel.querySelectorAll('[data-home-pane]');
-
-            function setOpen(open) {
-                panel.setAttribute('aria-hidden', open ? 'false' : 'true');
-                trigger.setAttribute('aria-expanded', open ? 'true' : 'false');
-                if (open) positionMegaCaret();
-            }
-
-            function open() {
-                setOpen(true);
-            }
-
-            function close() {
-                setOpen(false);
-            }
-
-            function positionMegaCaret() {
-                var pr = panel.getBoundingClientRect();
-                var tr = trigger.getBoundingClientRect();
-                var cx = tr.left + tr.width / 2 - pr.left;
-                var pad = 20;
-                var clamped = Math.min(Math.max(pad, Math.round(cx)), Math.max(pad, pr.width - pad));
-                panel.style.setProperty('--mega-caret-x', clamped + 'px');
-            }
-
-            function activateHomeTab(id) {
-                tabs.forEach(function (t) {
-                    var on = t.getAttribute('data-home-tab') === id;
-                    t.classList.toggle('is-active', on);
-                    t.setAttribute('aria-selected', on ? 'true' : 'false');
-                });
-                panes.forEach(function (p) {
-                    var on = p.getAttribute('data-home-pane') === id;
-                    p.classList.toggle('is-active', on);
-                    p.setAttribute('aria-hidden', on ? 'false' : 'true');
-                });
-            }
-
-            tabs.forEach(function (t) {
-                t.setAttribute('role', 'tab');
-                t.setAttribute('tabindex', '0');
-                t.addEventListener('mouseenter', function () {
-                    activateHomeTab(t.getAttribute('data-home-tab'));
-                });
-                t.addEventListener('focus', function () {
-                    activateHomeTab(t.getAttribute('data-home-tab'));
-                });
-            });
-            if (tabs.length) {
-                activateHomeTab(tabs[0].getAttribute('data-home-tab'));
-            }
-
-            function isInsideHomeUi(node) {
-                return !!(node && (node === trigger || node === panel || trigger.contains(node) || panel.contains(node)));
-            }
-
-            function maybeCloseHover(e) {
-                if (isInsideHomeUi(e.relatedTarget)) return;
-                close();
-            }
-
-            trigger.addEventListener('mouseenter', open);
-            panel.addEventListener('mouseenter', open);
-            trigger.addEventListener('mouseleave', maybeCloseHover);
-            panel.addEventListener('mouseleave', maybeCloseHover);
-
-            window.addEventListener('resize', function () {
-                if (panel.getAttribute('aria-hidden') === 'false') positionMegaCaret();
-            });
-            if (navScroll) {
-                navScroll.addEventListener('scroll', function () {
-                    if (panel.getAttribute('aria-hidden') === 'false') positionMegaCaret();
-                });
-            }
-
-            nav.addEventListener('focusin', function (e) {
-                if (trigger.contains(e.target) || panel.contains(e.target)) open();
-            });
-            nav.addEventListener('focusout', function (e) {
-                var rel = e.relatedTarget;
-                if (rel && nav.contains(rel)) {
-                    if (trigger.contains(rel) || panel.contains(rel)) return;
-                    close();
-                    return;
-                }
-                close();
-            });
-        })();
-    </script>
-    <script>
-        (function () {
-            var nav = document.querySelector('.header-nav-3');
-            var trigger = document.querySelector('.header-nav-3-pet-trigger');
-            var panel = document.querySelector('.header-nav-3-mega-panel--pet');
-            var navScroll = document.querySelector('.header-nav-3-inner');
-            if (!nav || !trigger || !panel) return;
-
-            var tabs = panel.querySelectorAll('[data-pet-tab]');
-            var panes = panel.querySelectorAll('[data-pet-pane]');
-
-            function setOpen(open) {
-                panel.setAttribute('aria-hidden', open ? 'false' : 'true');
-                trigger.setAttribute('aria-expanded', open ? 'true' : 'false');
-                if (open) positionMegaCaret();
-            }
-
-            function open() {
-                setOpen(true);
-            }
-
-            function close() {
-                setOpen(false);
-            }
-
-            function positionMegaCaret() {
-                var pr = panel.getBoundingClientRect();
-                var tr = trigger.getBoundingClientRect();
-                var cx = tr.left + tr.width / 2 - pr.left;
-                var pad = 20;
-                var clamped = Math.min(Math.max(pad, Math.round(cx)), Math.max(pad, pr.width - pad));
-                panel.style.setProperty('--mega-caret-x', clamped + 'px');
-            }
-
-            function activatePetTab(id) {
-                tabs.forEach(function (t) {
-                    var on = t.getAttribute('data-pet-tab') === id;
-                    t.classList.toggle('is-active', on);
-                    t.setAttribute('aria-selected', on ? 'true' : 'false');
-                });
-                panes.forEach(function (p) {
-                    var on = p.getAttribute('data-pet-pane') === id;
-                    p.classList.toggle('is-active', on);
-                    p.setAttribute('aria-hidden', on ? 'false' : 'true');
-                });
-            }
-
-            tabs.forEach(function (t) {
-                t.setAttribute('role', 'tab');
-                t.setAttribute('tabindex', '0');
-                t.addEventListener('mouseenter', function () {
-                    activatePetTab(t.getAttribute('data-pet-tab'));
-                });
-                t.addEventListener('focus', function () {
-                    activatePetTab(t.getAttribute('data-pet-tab'));
-                });
-            });
-            if (tabs.length) {
-                activatePetTab(tabs[0].getAttribute('data-pet-tab'));
-            }
-
-            function isInsidePetUi(node) {
-                return !!(node && (node === trigger || node === panel || trigger.contains(node) || panel.contains(node)));
-            }
-
-            function maybeCloseHover(e) {
-                if (isInsidePetUi(e.relatedTarget)) return;
-                close();
-            }
-
-            trigger.addEventListener('mouseenter', open);
-            panel.addEventListener('mouseenter', open);
-            trigger.addEventListener('mouseleave', maybeCloseHover);
-            panel.addEventListener('mouseleave', maybeCloseHover);
-
-            window.addEventListener('resize', function () {
-                if (panel.getAttribute('aria-hidden') === 'false') positionMegaCaret();
-            });
-            if (navScroll) {
-                navScroll.addEventListener('scroll', function () {
-                    if (panel.getAttribute('aria-hidden') === 'false') positionMegaCaret();
-                });
-            }
-
-            nav.addEventListener('focusin', function (e) {
-                if (trigger.contains(e.target) || panel.contains(e.target)) open();
-            });
-            nav.addEventListener('focusout', function (e) {
-                var rel = e.relatedTarget;
-                if (rel && nav.contains(rel)) {
-                    if (trigger.contains(rel) || panel.contains(rel)) return;
-                    close();
-                    return;
-                }
-                close();
             });
         })();
     </script>

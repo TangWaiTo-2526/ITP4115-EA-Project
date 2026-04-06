@@ -132,7 +132,7 @@ msgstr ""
 
 #: templates/base.html.j2:44
 msgid "Logout"
-msgstr ""
+msgstr "退出登录"
 
 #: templates/index.html.j2:4
 #, python-format
@@ -508,4 +508,28 @@ msgstr "尚未设置默认送货地址"
 #: templates/partials/info-page_delivery-address.html.j2
 msgid "選填"
 msgstr "选填"
+
+#: templates/base.html.j2
+msgid "Account"
+msgstr "帐户"
+
+#: templates/base.html.j2
+msgid "Header actions"
+msgstr "页首操作"
+
+#: templates/base.html.j2
+msgid "Favorites"
+msgstr "我的清单"
+
+#: templates/base.html.j2
+msgid "Shopping cart"
+msgstr "购物车"
+
+#: templates/base.html.j2
+msgid "Order history"
+msgstr "订单记录"
+
+#: templates/base.html.j2
+msgid "Buy again"
+msgstr "再次购买"
 

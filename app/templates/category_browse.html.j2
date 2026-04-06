@@ -8,8 +8,8 @@
 {% endblock %}
 
 {% block app_content %}
-<div class="browse-page">
-    <nav class="browse-breadcrumb" aria-label="麵包屑">
+<div class="browse-page{% if browse_source == 'catalog' %} browse-page--catalog{% endif %}">
+    <nav class="browse-breadcrumb" aria-label="{{ _('麵包屑') }}">
         {% for bc in breadcrumbs %}
             {% if bc.url %}
                 <a href="{{ bc.url }}">{{ bc.label }}</a>
@@ -21,54 +21,150 @@
     </nav>
 
     <header class="browse-frame browse-frame--muted">
-        <h1 class="browse-title">{{ browse_title }}</h1>
+        <h1 class="browse-title{% if browse_source == 'catalog' and catalog_supplier_name %} browse-title--with-brand{% endif %}">
+            {{ browse_title }}
+            {% if browse_source == 'catalog' and catalog_supplier_name %}
+            <span class="browse-title-brand-sep" aria-hidden="true">&gt;</span>
+            <span class="browse-catalog-brand">{{ catalog_supplier_name }}</span>
+            {% endif %}
+        </h1>
+        {% if browse_source != 'catalog' %}
         <p class="browse-desc">{{ browse_description }}</p>
+        {% endif %}
+        {% if browse_source == 'catalog' and supplier_id is not none %}
+        <p class="browse-desc browse-desc--filter">
+            <a href="{{ url_for('catalog_category', category_id=category_id) }}">{{ _('清除品牌篩選') }}</a>
+        </p>
+        {% endif %}
     </header>
 
+    {% if filter_tabs %}
     <section class="browse-frame" aria-labelledby="browse-filters-heading">
-        <h2 id="browse-filters-heading" class="sr-only">篩選</h2>
+        <h2 id="browse-filters-heading" class="sr-only">{{ _('篩選') }}</h2>
         <div class="browse-filters" role="tablist">
             {% for tab in filter_tabs %}
                 <span class="browse-filter-tab{% if tab.active %} is-active{% endif %}" role="tab" aria-selected="{{ 'true' if tab.active else 'false' }}">{{ tab.label }}</span>
             {% endfor %}
         </div>
+        {% if subcategories %}
         <div class="browse-subcats" role="list">
             {% for sc in subcategories %}
-                <a class="browse-subcat" href="{{ browse_url(browse_section, browse_slug) }}?sub={{ sc.slug }}" role="listitem">
+                <a class="browse-subcat" href="{% if sc.url is defined and sc.url %}{{ sc.url }}{% else %}{{ browse_url(browse_section, browse_slug) }}?sub={{ sc.slug }}{% endif %}" role="listitem">
                     <span class="browse-subcat-visual browse-subcat-visual--{{ sc.img_mod }}" aria-hidden="true"></span>
                     <span class="browse-subcat-meta">
                         <span>{{ sc.label }}</span>
-                        <span class="browse-subcat-count">{{ sc.count }} 件商品</span>
+                        <span class="browse-subcat-count">{{ sc.count }} {{ _('件商品') }}</span>
                     </span>
                 </a>
             {% endfor %}
         </div>
+        {% endif %}
     </section>
+    {% elif browse_source == 'catalog' and catalog_show_nav|default(false) %}
+    <section class="browse-frame browse-frame--catalog-nav" aria-labelledby="browse-catalog-nav-heading">
+        <h2 id="browse-catalog-nav-heading" class="sr-only">{{ _('分類與篩選') }}</h2>
+        <nav class="browse-catalog-nav" aria-label="{{ _('分類與品牌') }}">
+            {% for tab in catalog_nav_tabs %}
+                {% if tab.disabled %}
+                <span class="browse-catalog-nav-tab browse-catalog-nav-tab--muted" aria-disabled="true">{{ tab.label }}</span>
+                {% else %}
+                <a class="browse-catalog-nav-tab{% if tab.active %} is-active{% endif %}{% if tab.key is defined and tab.key == 'brand' and tab.active and supplier_id is not none %} browse-catalog-nav-tab--brand-selected{% endif %}" href="{{ tab.url }}"{% if tab.link_title is defined and tab.link_title %} title="{{ tab.link_title }}"{% endif %}>{{ tab.label }}</a>
+                {% endif %}
+            {% endfor %}
+        </nav>
+        {% if catalog_view == 'category' %}
+            {% if subcategories %}
+            <div class="browse-subcats browse-subcats--catalog" role="list">
+                {% for sc in subcategories %}
+                    <a class="browse-subcat browse-subcat--text-only{% if sc.is_active is defined and sc.is_active %} is-active{% endif %}" href="{{ sc.url }}" role="listitem"{% if sc.is_active is defined and sc.is_active %} aria-current="page"{% endif %}>
+                        <span class="browse-subcat-meta">
+                            <span class="browse-subcat-label">{{ sc.label }}</span>
+                            <span class="browse-subcat-count">{{ sc.count }} {{ _('件商品') }}</span>
+                        </span>
+                    </a>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p class="browse-catalog-panel-empty">{{ _('此分類下沒有更細的子分類。') }}</p>
+            {% endif %}
+        {% else %}
+            {% if catalog_brands %}
+            <div class="browse-brand-panel">
+                {% if catalog_brands|length > 6 %}
+                <input type="checkbox" id="browse-brand-expand-{{ category_id }}" class="browse-brand-expand-cb">
+                {% endif %}
+                <div class="browse-brand-grid-clip{% if catalog_brands|length > 6 %} browse-brand-grid-clip--collapsible{% endif %}">
+                    <div class="browse-brand-grid" role="list">
+                        {% for br in catalog_brands %}
+                            <a class="browse-brand-cell browse-brand-cell--text-only{% if br.is_active %} is-active{% endif %}" href="{{ br.url }}" role="listitem"{% if br.is_active %} aria-current="page"{% endif %}>
+                                <span class="browse-brand-name">{{ br.label }}</span>
+                                <span class="browse-brand-count">{{ br.count }}</span>
+                            </a>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% if catalog_brands|length > 6 %}
+                <label for="browse-brand-expand-{{ category_id }}" class="browse-brand-expand-toggle">
+                    <span class="browse-brand-expand-more">{{ _('展開更多') }}</span>
+                    <span class="browse-brand-expand-less">{{ _('收起') }}</span>
+                </label>
+                {% endif %}
+            </div>
+            {% else %}
+            <p class="browse-catalog-panel-empty">{{ _('此分類暫無品牌資料。') }}</p>
+            {% endif %}
+        {% endif %}
+    </section>
+    {% endif %}
 
-    <div class="browse-sort-row" role="toolbar" aria-label="排序">
-        <span class="browse-sort-label">相關商品</span>
+    {% if sort_options %}
+    <div class="browse-sort-row" role="toolbar" aria-label="{{ _('排序') }}">
+        <span class="browse-sort-label">{{ _('相關商品') }}</span>
         <div class="browse-sort-btns">
             {% for so in sort_options %}
                 <button type="button" class="browse-sort-btn{% if so.active %} is-active{% endif %}">{{ so.label }}</button>
             {% endfor %}
         </div>
     </div>
+    {% elif browse_source == 'catalog' %}
+    <div class="browse-sort-row browse-sort-row--catalog" role="toolbar" aria-label="{{ _('商品列表') }}">
+        <span class="browse-sort-label">{{ _('相關商品') }}</span>
+    </div>
+    {% endif %}
 
-    <section class="browse-products" aria-label="商品列表">
+    <section class="browse-products{% if browse_source == 'catalog' %} browse-products--catalog{% endif %}" aria-label="{{ _('商品列表') }}">
+        {% if not products %}
+        <p class="browse-empty">{{ _('此分類暫無商品。') }}</p>
+        {% endif %}
         {% for product in products %}
-            <article class="browse-product">
-                <div class="browse-product-img-wrap browse-product-img-wrap--{{ product.img_mod }}" role="img" aria-label=""></div>
+            <article class="browse-product"{% if product.uuid is defined %} data-product-uuid="{{ product.uuid }}"{% endif %}>
+                <div class="browse-product-img-wrap browse-product-img-wrap--{{ product.img_mod }}{% if product.image_url is defined and product.image_url %} browse-product-img-wrap--photo{% endif %}" role="img" aria-label="">
+                    {% if product.image_url is defined and product.image_url %}
+                    <img class="browse-product-photo" src="{{ product.image_url }}" alt="" loading="lazy" decoding="async">
+                    {% endif %}
+                </div>
                 <div class="browse-product-body">
                     <h3 class="browse-product-name">{{ product.name }}</h3>
                     <p class="browse-product-unit">{{ product.unit }}</p>
+                    {% if product.stars_full is defined %}
                     <p class="browse-product-rating">
                         {% for i in [1, 2, 3, 4, 5] %}
                             {% if i <= product.stars_full %}★{% else %}☆{% endif %}
                         {% endfor %}
+                        {% if product.reviews is defined %}
                         <span class="browse-product-reviews">({{ product.reviews }})</span>
+                        {% endif %}
                     </p>
+                    {% endif %}
+                    {% if product.discount_price is defined and product.discount_price is not none %}
+                    <p class="browse-product-price browse-product-price--sale">
+                        <span class="browse-product-price-current">${{ '%.2f'|format(product.discount_price) }}</span>
+                        <span class="browse-product-price-was">${{ '%.2f'|format(product.price) }}</span>
+                    </p>
+                    {% else %}
                     <p class="browse-product-price">${{ '%.2f'|format(product.price) }}</p>
-                    <button type="button" class="browse-product-cart">加入購物車</button>
+                    {% endif %}
+                    <button type="button" class="browse-product-cart">{{ _('加入購物車') }}</button>
                 </div>
             </article>
         {% endfor %}

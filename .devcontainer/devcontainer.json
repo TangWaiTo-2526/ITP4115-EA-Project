@@ -12,7 +12,7 @@
     }
   },
   "postCreateCommand": "bash .devcontainer/post-create.sh",
-  "postAttachCommand": "bash -lc 'export FLASK_APP=app && flask db upgrade && exec flask --debug run --host=0.0.0.0'",
+  "postAttachCommand": "bash -lc 'export FLASK_APP=app && flask db upgrade && cd migrations/database_data && python import_product_backup_data.py && cd /workspaces/ITP4115-EA-Project && exec flask --debug run --host=0.0.0.0'",
   "forwardPorts": [5000, 5050, 5432],
   "portsAttributes": {
     "5000": {
