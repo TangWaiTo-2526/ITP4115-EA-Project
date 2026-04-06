@@ -36,8 +36,13 @@ def get_locale():
         # 其餘中文（zh / zh-TW / zh-HK / zh-MO / zh-Hant）統一走繁中 catalog（zh）
         return 'zh'
 
-    # 其餘語言使用 Babel 既有 best_match
-    return request.accept_languages.best_match(app.config['LANGUAGES']) or 'zh'
+    # 其餘語言：保留西語；其餘預設繁中（本站主體為中文介面）
+    match = request.accept_languages.best_match(app.config['LANGUAGES']) or 'zh'
+    if match == 'es':
+        return 'es'
+    if match in ('zh', 'zh_Hans'):
+        return match
+    return 'zh'
 
 
 babel = Babel(app, locale_selector=get_locale)

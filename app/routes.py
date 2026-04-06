@@ -1,12 +1,27 @@
+import os
+import random
 import secrets
 import time
 from datetime import datetime, timedelta, timezone
 from urllib.parse import urlparse
 
+from collections import defaultdict
+
 from sqlalchemy import func, or_
+from sqlalchemy.orm import joinedload
 from werkzeug.security import generate_password_hash
 
-from flask import render_template, flash, redirect, url_for, request, g, session, abort
+from flask import (
+    render_template,
+    flash,
+    redirect,
+    url_for,
+    request,
+    g,
+    session,
+    abort,
+    current_app,
+)
 from flask_login import login_user, logout_user, current_user, login_required
 from flask_babel import _, get_locale
 from app import app, db
@@ -29,8 +44,10 @@ from app.models import (
     RegistrationVerificationCode,
     ProductCategory,
     ProductDetail,
+    Supplier,
 )
 from app.category_catalog import build_browse_page
+from app.maternity_nav import _collect_descendant_category_ids
 from app.email import send_password_reset_email, send_registration_verification_email
 from app.hk_address import HK_DISTRICTS
 
@@ -273,18 +290,118 @@ def product_image_url(image_path):
     s = str(image_path).strip()
     if s.startswith('http://') or s.startswith('https://'):
         return s
-    return url_for('static', filename=s)
+    return url_for('static', filename=s.lstrip('/'))
+
+
+def _static_product_image_file_exists(rel_path: str) -> bool:
+    root = current_app.static_folder
+    if not root or not rel_path:
+        return False
+    rel = str(rel_path).strip().lstrip('/')
+    if not rel or rel.startswith('..'):
+        return False
+    full = os.path.normpath(os.path.join(root, rel))
+    root_norm = os.path.normpath(root)
+    if not full.startswith(root_norm + os.sep) and full != root_norm:
+        return False
+    return os.path.isfile(full)
+
+
+def _promo_image_will_display(image_path) -> bool:
+    """遠端 URL 或可找到的 static 檔案，避免首頁出現破圖或空白圖。"""
+    if image_path is None:
+        return False
+    s = str(image_path).strip()
+    if not s:
+        return False
+    if s.startswith('http://') or s.startswith('https://'):
+        return True
+    return _static_product_image_file_exists(s)
+
+
+HOME_NEW_ARRIVALS_SCAN_LIMIT = 120
+HOME_NEW_ARRIVALS_DISPLAY = 4
+HOME_PROMO_DEALS_SCAN_LIMIT = 120
+HOME_PROMO_DEALS_DISPLAY = 4
+
+
+def _product_detail_to_promo_card(p: ProductDetail) -> dict:
+    img = product_image_url(p.image_path)
+    brand = (p.supplier.supplier_name if p.supplier is not None else '') or ''
+    brand = brand.strip()
+    pname = (p.product_name or '').strip()
+    display_name = f'{brand} {pname}'.strip() if brand else pname
+    price_f = float(p.price)
+    disc = p.discount_price
+    disc_f = float(disc) if disc is not None else None
+    return {
+        'uuid': str(p.product_categories_uuid),
+        'name': display_name or _('商品'),
+        'image_url': img,
+        'price': price_f,
+        'discount_price': disc_f,
+        'catalog_url': url_for('catalog_category', category_id=p.product_categories_id),
+    }
+
+
+def build_home_new_arrivals():
+    """自最近商品中挑有圖且圖可顯示者，再隨機抽若干筆給首頁「新貨上架」。"""
+    rows = (
+        ProductDetail.query.options(joinedload(ProductDetail.supplier))
+        .filter(
+            ProductDetail.image_path.isnot(None),
+            ProductDetail.image_path != '',
+        )
+        .order_by(ProductDetail.create_time.desc())
+        .limit(HOME_NEW_ARRIVALS_SCAN_LIMIT)
+        .all()
+    )
+    with_displayable = [p for p in rows if _promo_image_will_display(p.image_path)]
+    if not with_displayable:
+        return []
+    k = min(HOME_NEW_ARRIVALS_DISPLAY, len(with_displayable))
+    picked = random.sample(with_displayable, k)
+    return [_product_detail_to_promo_card(p) for p in picked]
+
+
+def build_home_promo_deals():
+    """有特價（特價低於原價）且圖可顯示的商品中，隨機抽若干筆給首頁「易賞價」。"""
+    rows = (
+        ProductDetail.query.options(joinedload(ProductDetail.supplier))
+        .filter(
+            ProductDetail.discount_price.isnot(None),
+            ProductDetail.discount_price < ProductDetail.price,
+            ProductDetail.image_path.isnot(None),
+            ProductDetail.image_path != '',
+        )
+        .order_by(ProductDetail.create_time.desc())
+        .limit(HOME_PROMO_DEALS_SCAN_LIMIT)
+        .all()
+    )
+    with_displayable = [p for p in rows if _promo_image_will_display(p.image_path)]
+    if not with_displayable:
+        return []
+    k = min(HOME_PROMO_DEALS_DISPLAY, len(with_displayable))
+    picked = random.sample(with_displayable, k)
+    return [_product_detail_to_promo_card(p) for p in picked]
 
 
 @app.context_processor
 def inject_maternity_nav():
+    out: dict = {'maternity_nav': None, 'food_nav': None}
     try:
         from app.maternity_nav import build_maternity_mega_nav
 
-        return {'maternity_nav': build_maternity_mega_nav()}
+        out['maternity_nav'] = build_maternity_mega_nav()
     except Exception:
         app.logger.exception('母嬰導航載入失敗')
-        return {'maternity_nav': None}
+    try:
+        from app.food_nav import build_food_mega_nav
+
+        out['food_nav'] = build_food_mega_nav()
+    except Exception:
+        app.logger.exception('食品及飲品導航載入失敗')
+    return out
 
 
 @app.before_request
@@ -299,6 +416,10 @@ def catalog_category(category_id):
         abort(404)
 
     supplier_id = request.args.get('supplier_id', type=int)
+    supplier_row = db.session.get(Supplier, supplier_id) if supplier_id is not None else None
+    if supplier_id is not None and supplier_row is None:
+        abort(404)
+    catalog_supplier_name = supplier_row.supplier_name if supplier_row is not None else None
 
     chain: list[ProductCategory] = []
     node: ProductCategory | None = cat
@@ -309,16 +430,158 @@ def catalog_category(category_id):
     chain.reverse()
 
     breadcrumbs = [{'label': _('首頁'), 'url': url_for('index')}]
+    n = len(chain)
     for i, c in enumerate(chain):
-        last = i == len(chain) - 1
-        breadcrumbs.append(
+        is_leaf_cat = i == n - 1
+        if catalog_supplier_name and is_leaf_cat:
+            leaf_url = url_for('catalog_category', category_id=c.product_categories_id)
+        elif is_leaf_cat:
+            leaf_url = None
+        else:
+            leaf_url = url_for('catalog_category', category_id=c.product_categories_id)
+        breadcrumbs.append({'label': c.product_categories_name, 'url': leaf_url})
+    if catalog_supplier_name:
+        breadcrumbs.append({'label': catalog_supplier_name, 'url': None})
+
+    all_cats = ProductCategory.query.order_by(ProductCategory.product_categories_id.asc()).all()
+    children_by_parent: dict[int, list[ProductCategory]] = defaultdict(list)
+    for c in all_cats:
+        if c.parent_id is not None:
+            children_by_parent[c.parent_id].append(c)
+    for pid in children_by_parent:
+        children_by_parent[pid].sort(key=lambda x: x.product_categories_id)
+
+    rollup_ids = _collect_descendant_category_ids(category_id, children_by_parent)
+
+    def _catalog_cat_url(cid: int) -> str:
+        if supplier_id is not None:
+            return url_for('catalog_category', category_id=cid, supplier_id=supplier_id)
+        return url_for('catalog_category', category_id=cid)
+
+    def _count_products_in_categories(cat_ids: list[int]) -> int:
+        if not cat_ids:
+            return 0
+        cq = db.session.query(func.count(ProductDetail.product_categories_uuid)).filter(
+            ProductDetail.product_categories_id.in_(cat_ids)
+        )
+        if supplier_id is not None:
+            cq = cq.filter(ProductDetail.supplier_id == supplier_id)
+        return int(cq.scalar() or 0)
+
+    child_cats = (
+        ProductCategory.query.filter_by(parent_id=category_id)
+        .order_by(ProductCategory.product_categories_id.asc())
+        .all()
+    )
+
+    subcategories = []
+    if child_cats:
+        strip_all_id = category_id
+        all_rollup_ids = rollup_ids
+        tiles = child_cats
+    elif cat.parent_id is not None:
+        strip_all_id = cat.parent_id
+        tiles = list(children_by_parent.get(cat.parent_id, []))
+        all_rollup_ids = _collect_descendant_category_ids(strip_all_id, children_by_parent)
+    else:
+        tiles = []
+
+    if tiles:
+        subcategories.append(
             {
-                'label': c.product_categories_name,
-                'url': None if last else url_for('catalog_category', category_id=c.product_categories_id),
+                'label': _('全部'),
+                'count': _count_products_in_categories(all_rollup_ids),
+                'url': _catalog_cat_url(strip_all_id),
+                'is_active': category_id == strip_all_id,
+            }
+        )
+        for ch in tiles:
+            sub_rollup = _collect_descendant_category_ids(ch.product_categories_id, children_by_parent)
+            subcategories.append(
+                {
+                    'label': ch.product_categories_name,
+                    'count': _count_products_in_categories(sub_rollup),
+                    'url': _catalog_cat_url(ch.product_categories_id),
+                    'is_active': ch.product_categories_id == category_id,
+                }
+            )
+
+    brand_rows = (
+        db.session.query(
+            Supplier.supplier_id,
+            Supplier.supplier_name,
+            func.count(ProductDetail.product_categories_uuid),
+        )
+        .join(ProductDetail, ProductDetail.supplier_id == Supplier.supplier_id)
+        .filter(ProductDetail.product_categories_id.in_(rollup_ids))
+        .group_by(Supplier.supplier_id, Supplier.supplier_name)
+        .order_by(func.count(ProductDetail.product_categories_uuid).desc())
+        .limit(48)
+        .all()
+    )
+    catalog_brands = []
+    for r in brand_rows:
+        sid, sname, cnt = r[0], r[1], int(r[2] or 0)
+        catalog_brands.append(
+            {
+                'supplier_id': sid,
+                'label': sname,
+                'count': cnt,
+                'url': url_for(
+                    'catalog_category',
+                    category_id=category_id,
+                    supplier_id=sid,
+                    view='brand',
+                ),
+                'is_active': supplier_id == sid,
             }
         )
 
-    q = ProductDetail.query.filter(ProductDetail.product_categories_id == category_id)
+    catalog_show_nav = bool(subcategories) or bool(catalog_brands)
+
+    raw_view = (request.args.get('view') or '').strip().lower()
+    if raw_view in ('category', 'brand'):
+        catalog_view = raw_view
+    elif not subcategories and catalog_brands:
+        catalog_view = 'brand'
+    else:
+        catalog_view = 'category'
+
+    def _catalog_tab_url(view: str) -> str:
+        if supplier_id is not None:
+            return url_for(
+                'catalog_category',
+                category_id=category_id,
+                view=view,
+                supplier_id=supplier_id,
+            )
+        return url_for('catalog_category', category_id=category_id, view=view)
+
+    brand_nav_title = None
+    if supplier_id is not None and catalog_supplier_name:
+        brand_nav_title = _('目前篩選：%(brand)s（可在此切換其他品牌）') % {'brand': catalog_supplier_name}
+
+    catalog_nav_tabs = [
+        {
+            'key': 'category',
+            'label': _('分類'),
+            'url': _catalog_tab_url('category'),
+            'active': catalog_view == 'category',
+            'disabled': False,
+        },
+        {
+            'key': 'brand',
+            'label': _('品牌'),
+            'url': _catalog_tab_url('brand'),
+            'active': catalog_view == 'brand',
+            'disabled': False,
+            'link_title': brand_nav_title,
+        },
+    ]
+
+    q = ProductDetail.query.options(joinedload(ProductDetail.supplier)).filter(
+        ProductDetail.product_categories_id.in_(rollup_ids)
+    )
     if supplier_id is not None:
         q = q.filter(ProductDetail.supplier_id == supplier_id)
     rows = q.order_by(ProductDetail.product_name.asc()).limit(120).all()
@@ -326,9 +589,14 @@ def catalog_category(category_id):
     products = []
     for i, p in enumerate(rows):
         img = product_image_url(p.image_path)
+        brand = (p.supplier.supplier_name if p.supplier is not None else '') or ''
+        brand = brand.strip()
+        product_name = (p.product_name or '').strip()
+        display_name = f'{brand} {product_name}'.strip() if brand else product_name
         products.append(
             {
-                'name': p.product_name,
+                'uuid': str(p.product_categories_uuid),
+                'name': display_name,
                 'unit': p.specification or '',
                 'price': float(p.price),
                 'discount_price': float(p.discount_price) if p.discount_price is not None else None,
@@ -337,20 +605,28 @@ def catalog_category(category_id):
             }
         )
 
-    title = f'{cat.product_categories_name} - PNS'
-    filter_note = ''
-    if supplier_id is not None:
-        filter_note = _('（已依品牌篩選）')
+    if catalog_supplier_name:
+        title = f'{cat.product_categories_name} · {catalog_supplier_name} - PNS'
+    else:
+        title = f'{cat.product_categories_name} - PNS'
 
     return render_template(
-        'catalog_category.html.j2',
+        'category_browse.html.j2',
         title=title,
         browse_title=cat.product_categories_name,
-        browse_description=_('此分類從資料庫載入的商品。') + filter_note,
+        catalog_supplier_name=catalog_supplier_name,
         breadcrumbs=breadcrumbs,
         products=products,
+        subcategories=subcategories,
+        filter_tabs=[],
+        sort_options=[],
+        browse_source='catalog',
         supplier_id=supplier_id,
         category_id=category_id,
+        catalog_view=catalog_view,
+        catalog_nav_tabs=catalog_nav_tabs,
+        catalog_brands=catalog_brands,
+        catalog_show_nav=catalog_show_nav,
     )
 
 
@@ -365,12 +641,41 @@ def category_browse(section, slug):
 @app.route('/', methods=['GET'])
 @app.route('/index', methods=['GET'])
 def index():
-    if current_user.is_anonymous:
-        return render_template('index.html.j2', title=_('PNS 網購'))
-    return render_template(
-        'index.html.j2',
-        title=_('Home'),
+    home_new_arrivals = build_home_new_arrivals()
+    home_promo_deals = build_home_promo_deals()
+    newest_cid = (
+        db.session.query(ProductDetail.product_categories_id)
+        .order_by(ProductDetail.create_time.desc())
+        .limit(1)
+        .scalar()
     )
+    home_new_view_all_url = (
+        url_for('catalog_category', category_id=newest_cid) if newest_cid is not None else url_for('index')
+    )
+    deals_view_cid = (
+        db.session.query(ProductDetail.product_categories_id)
+        .filter(
+            ProductDetail.discount_price.isnot(None),
+            ProductDetail.discount_price < ProductDetail.price,
+        )
+        .order_by(ProductDetail.create_time.desc())
+        .limit(1)
+        .scalar()
+    )
+    home_promo_deals_view_all_url = (
+        url_for('catalog_category', category_id=deals_view_cid)
+        if deals_view_cid is not None
+        else home_new_view_all_url
+    )
+    ctx = {
+        'home_new_arrivals': home_new_arrivals,
+        'home_new_view_all_url': home_new_view_all_url,
+        'home_promo_deals': home_promo_deals,
+        'home_promo_deals_view_all_url': home_promo_deals_view_all_url,
+    }
+    if current_user.is_anonymous:
+        return render_template('index.html.j2', title=_('PNS 網購'), **ctx)
+    return render_template('index.html.j2', title=_('Home'), **ctx)
 
 
 @app.route('/login', methods=['GET', 'POST'])

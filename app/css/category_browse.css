@@ -45,6 +45,25 @@
     color: #1a1d24;
 }
 
+.browse-title--with-brand {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 6px 10px;
+}
+
+.browse-title-brand-sep {
+    font-size: 18px;
+    font-weight: 600;
+    color: #b0b5bd;
+}
+
+.browse-catalog-brand {
+    font-size: 22px;
+    font-weight: 800;
+    color: #2d4a8c;
+}
+
 .browse-desc {
     margin: 0;
     font-size: 14px;
@@ -106,6 +125,221 @@
 .browse-subcat:hover {
     border-color: #d5d9e0;
     background: #f8f9fc;
+}
+
+.browse-subcats--catalog .browse-subcat.is-active {
+    border-color: #3879ff;
+    background: #eef3ff;
+    box-shadow: 0 0 0 1px rgba(56, 121, 255, 0.25);
+}
+
+.browse-subcats--catalog .browse-subcat--text-only {
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    min-height: auto;
+    gap: 4px;
+}
+
+.browse-subcats--catalog .browse-subcat-meta {
+    width: 100%;
+    min-width: 0;
+}
+
+.browse-subcats--catalog .browse-subcat-label {
+    display: block;
+    font-size: 14px;
+    font-weight: 700;
+    color: #1a1d24;
+    line-height: 1.3;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+}
+
+/* Catalog：頂部「分類 | 品牌」導航 */
+.browse-frame--catalog-nav {
+    padding-top: 12px;
+}
+
+.browse-catalog-nav {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 4px 20px;
+    padding: 0 4px 0;
+    margin: 0 0 16px;
+    border-bottom: 1px solid #e8eaef;
+}
+
+.browse-catalog-nav-tab {
+    display: inline-block;
+    padding: 10px 2px 12px;
+    margin-bottom: -1px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #5c6370;
+    text-decoration: none;
+    border-bottom: 2px solid transparent;
+    transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.browse-catalog-nav-tab:hover {
+    color: #2d4a8c;
+}
+
+.browse-catalog-nav-tab.is-active {
+    color: #1a3a6e;
+    font-weight: 700;
+    border-bottom-color: #2d4a8c;
+}
+
+/* 品牌分頁：已選品牌篩選時，強化「品牌」分頁與列表高亮呼應 */
+.browse-catalog-nav-tab--brand-selected.is-active {
+    border-bottom-color: #3879ff;
+    box-shadow: inset 0 -3px 0 -1px rgba(56, 121, 255, 0.35);
+}
+
+.browse-catalog-nav-tab--muted {
+    padding: 10px 2px 12px;
+    margin-bottom: -1px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #b0b5bd;
+    cursor: default;
+    user-select: none;
+}
+
+.browse-frame--catalog-nav .browse-subcats--catalog {
+    margin-top: 0;
+}
+
+.browse-catalog-panel-empty {
+    margin: 0;
+    padding: 20px 8px;
+    text-align: center;
+    font-size: 14px;
+    color: #8b919a;
+}
+
+/* Catalog：品牌（純文字，預設約兩列可展開） */
+.browse-brand-panel {
+    position: relative;
+}
+
+.browse-brand-expand-cb {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.browse-brand-grid-clip--collapsible {
+    /* 約兩列列高（列高隨字級略變，可再微調） */
+    max-height: 110px;
+    overflow: hidden;
+    transition: max-height 0.45s ease;
+}
+
+.browse-brand-expand-cb:checked ~ .browse-brand-grid-clip--collapsible {
+    max-height: 4000px;
+}
+
+.browse-brand-expand-cb:checked ~ .browse-brand-expand-toggle .browse-brand-expand-more {
+    display: none;
+}
+
+.browse-brand-expand-cb:not(:checked) ~ .browse-brand-expand-toggle .browse-brand-expand-less {
+    display: none;
+}
+
+.browse-brand-expand-toggle {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 12px;
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    color: #2d4a8c;
+    user-select: none;
+}
+
+.browse-brand-expand-toggle:hover {
+    text-decoration: underline;
+}
+
+.browse-brand-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 0;
+    border: 1px solid #e8eaef;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #fff;
+}
+
+.browse-brand-cell {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    text-decoration: none;
+    color: inherit;
+    border-right: 1px solid #e8eaef;
+    border-bottom: 1px solid #e8eaef;
+    transition: background 0.15s ease;
+}
+
+.browse-brand-cell--text-only {
+    justify-content: space-between;
+}
+
+.browse-brand-cell:hover {
+    background: #f8f9fc;
+}
+
+.browse-brand-cell.is-active {
+    background: #e8efff;
+    box-shadow: inset 0 0 0 2px rgba(56, 121, 255, 0.45);
+}
+
+.browse-brand-cell.is-active .browse-brand-name {
+    color: #153a8c;
+}
+
+.browse-brand-name {
+    flex: 1;
+    min-width: 0;
+    font-size: 13px;
+    font-weight: 700;
+    color: #1a1d24;
+    line-height: 1.35;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.browse-brand-count {
+    flex-shrink: 0;
+    min-width: 28px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    text-align: center;
+    color: #2d4a8c;
+    background: #e8f0ff;
 }
 
 .browse-subcat-visual {
@@ -242,11 +476,14 @@
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
+    /* 兩行標題高度，避免一行標題時價格上移 */
+    min-height: calc(1.35em * 2);
 }
 
 .browse-product-unit {
     font-size: 11px;
     color: #8b919a;
+    min-height: 1.35em;
 }
 
 .browse-product-rating {
@@ -262,13 +499,17 @@
 }
 
 .browse-product-price {
+    margin-top: auto;
+    margin-bottom: 0;
     font-size: 18px;
     font-weight: 800;
     color: #c62828;
+    line-height: 1.2;
 }
 
 .browse-product-cart {
-    margin-top: auto;
+    margin-top: 8px;
+    flex-shrink: 0;
     padding: 8px 10px;
     border: none;
     border-radius: 8px;
@@ -298,6 +539,11 @@
     width: auto;
     height: auto;
     object-fit: contain;
+}
+
+.browse-product-price--sale {
+    margin-top: auto;
+    line-height: 1.25;
 }
 
 .browse-product-price--sale .browse-product-price-current {

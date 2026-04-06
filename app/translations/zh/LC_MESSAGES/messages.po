@@ -132,7 +132,7 @@ msgstr ""
 
 #: templates/base.html.j2:44
 msgid "Logout"
-msgstr ""
+msgstr "登出"
 
 #: templates/index.html.j2:4
 #, python-format
@@ -252,4 +252,28 @@ msgstr "交易 HK$"
 #: templates/partials/info-page_membership-points.html.j2
 msgid "N/A"
 msgstr "不適用"
+
+#: templates/base.html.j2
+msgid "Account"
+msgstr "帳戶"
+
+#: templates/base.html.j2
+msgid "Header actions"
+msgstr "頁首操作"
+
+#: templates/base.html.j2
+msgid "Favorites"
+msgstr "我的清單"
+
+#: templates/base.html.j2
+msgid "Shopping cart"
+msgstr "購物車"
+
+#: templates/base.html.j2
+msgid "Order history"
+msgstr "訂單紀錄"
+
+#: templates/base.html.j2
+msgid "Buy again"
+msgstr "再次購買"
 

@@ -55,9 +55,7 @@
         </div>
         <div class="hero-carousel-pager" id="hero-carousel-pager" aria-label="{{ _('Carousel pagination') }}"></div>
     </section>
-    {% if current_user.is_anonymous %}
-        <p>{{ _('Welcome to PNS online store.') }}</p>
-    {% else %}
+    {% if not current_user.is_anonymous %}
         <h1>{{ _('Hi, %(username)s!', username=current_user.username) }}</h1>
         <p>{{ _('You are signed in.') }}</p>
     {% endif %}
@@ -80,9 +78,38 @@
         <div class="promo-panel">
             <div class="promo-panel-header">
                 <h2 class="preview-title promo-panel-title" role="heading">易賞價</h2>
-                <a class="btn btn-secondary-sm view-all-btn promo-panel-link" role="link">查看所有</a>
+                <a class="btn btn-secondary-sm view-all-btn promo-panel-link" role="link" href="{{ home_promo_deals_view_all_url }}">{{ _('查看所有') }}</a>
             </div>
-            <div class="promo-products" data-products="easy">
+            <div class="promo-products" data-products="easy"{% if home_promo_deals %} data-use-real-products="1"{% endif %}>
+                {% if home_promo_deals %}
+                {% for p in home_promo_deals %}
+                <article class="promo-product" data-product-uuid="{{ p.uuid }}">
+                    <div class="promo-product-image-wrap">
+                        {% if p.image_url %}
+                        <img class="promo-product-image" src="{{ p.image_url }}" alt="{{ p.name }}" loading="lazy" decoding="async">
+                        {% else %}
+                        <img class="promo-product-image" src="" alt="{{ p.name }}" loading="lazy" decoding="async">
+                        {% endif %}
+                        <div class="promo-product-hover-actions">
+                            <a class="promo-action-btn" href="{{ p.catalog_url }}">{{ _('详情') }}</a>
+                            <div class="promo-qty-control" aria-label="{{ _('Quantity selector') }}">
+                                <button type="button" class="promo-qty-btn" data-qty-action="decrease">-</button>
+                                <span class="promo-qty-value" data-qty-value>1</span>
+                                <button type="button" class="promo-qty-btn" data-qty-action="increase">+</button>
+                            </div>
+                            <button type="button" class="promo-action-btn is-primary" data-add-cart>{{ _('加入购物车') }}</button>
+                        </div>
+                    </div>
+                    {% if p.discount_price is not none %}
+                    <div class="promo-price-sale">${{ '%.2f'|format(p.discount_price) }}</div>
+                    <div class="promo-price-original">${{ '%.2f'|format(p.price) }}</div>
+                    {% else %}
+                    <div class="promo-price-sale">${{ '%.2f'|format(p.price) }}</div>
+                    <div class="promo-price-original promo-price-original--empty" aria-hidden="true">&nbsp;</div>
+                    {% endif %}
+                </article>
+                {% endfor %}
+                {% else %}
                 {% for i in range(4) %}
                 <article class="promo-product">
                     <div class="promo-product-image-wrap">
@@ -101,14 +128,44 @@
                     <div class="promo-price-original">$0.00</div>
                 </article>
                 {% endfor %}
+                {% endif %}
             </div>
         </div>
         <div class="promo-panel">
             <div class="promo-panel-header">
                 <h2 class="preview-title promo-panel-title" role="heading">新貨上架</h2>
-                <a class="btn btn-secondary-sm view-all-btn promo-panel-link" role="link">查看所有</a>
+                <a class="btn btn-secondary-sm view-all-btn promo-panel-link" role="link" href="{{ home_new_view_all_url }}">{{ _('查看所有') }}</a>
             </div>
-            <div class="promo-products" data-products="new">
+            <div class="promo-products" data-products="new"{% if home_new_arrivals %} data-use-real-products="1"{% endif %}>
+                {% if home_new_arrivals %}
+                {% for p in home_new_arrivals %}
+                <article class="promo-product" data-product-uuid="{{ p.uuid }}">
+                    <div class="promo-product-image-wrap">
+                        {% if p.image_url %}
+                        <img class="promo-product-image" src="{{ p.image_url }}" alt="{{ p.name }}" loading="lazy" decoding="async">
+                        {% else %}
+                        <img class="promo-product-image" src="" alt="{{ p.name }}" loading="lazy" decoding="async">
+                        {% endif %}
+                        <div class="promo-product-hover-actions">
+                            <a class="promo-action-btn" href="{{ p.catalog_url }}">{{ _('详情') }}</a>
+                            <div class="promo-qty-control" aria-label="{{ _('Quantity selector') }}">
+                                <button type="button" class="promo-qty-btn" data-qty-action="decrease">-</button>
+                                <span class="promo-qty-value" data-qty-value>1</span>
+                                <button type="button" class="promo-qty-btn" data-qty-action="increase">+</button>
+                            </div>
+                            <button type="button" class="promo-action-btn is-primary" data-add-cart>{{ _('加入购物车') }}</button>
+                        </div>
+                    </div>
+                    {% if p.discount_price is not none %}
+                    <div class="promo-price-sale">${{ '%.2f'|format(p.discount_price) }}</div>
+                    <div class="promo-price-original">${{ '%.2f'|format(p.price) }}</div>
+                    {% else %}
+                    <div class="promo-price-sale">${{ '%.2f'|format(p.price) }}</div>
+                    <div class="promo-price-original promo-price-original--empty" aria-hidden="true">&nbsp;</div>
+                    {% endif %}
+                </article>
+                {% endfor %}
+                {% else %}
                 {% for i in range(4) %}
                 <article class="promo-product">
                     <div class="promo-product-image-wrap">
@@ -127,6 +184,7 @@
                     <div class="promo-price-original">$0.00</div>
                 </article>
                 {% endfor %}
+                {% endif %}
             </div>
         </div>
     </div>
@@ -813,6 +871,9 @@
 
             const productGroups = document.querySelectorAll(".promo-products");
             productGroups.forEach((group) => {
+                if (group.getAttribute("data-use-real-products") === "1") {
+                    return;
+                }
                 const productCards = Array.from(group.querySelectorAll(".promo-product"));
                 const isEasyGroup = group.getAttribute("data-products") === "easy";
                 const isNewGroup = group.getAttribute("data-products") === "new";

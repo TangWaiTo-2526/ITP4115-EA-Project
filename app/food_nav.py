@@ -1,70 +1,22 @@
-"""Build 母嬰 mega menu from product_categories / product_details (DB)."""
+"""Build 食品及飲品 mega menu from product_categories / product_details (DB)."""
 
 from __future__ import annotations
 
 from collections import defaultdict
-import re
 from typing import Any
 
 from flask import url_for
-from sqlalchemy import func
 
-from app import db
-from app.models import ProductCategory, ProductDetail, Supplier
+from app.maternity_nav import _collect_descendant_category_ids, _top_suppliers_for_categories
+from app.models import ProductCategory
 
-
-HIDDEN_MATERNITY_MENU_NAMES = frozenset({'原箱優惠'})
-
-HIDDEN_MATERNITY_MENU_PATTERNS = (
-    re.compile(r'^初生\s*(?:\(?NB\)?)$', re.IGNORECASE),
-    re.compile(r'^細碼\s*(?:\(?S\)?)$', re.IGNORECASE),
-    re.compile(r'^中碼\s*(?:\(?M\)?)$', re.IGNORECASE),
-    re.compile(r'^大碼\s*(?:\(?L\)?)$', re.IGNORECASE),
-    re.compile(r'^加大碼\s*(?:\(?XL\)?)$', re.IGNORECASE),
-    re.compile(r'^加加大碼\s*(?:\(?XXL\)?)$', re.IGNORECASE),
-)
+FOOD_ROOT_NAMES = frozenset({'食品及飲品', '食品及饮料'})
 
 
-def _should_hide_from_maternity_menu(name: str) -> bool:
-    normalized_name = name.strip()
-    return normalized_name in HIDDEN_MATERNITY_MENU_NAMES or any(
-        pattern.fullmatch(normalized_name) for pattern in HIDDEN_MATERNITY_MENU_PATTERNS
-    )
-
-
-def _collect_descendant_category_ids(
-    root_id: int, children_by_parent: dict[int, list[ProductCategory]]
-) -> list[int]:
-    out: list[int] = []
-    stack = [root_id]
-    while stack:
-        cid = stack.pop()
-        out.append(cid)
-        for ch in children_by_parent.get(cid, []):
-            stack.append(ch.product_categories_id)
-    return out
-
-
-def _top_suppliers_for_categories(category_ids: list[int], limit: int = 8) -> list[dict[str, Any]]:
-    if not category_ids:
-        return []
-    rows = (
-        db.session.query(Supplier.supplier_id, Supplier.supplier_name)
-        .join(ProductDetail, ProductDetail.supplier_id == Supplier.supplier_id)
-        .filter(ProductDetail.product_categories_id.in_(category_ids))
-        .group_by(Supplier.supplier_id, Supplier.supplier_name)
-        .order_by(func.count(ProductDetail.product_categories_uuid).desc())
-        .limit(limit)
-        .all()
-    )
-    return [{'supplier_id': r[0], 'name': r[1]} for r in rows]
-
-
-def _pane_sections_for_l2(
+def _pane_sections_for_l2_food(
     l2: ProductCategory,
     children_by_parent: dict[int, list[ProductCategory]],
 ) -> list[dict[str, Any]]:
-    """Render maternity mega menu at the parent-category level only."""
     l3_list = children_by_parent.get(l2.product_categories_id, [])
     sections: list[dict[str, Any]] = []
     flat_buffer: list[dict[str, Any]] = []
@@ -85,8 +37,6 @@ def _pane_sections_for_l2(
         flat_buffer.clear()
 
     for l3 in l3_list:
-        if _should_hide_from_maternity_menu(l3.product_categories_name):
-            continue
         flat_buffer.append(
             {
                 'name': l3.product_categories_name,
@@ -99,7 +49,7 @@ def _pane_sections_for_l2(
     return sections
 
 
-def build_maternity_mega_nav() -> dict[str, Any] | None:
+def build_food_mega_nav() -> dict[str, Any] | None:
     """
     Returns { 'tabs': [ { tab_key, name, sections, brands, view_all_url } ] }
     or None if DB / schema unavailable.
@@ -121,13 +71,14 @@ def build_maternity_mega_nav() -> dict[str, Any] | None:
         (
             c
             for c in all_cats
-            if c.product_categories_name in ('母婴', '母嬰') and (c.parent_id is None or c.level == 1)
+            if c.product_categories_name in FOOD_ROOT_NAMES
+            and (c.parent_id is None or c.level == 1)
         ),
         None,
     )
     if root is None:
         root = next(
-            (c for c in all_cats if c.product_categories_name in ('母婴', '母嬰')),
+            (c for c in all_cats if c.product_categories_name in FOOD_ROOT_NAMES),
             None,
         )
     if root is None:
@@ -167,7 +118,7 @@ def build_maternity_mega_nav() -> dict[str, Any] | None:
                 'category_id': l2.product_categories_id,
                 'name': l2.product_categories_name,
                 'view_all_url': url_for('catalog_category', category_id=l2.product_categories_id),
-                'sections': _pane_sections_for_l2(l2, children_by_parent),
+                'sections': _pane_sections_for_l2_food(l2, children_by_parent),
                 'brands': brands,
             }
         )
