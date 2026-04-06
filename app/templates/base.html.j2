@@ -5,6 +5,26 @@
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='png/favicon.ico') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/header.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/footer.css') }}">
+    <style>
+        .header-nav-2-cart-badge {
+            position: absolute;
+            top: 0.2rem;
+            right: 0.2rem;
+            min-width: 1.35rem;
+            height: 1.35rem;
+            line-height: 1.35rem;
+            border-radius: 999px;
+            background: #ff4d4f;
+            color: #fff;
+            font-size: 0.75rem;
+            text-align: center;
+            font-weight: 700;
+            padding: 0 0.3rem;
+        }
+        .header-nav-2-icon-link {
+            position: relative;
+        }
+    </style>
 {% endblock %}
 
 {% block navbar %}
@@ -82,8 +102,11 @@
                         <a class="header-nav-2-icon-link" href="#" aria-label="{{ _('Favorites') }}">
                             <i class="fa-regular fa-heart header-nav-2-icon" aria-hidden="true"></i>
                         </a>
-                        <a class="header-nav-2-icon-link" href="#" aria-label="{{ _('Shopping cart') }}">
+                        <a class="header-nav-2-icon-link" href="{{ url_for('cart') }}" aria-label="{{ _('Shopping cart') }}">
                             <i class="fa-solid fa-cart-shopping header-nav-2-icon" aria-hidden="true"></i>
+                            {% if cart_count and cart_count > 0 %}
+                            <span class="header-nav-2-cart-badge">{{ cart_count }}</span>
+                            {% endif %}
                         </a>
                     </div>
                 </nav>
@@ -1341,6 +1364,75 @@
                     m.clearTimer();
                     if (rel && nav.contains(rel) && m.hitIn(rel)) return;
                     m.close();
+                });
+            });
+        })();
+    </script>
+    <script>
+        (function () {
+            function findProductUuid(element) {
+                var card = element.closest('[data-product-uuid]');
+                if (!card) {
+                    card = element.closest('article');
+                }
+                return card && card.getAttribute('data-product-uuid');
+            }
+
+            function showTemporaryMessage(message) {
+                if (window.alert) {
+                    window.alert(message);
+                    return;
+                }
+            }
+
+            function updateCartBadge(count) {
+                var badge = document.querySelector('.header-nav-2-cart-badge');
+                if (!badge) return;
+                if (count > 0) {
+                    badge.textContent = String(count);
+                } else {
+                    badge.remove();
+                }
+            }
+
+            function addToCart(productUuid) {
+                if (!productUuid) {
+                    showTemporaryMessage('此商品暫不支援加入購物車。');
+                    return;
+                }
+                fetch('{{ url_for('add_cart') }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                    },
+                    body: JSON.stringify({ product_uuid: productUuid }),
+                })
+                    .then(function (response) {
+                        if (response.redirected) {
+                            window.location.href = response.url;
+                            return null;
+                        }
+                        return response.json();
+                    })
+                    .then(function (data) {
+                        if (!data) return;
+                        if (data.status === 'ok') {
+                            updateCartBadge(data.cart_count || 0);
+                            showTemporaryMessage('商品已加入購物車。');
+                        } else {
+                            showTemporaryMessage(data.message || '加入購物車失敗。');
+                        }
+                    })
+                    .catch(function () {
+                        showTemporaryMessage('加入購物車時發生錯誤。');
+                    });
+            }
+
+            document.querySelectorAll('[data-add-cart], .browse-product-cart, .porductContainer-cart').forEach(function (button) {
+                button.addEventListener('click', function () {
+                    var productUuid = findProductUuid(button);
+                    addToCart(productUuid);
                 });
             });
         })();

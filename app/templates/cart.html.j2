@@ -1,0 +1,61 @@
+{% extends 'base.html.j2' %}
+
+{% block title %}購物車{% endblock %}
+
+{% block app_content %}
+<div class="cart-page">
+    <div class="page-header">
+        <h1>購物車</h1>
+    </div>
+
+    {% if cart_items %}
+    <section class="cart-table">
+        <table>
+            <thead>
+                <tr>
+                    <th>商品</th>
+                    <th>單價</th>
+                    <th>小計</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in cart_items %}
+                <tr>
+                    <td class="cart-item-info">
+                        <img src="{{ item.image_url }}" alt="{{ item.name }}" loading="lazy" width="80" height="80">
+                        <div>
+                            <strong>{{ item.name }}</strong>
+                        </div>
+                    </td>
+                    <td>${{ '%.2f'|format(item.unit_price) }}</td>
+                    <td>${{ '%.2f'|format(item.line_total) }}</td>
+                    <td>
+                        <form action="{{ url_for('cart_remove') }}" method="post">
+                            <input type="hidden" name="product_uuid" value="{{ item.product_uuid }}">
+                            <button type="submit" class="btn btn-secondary-sm">移除</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </section>
+    <section class="cart-summary">
+        <div class="cart-summary-row">
+            <span>總計</span>
+            <strong>${{ '%.2f'|format(total_price) }}</strong>
+        </div>
+        <div class="cart-actions">
+            <a class="btn btn-secondary-sm" href="{{ url_for('index') }}">繼續購物</a>
+            <a class="btn btn-primary" href="{{ url_for('checkout') }}">前往結帳</a>
+        </div>
+    </section>
+    {% else %}
+    <section class="cart-empty">
+        <p>您的購物車目前沒有任何商品。</p>
+        <a class="btn btn-primary" href="{{ url_for('index') }}">立即選購</a>
+    </section>
+    {% endif %}
+</div>
+{% endblock %}
