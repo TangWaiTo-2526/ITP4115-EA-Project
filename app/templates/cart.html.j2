@@ -26,6 +26,9 @@
                         <img src="{{ item.image_url }}" alt="{{ item.name }}" loading="lazy" width="80" height="80">
                         <div>
                             <strong>{{ item.name }}</strong>
+                            {% if item.quantity and item.quantity > 1 %}
+                            <span class="quantity">數量: {{ item.quantity }}</span>
+                            {% endif %}
                         </div>
                     </td>
                     <td>${{ '%.2f'|format(item.unit_price) }}</td>

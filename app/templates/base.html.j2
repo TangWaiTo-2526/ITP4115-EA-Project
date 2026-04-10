@@ -24,6 +24,46 @@
         .header-nav-2-icon-link {
             position: relative;
         }
+        /* Floating Cart Styles */
+        .floating-cart {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+        .floating-cart-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 60px;
+            height: 60px;
+            background: #007bff;
+            color: #fff;
+            border-radius: 50%;
+            text-decoration: none;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            transition: background 0.3s ease;
+        }
+        .floating-cart-link:hover {
+            background: #0056b3;
+        }
+        .floating-cart-icon {
+            font-size: 24px;
+        }
+        .floating-cart-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            min-width: 20px;
+            height: 20px;
+            line-height: 20px;
+            border-radius: 50%;
+            background: #ff4d4f;
+            color: #fff;
+            font-size: 12px;
+            text-align: center;
+            font-weight: 700;
+        }
     </style>
 {% endblock %}
 
@@ -946,6 +986,16 @@
         {% endblock %}
         {# application content needs to be provided in the app_content block #}
         {% block app_content %}{% endblock %}
+
+        <!-- Floating Cart Button -->
+        <div id="floating-cart" class="floating-cart">
+            <a href="{{ url_for('cart') }}" class="floating-cart-link" aria-label="購物車">
+                <i class="fa-solid fa-cart-shopping floating-cart-icon"></i>
+                {% if cart_count and cart_count > 0 %}
+                <span class="floating-cart-badge">{{ cart_count }}</span>
+                {% endif %}
+            </a>
+        </div>
     </div>
 
     <footer class="footer-div1-1">

@@ -293,6 +293,10 @@ def inject_cart_count():
     cart_count = 0
     if current_user.is_authenticated:
         cart_count = Cart.query.filter_by(user_uuid=current_user.user_uuid).count()
+    else:
+        # For anonymous users, count items in session
+        cart_items = session.get('cart', {})
+        cart_count = sum(cart_items.values())
     return {'cart_count': cart_count}
 
 
@@ -652,35 +656,60 @@ def category_browse(section, slug):
 
 
 @app.route('/cart', methods=['GET'])
-@login_required
 def cart():
-    cart_rows = (
-        Cart.query.filter_by(user_uuid=current_user.user_uuid)
-        .join(ProductDetail, ProductDetail.product_categories_uuid == Cart.product_details_uuid)
-        .all()
-    )
     cart_items = []
     total_price = 0.0
-    for row in cart_rows:
-        product = row.product
-        if product is None:
-            continue
-        price = float(product.discount_price if product.discount_price is not None else product.price)
-        cart_items.append(
-            {
-                'product_uuid': str(product.product_categories_uuid),
-                'name': product.product_name,
-                'image_url': product_image_url(product.image_path),
-                'unit_price': price,
-                'line_total': price,
-            }
+    
+    if current_user.is_authenticated:
+        # Authenticated user: get from database
+        cart_rows = (
+            Cart.query.filter_by(user_uuid=current_user.user_uuid)
+            .join(ProductDetail, ProductDetail.product_categories_uuid == Cart.product_details_uuid)
+            .all()
         )
-        total_price += price
+        for row in cart_rows:
+            product = row.product
+            if product is None:
+                continue
+            price = float(product.discount_price if product.discount_price is not None else product.price)
+            cart_items.append(
+                {
+                    'product_uuid': str(product.product_categories_uuid),
+                    'name': product.product_name,
+                    'image_url': product_image_url(product.image_path),
+                    'unit_price': price,
+                    'line_total': price,
+                }
+            )
+            total_price += price
+    else:
+        # Anonymous user: get from session
+        cart_data = session.get('cart', {})
+        for product_uuid, quantity in cart_data.items():
+            try:
+                product_id = uuid.UUID(product_uuid)
+                product = db.session.get(ProductDetail, product_id)
+                if product is None:
+                    continue
+                price = float(product.discount_price if product.discount_price is not None else product.price)
+                cart_items.append(
+                    {
+                        'product_uuid': product_uuid,
+                        'name': product.product_name,
+                        'image_url': product_image_url(product.image_path),
+                        'unit_price': price,
+                        'line_total': price * quantity,
+                        'quantity': quantity,
+                    }
+                )
+                total_price += price * quantity
+            except ValueError:
+                continue
+    
     return render_template('cart.html.j2', cart_items=cart_items, total_price=total_price)
 
 
 @app.route('/cart/add', methods=['POST'])
-@login_required
 def add_cart():
     data = request.get_json(silent=True) or request.form
     product_uuid = (data.get('product_uuid') or data.get('product_uuid') or '').strip()
@@ -693,16 +722,25 @@ def add_cart():
     product = db.session.get(ProductDetail, product_id)
     if product is None:
         return jsonify({'status': 'error', 'message': '找不到商品'}), 404
-    existing = db.session.get(Cart, (current_user.user_uuid, product.product_categories_uuid))
-    if existing is None:
-        db.session.add(Cart(user_uuid=current_user.user_uuid, product_details_uuid=product.product_categories_uuid))
-        db.session.commit()
-    cart_count = Cart.query.filter_by(user_uuid=current_user.user_uuid).count()
+    
+    if current_user.is_authenticated:
+        # Authenticated user: add to database
+        existing = db.session.get(Cart, (current_user.user_uuid, product.product_categories_uuid))
+        if existing is None:
+            db.session.add(Cart(user_uuid=current_user.user_uuid, product_details_uuid=product.product_categories_uuid))
+            db.session.commit()
+        cart_count = Cart.query.filter_by(user_uuid=current_user.user_uuid).count()
+    else:
+        # Anonymous user: add to session
+        cart = session.get('cart', {})
+        cart[product_uuid] = cart.get(product_uuid, 0) + 1
+        session['cart'] = cart
+        cart_count = sum(cart.values())
+    
     return jsonify({'status': 'ok', 'cart_count': cart_count})
 
 
 @app.route('/cart/remove', methods=['POST'])
-@login_required
 def cart_remove():
     data = request.get_json(silent=True) or request.form
     product_uuid = (data.get('product_uuid') or '').strip()
@@ -712,11 +750,22 @@ def cart_remove():
         product_id = uuid.UUID(product_uuid)
     except ValueError:
         return jsonify({'status': 'error', 'message': '無效的商品識別'}), 400
-    row = db.session.get(Cart, (current_user.user_uuid, product_id))
-    if row:
-        db.session.delete(row)
-        db.session.commit()
-    cart_count = Cart.query.filter_by(user_uuid=current_user.user_uuid).count()
+    
+    if current_user.is_authenticated:
+        # Authenticated user: remove from database
+        row = db.session.get(Cart, (current_user.user_uuid, product_id))
+        if row:
+            db.session.delete(row)
+            db.session.commit()
+        cart_count = Cart.query.filter_by(user_uuid=current_user.user_uuid).count()
+    else:
+        # Anonymous user: remove from session
+        cart = session.get('cart', {})
+        if product_uuid in cart:
+            del cart[product_uuid]
+            session['cart'] = cart
+        cart_count = sum(cart.values())
+    
     if request.is_json:
         return jsonify({'status': 'ok', 'cart_count': cart_count})
     return redirect(url_for('cart'))
@@ -855,6 +904,21 @@ def login():
             flash('使用者名稱、電子郵件或密碼不正確')
             return redirect(url_for('login'))
         login_user(user, remember=form.remember_me.data)
+        # Migrate cart from session to database
+        cart = session.get('cart', {})
+        if cart:
+            for product_uuid, quantity in cart.items():
+                try:
+                    product_id = uuid.UUID(product_uuid)
+                    # Check if already in database cart
+                    existing = db.session.get(Cart, (user.user_uuid, product_id))
+                    if existing is None:
+                        for _ in range(quantity):
+                            db.session.add(Cart(user_uuid=user.user_uuid, product_details_uuid=product_id))
+                except ValueError:
+                    continue
+            db.session.commit()
+            session.pop('cart', None)  # Clear session cart
         next_page = request.args.get('next')
         if not next_page or urlparse(next_page).netloc != '':
             next_page = url_for('index')
