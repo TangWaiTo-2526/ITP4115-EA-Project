@@ -712,6 +712,26 @@ def cart():
 @app.route('/cart/add', methods=['POST'])
 def add_cart():
     data = request.get_json(silent=True) or request.form
+    next_url = (data.get('next_url') or request.args.get('next') or '').strip()
+    if not next_url:
+        referrer = (request.referrer or '').strip()
+        if referrer:
+            parsed_referrer = urlparse(referrer)
+            if not parsed_referrer.netloc or parsed_referrer.netloc == request.host:
+                next_url = parsed_referrer.path or ''
+                if parsed_referrer.query:
+                    next_url += f'?{parsed_referrer.query}'
+                if parsed_referrer.fragment:
+                    next_url += f'#{parsed_referrer.fragment}'
+    if not next_url or urlparse(next_url).netloc != '':
+        next_url = url_for('index')
+
+    if current_user.is_anonymous:
+        login_url = url_for('login', next=next_url)
+        if request.is_json or request.accept_mimetypes.accept_json:
+            return jsonify({'status': 'login_required', 'login_url': login_url}), 401
+        return redirect(login_url)
+
     product_uuid = (data.get('product_uuid') or data.get('product_uuid') or '').strip()
     if not product_uuid:
         return jsonify({'status': 'error', 'message': '缺少 product_uuid'}), 400
