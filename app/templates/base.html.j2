@@ -142,7 +142,7 @@
                         <a class="header-nav-2-icon-link" href="#" aria-label="{{ _('Favorites') }}">
                             <i class="fa-regular fa-heart header-nav-2-icon" aria-hidden="true"></i>
                         </a>
-                        <a class="header-nav-2-icon-link" href="{{ url_for('cart') }}" aria-label="{{ _('Shopping cart') }}">
+                        <a class="header-nav-2-icon-link" href="{% if current_user.is_anonymous %}{{ url_for('login', next=url_for('cart')) }}{% else %}{{ url_for('cart') }}{% endif %}" aria-label="{{ _('Shopping cart') }}">
                             <i class="fa-solid fa-cart-shopping header-nav-2-icon" aria-hidden="true"></i>
                             {% if cart_count and cart_count > 0 %}
                             <span class="header-nav-2-cart-badge">{{ cart_count }}</span>
@@ -989,7 +989,7 @@
 
         <!-- Floating Cart Button -->
         <div id="floating-cart" class="floating-cart">
-            <a href="{{ url_for('cart') }}" class="floating-cart-link" aria-label="購物車">
+            <a href="{% if current_user.is_anonymous %}{{ url_for('login', next=url_for('cart')) }}{% else %}{{ url_for('cart') }}{% endif %}" class="floating-cart-link" aria-label="購物車">
                 <i class="fa-solid fa-cart-shopping floating-cart-icon"></i>
                 {% if cart_count and cart_count > 0 %}
                 <span class="floating-cart-badge">{{ cart_count }}</span>
@@ -1420,6 +1420,10 @@
     </script>
     <script>
         (function () {
+            var isAuthenticated = {{ 'true' if current_user.is_authenticated else 'false' }};
+            var defaultLoginUrl = {{ url_for('login')|tojson }};
+            var toastTimer = null;
+
             function findProductUuid(element) {
                 var card = element.closest('[data-product-uuid]');
                 if (!card) {
@@ -1429,10 +1433,34 @@
             }
 
             function showTemporaryMessage(message) {
+                var cartToast = document.getElementById('cart-toast');
+                if (cartToast) {
+                    cartToast.textContent = message;
+                    cartToast.classList.add('is-visible');
+                    if (toastTimer) {
+                        clearTimeout(toastTimer);
+                    }
+                    toastTimer = setTimeout(function () {
+                        cartToast.classList.remove('is-visible');
+                    }, 1500);
+                    return;
+                }
                 if (window.alert) {
                     window.alert(message);
                     return;
                 }
+            }
+
+            function getCurrentPagePath() {
+                return window.location.pathname + window.location.search + window.location.hash;
+            }
+
+            function redirectToLogin(loginUrl) {
+                if (loginUrl) {
+                    window.location.href = loginUrl;
+                    return;
+                }
+                window.location.href = defaultLoginUrl + '?next=' + encodeURIComponent(getCurrentPagePath());
             }
 
             function updateCartBadge(count) {
@@ -1446,6 +1474,10 @@
             }
 
             function addToCart(productUuid) {
+                if (!isAuthenticated) {
+                    redirectToLogin();
+                    return;
+                }
                 if (!productUuid) {
                     showTemporaryMessage('此商品暫不支援加入購物車。');
                     return;
@@ -1456,9 +1488,24 @@
                         'Content-Type': 'application/json',
                         'Accept': 'application/json',
                     },
-                    body: JSON.stringify({ product_uuid: productUuid }),
+                    body: JSON.stringify({
+                        product_uuid: productUuid,
+                        next_url: getCurrentPagePath(),
+                    }),
                 })
                     .then(function (response) {
+                        if (response.status === 401) {
+                            return response
+                                .json()
+                                .then(function (data) {
+                                    redirectToLogin(data && data.login_url);
+                                    return null;
+                                })
+                                .catch(function () {
+                                    redirectToLogin();
+                                    return null;
+                                });
+                        }
                         if (response.redirected) {
                             window.location.href = response.url;
                             return null;
