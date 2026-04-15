@@ -899,21 +899,6 @@
                 });
             });
 
-            const cartToast = document.getElementById("cart-toast");
-            let toastTimer = null;
-
-            function showCartToast(message) {
-                if (!cartToast) return;
-                cartToast.textContent = message;
-                cartToast.classList.add("is-visible");
-                if (toastTimer) {
-                    clearTimeout(toastTimer);
-                }
-                toastTimer = setTimeout(() => {
-                    cartToast.classList.remove("is-visible");
-                }, 1500);
-            }
-
             const qtyControls = document.querySelectorAll(".promo-qty-control");
             qtyControls.forEach((control) => {
                 const valueNode = control.querySelector("[data-qty-value]");
@@ -932,21 +917,6 @@
                 });
             });
 
-            const addButtons = document.querySelectorAll("[data-add-cart]");
-            addButtons.forEach((button) => {
-                button.addEventListener("click", () => {
-                    const productCard = button.closest(".promo-product");
-                    const qtyNode = productCard ? productCard.querySelector("[data-qty-value]") : null;
-                    const qty = qtyNode ? qtyNode.textContent : "1";
-                    showCartToast("成功加入购物车 x" + qty);
-                });
-            });
-
-            document.querySelectorAll(".porductContainer-cart").forEach((button) => {
-                button.addEventListener("click", () => {
-                    showCartToast("成功加入购物车 x1");
-                });
-            });
         })();
     </script>
 {% endblock %}
