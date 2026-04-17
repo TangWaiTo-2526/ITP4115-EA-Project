@@ -71,7 +71,7 @@ python -m flask --app run.py db upgrade
 | 表（Table） | 说明 | 字段（Columns） |
 | --- | --- | --- |
 | `user` | 用戶表 | `user_uuid`, `user_name`, `phone_number`, `mail`, `password_hash`, `create_time`, `salutation`, `birthday`, `nationality`, `communication_language`, `marketing_opt_out`, `brand_fortress`, `brand_parknshop`, `brand_watsons`, `brand_moneyback` |
-| `user_address` | 用戶收貨地址 | `user_address_uuid`, `user_uuid`, `user_address`, `unit`, `floor`, `building_street`, `region`, `district`, `phone_number`, `home_phone`, `create_time` |
+| `user_address` | 用戶收貨地址 | `user_address_uuid`, `user_uuid`, `user_address`, `unit`, `floor`, `building_street`, `region`, `district`, `phone_number`, `home_phone`, `is_default`, `create_time` |
 | `registration_verification_code` | 註冊驗證碼 | `id`, `client_ip`, `code`, `mail`, `created_at`, `expires_at`, `last_sent_at`, `consumed_at` |
 | `membership` | 會員促銷/積分 | `user_uuid`, `membership_point`, `create_time` |
 | `membership_points_log` | 會員積分交易紀錄 | `points_log_uuid`, `user_uuid`, `transaction_time`, `retailer`, `store_name`, `transaction_amount_hkd`, `base_points`, `extra_points`, `redeemed_points`, `create_time` |
@@ -84,7 +84,7 @@ python -m flask --app run.py db upgrade
 ### 主键（PK）
 
 - user: PK = user_uuid；`mail` 唯一（`uq_user_mail`）；索引 `ix_user_user_name`、`ix_user_phone_number`
-- user_address: PK = user_address_uuid；索引 `ix_user_address_user_uuid`
+- user_address: PK = user_address_uuid；索引 `ix_user_address_user_uuid`, `ix_user_address_user_uuid_is_default`
 - registration_verification_code: PK = id
 - membership: PK = user_uuid
 - membership_points_log: PK = points_log_uuid；索引 `ix_membership_points_log_user_uuid`、`ix_membership_points_log_transaction_time`
@@ -102,6 +102,9 @@ python -m flask --app run.py db upgrade
 - order_items.product_details_uuid -> product_details.product_categories_uuid
 - cart.user_uuid -> user.user_uuid
 - cart.product_details_uuid -> product_details.product_categories_uuid
+- product_categories.parent_id -> product_categories.product_categories_id（`ON DELETE CASCADE`）；唯一 `uq_product_category_parent_name`（`parent_id`, `product_categories_name`）
+- product_details.product_categories_id -> product_categories.product_categories_id（`ON DELETE CASCADE`）
+- product_details.supplier_id -> supplier.supplier_id（`ON DELETE CASCADE`）；索引 `ix_product_details_product_categories_id`, `ix_product_details_supplier_id`
 
 ## Sample Data
 
@@ -135,6 +138,7 @@ python -m flask --app run.py db upgrade
 - 分區（`district`）: `油尖旺區`（可空）
 - 聯絡電話（`phone_number`）: `91234567`（可空）
 - 住宅電話（`home_phone`）: `21234567`（可空）
+- 預設地址（`is_default`）: `false`（預設）
 - 建立日期（`create_time`）: `2026:01:02:12:00:00`
 
 ### 註冊驗證碼（`registration_verification_code`）
@@ -198,9 +202,9 @@ python -m flask --app run.py db upgrade
 
 | 表（Table） | 说明 | 字段（Columns） |
 | --- | --- | --- |
-| `product_categories` | 貨物分類 | `product_categories_id`, `product_categories_name`, `create_time` |
+| `product_categories` | 貨物分類 | `product_categories_id`, `product_categories_name`, `parent_id`, `level`, `create_time` |
 | `supplier` | 供應商 | `supplier_id`, `supplier_name`, `supplier_png`, `create_time` |
-| `product_details` | 貨物詳情 | `product_categories_uuid`, `product_categories_id`, `supplier_id`, `product_name`, `product_details`, `price`, `create_time` |
+| `product_details` | 貨物詳情 | `product_categories_uuid`, `product_categories_id`, `supplier_id`, `product_name`, `specification`, `image_path`, `product_details`, `price`, `discount_price`, `create_time` |
 
 ## Sample Data (商品)
 
@@ -208,6 +212,8 @@ python -m flask --app run.py db upgrade
 
 - 商品分類識別符（`product_categories_id`）：3
 - 商品分類名字（`product_categories_name`）：飲品
+- 父分類（`parent_id`）：NULL（可空）
+- 層級（`level`）：1
 - 建立日期（`create_time`）：2026:01:03:09:30:00
 
 ### 供應商（`supplier`）
@@ -223,8 +229,11 @@ python -m flask --app run.py db upgrade
 - 供應商識別符（`supplier_id`）：1
 - 商品唯一識別符（`product_categories_uuid`）：dd7660db-700d-4b1a-866a-16e1cd2ee4dd
 - 商品名稱（`product_name`）：可樂
+- 商品規格（`specification`）：330ml（可空）
+- 商品圖片路徑（`image_path`）：coke.png（可空）
 - 商品詳情（`product_details`）：330ml 罐裝，冰鎮更佳
 - 商品單價（`price`）：8.50
+- 商品折扣價（`discount_price`）：NULL（可空）
 - 建立日期（`create_time`）：2026:01:03:11:00:00
 
 ## 新增配送、支付與評價相關表
@@ -234,7 +243,7 @@ python -m flask --app run.py db upgrade
 | `delivery` | 商品配送 | `delivery_uuid`, `user_uuid`, `order_uuid`, `deliver_time`, `create_time` |
 | `payment_log` | 支付日誌 | `payment_uuid`, `user_uuid`, `order_uuid`, `payment_methods`, `price`, `state`, `create_time` |
 | `refund` | 售後退款 | `refund_uuid`, `order_uuid`, `user_uuid`, `create_time` |
-| `evaluate` | 商品評價 | `evaluate_uuid`, `product_details_uuid`, `user_uuid`, `evaluate_txt`, `create_time` |
+| `evaluate` | 商品評價 | `evaluate_uuid`, `product_details_uuid`, `user_uuid`, `evalate_txt`, `create_time` |
 
 ## 約束（Constraints）- 配送、支付與評價
 
@@ -288,5 +297,5 @@ python -m flask --app run.py db upgrade
 - 評價唯一識別符（`evaluate_uuid`）: `1f2e3d4c-5b6a-7c8d-9e0f-1a2b3c4d5e6f`
 - 商品唯一識別符（`product_details_uuid`）: `dd7660db-700d-4b1a-866a-16e1cd2ee4dd`
 - 用戶唯一識別符（`user_uuid`）: `55f7d0f9-fba6-4833-b113-8f55e069c5b6`
-- 評價內容（`evaluate_txt`）: `送貨快，包裝完好，味道很好`
+- 評價內容（`evalate_txt`）: `送貨快，包裝完好，味道很好`
 - 建立日期（`create_time`）: `2026:01:07:20:30:00`
