@@ -1,14 +1,16 @@
 import os
 import random
+import re
 import secrets
 import time
 import uuid
+from decimal import Decimal, ROUND_DOWN
 from datetime import datetime, timedelta, timezone
 from urllib.parse import urlparse
 
 from collections import defaultdict
 
-from sqlalchemy import func, or_
+from sqlalchemy import func, or_, inspect
 from sqlalchemy.orm import joinedload
 from werkzeug.security import generate_password_hash
 
@@ -37,6 +39,8 @@ from app.forms import (
     DeliveryAddressForm,
     ResetPasswordRequestForm,
     ResetPasswordForm,
+    OrderRefundForm,
+    ProductReviewForm,
 )
 from app.models import (
     User,
@@ -50,6 +54,10 @@ from app.models import (
     Cart,
     Order,
     OrderItem,
+    Delivery,
+    PaymentLog,
+    Refund,
+    Evaluate,
 )
 from app.category_catalog import build_browse_page
 from app.maternity_nav import _collect_descendant_category_ids
@@ -59,6 +67,40 @@ from app.hk_address import HK_DISTRICTS
 
 REG_VERIFY_TTL_SEC = 900
 REG_VERIFY_IP_COOLDOWN_MIN = 15
+REG_VERIFY_IP_MAX_PENDING = 3
+POINTS_EARN_HKD_RATE = Decimal('10')
+POINTS_TO_HKD_RATE = Decimal('50')
+POINTS_LOG_RETAILER = '易賞錢'
+POINTS_LOG_ORDER_PREFIX = '網上訂單 #'
+POINTS_LOG_REFUND_PREFIX = '訂單退款 #'
+DEFAULT_POINTS_EXPIRY_DATE = datetime(2027, 10, 1)
+DEFAULT_E_STAMPS = (
+    {
+        'title': '花王電子印花',
+        'image': 'png/account/PNS-x-KAO-PNS-Estamp-202503-v1.avif',
+        'date_range': '2025/05/01 - 2026/03/31',
+    },
+    {
+        'title': '網購店取即日取貨',
+        'image': 'png/account/Asset-1.png',
+        'date_range': '2025/11/14 - 2026/12/31',
+    },
+    {
+        'title': 'Staub 電子印花',
+        'image': 'png/account/Staub-x-Ballarini-Mass-eStamp-1-.avif',
+        'date_range': '2026/01/09 - 2026/04/23',
+    },
+)
+DELIVERY_SLOT_CHOICES = (
+    ('morning', '早上'),
+    ('afternoon', '下午'),
+    ('evening', '晚上'),
+)
+DELIVERY_SLOT_HOURS = {
+    'morning': 9,
+    'afternoon': 14,
+    'evening': 19,
+}
 
 
 def _populate_edit_profile_form(form, user):
@@ -173,6 +215,351 @@ def _clear_reg_session():
         session.pop(k, None)
 
 
+def _get_or_create_membership(user):
+    membership = user.membership_row
+    if membership is None:
+        membership = Membership(user_uuid=user.user_uuid, membership_point=0)
+        db.session.add(membership)
+    return membership
+
+
+def _build_points_summary(membership):
+    points = int(membership.membership_point or 0)
+    return {
+        'points': points,
+        'hkd_equivalent': float((Decimal(points) / POINTS_TO_HKD_RATE).quantize(Decimal('0.01'))),
+        'expiring_points': min(points, 93),
+        'expiry_date': DEFAULT_POINTS_EXPIRY_DATE,
+    }
+
+
+def _order_code(order):
+    return str(order.order_uuid).split('-')[0].upper()
+
+
+def _points_order_store_name(order):
+    return f'{POINTS_LOG_ORDER_PREFIX}{_order_code(order)}'
+
+
+def _points_refund_store_name(order):
+    return f'{POINTS_LOG_REFUND_PREFIX}{_order_code(order)}'
+
+
+def _calculate_earned_points(amount_hkd):
+    amount = Decimal(str(amount_hkd or 0))
+    return int((amount / POINTS_EARN_HKD_RATE).to_integral_value(rounding=ROUND_DOWN))
+
+
+def _points_delta_from_log(log):
+    return int(log.base_points or 0) + int(log.extra_points or 0) - int(log.redeemed_points or 0)
+
+
+def _is_refunded_order(order):
+    return (order.order_status or '').strip().lower() in ('refund', 'refunded', '退款')
+
+
+def _is_points_eligible_order(order):
+    return (order.order_status or '').strip().lower() in ('paid', 'refund', 'refunded', '退款')
+
+
+def _build_points_log_timestamp(value):
+    return value if value is not None else datetime.utcnow()
+
+
+def _safe_internal_redirect_target(value, fallback_endpoint='index'):
+    target = (value or '').strip()
+    if not target:
+        return url_for(fallback_endpoint)
+    parsed = urlparse(target)
+    if parsed.netloc or parsed.scheme:
+        return url_for(fallback_endpoint)
+    if not target.startswith('/') or target.startswith('//'):
+        return url_for(fallback_endpoint)
+    return target
+
+
+def _delivery_slot_label(slot):
+    mapping = {key: _(label) for key, label in DELIVERY_SLOT_CHOICES}
+    return mapping.get((slot or '').strip(), '')
+
+
+def _delivery_slot_anchor_text(slot):
+    normalized_slot = (slot or '').strip()
+    hour = DELIVERY_SLOT_HOURS.get(normalized_slot)
+    if hour is None:
+        return ''
+    return f'{hour:02d}:00'
+
+
+def _delivery_slot_choices():
+    return [
+        {
+            'value': key,
+            'label': f"{_(label)} ({_delivery_slot_anchor_text(key)})",
+        }
+        for key, label in DELIVERY_SLOT_CHOICES
+    ]
+
+
+def _build_delivery_time(slot, base_dt=None):
+    normalized_slot = (slot or '').strip()
+    hour = DELIVERY_SLOT_HOURS.get(normalized_slot)
+    if hour is None:
+        return None
+    base = base_dt or datetime.utcnow()
+    return datetime(base.year, base.month, base.day, hour, 0, 0)
+
+
+def _delivery_time_label(deliver_time):
+    if deliver_time is None:
+        return ''
+    return f'{int(deliver_time.hour or 0):02d}:{int(deliver_time.minute or 0):02d}'
+
+
+def _sync_membership_points(user, membership=None, commit=False):
+    membership = membership or _get_or_create_membership(user)
+    feature_tables = _order_feature_tables_state()
+    existing_logs = user.points_logs.order_by(MembershipPointsLog.transaction_time.asc()).all()
+    logs_by_key = {
+        ((log.retailer or '').strip(), (log.store_name or '').strip()): log
+        for log in existing_logs
+    }
+    changed = membership in db.session.new
+
+    for order in user.orders.order_by(Order.create_time.asc()).all():
+        if not _is_points_eligible_order(order):
+            continue
+        earned_points = _calculate_earned_points(order.total_price)
+        if earned_points <= 0:
+            continue
+
+        earn_store_name = _points_order_store_name(order)
+        earn_key = (POINTS_LOG_RETAILER, earn_store_name)
+        if earn_key not in logs_by_key:
+            earn_log = MembershipPointsLog(
+                user_uuid=user.user_uuid,
+                transaction_time=_build_points_log_timestamp(order.create_time),
+                retailer=POINTS_LOG_RETAILER,
+                store_name=earn_store_name,
+                transaction_amount_hkd=order.total_price or 0,
+                base_points=earned_points,
+                extra_points=0,
+                redeemed_points=None,
+            )
+            db.session.add(earn_log)
+            existing_logs.append(earn_log)
+            logs_by_key[earn_key] = earn_log
+            changed = True
+
+        if feature_tables['refund'] and _is_refunded_order(order):
+            refund_store_name = _points_refund_store_name(order)
+            refund_key = (POINTS_LOG_RETAILER, refund_store_name)
+            if refund_key not in logs_by_key:
+                refund_row = order.refunds.order_by(Refund.create_time.asc()).first()
+                refund_log = MembershipPointsLog(
+                    user_uuid=user.user_uuid,
+                    transaction_time=_build_points_log_timestamp(
+                        refund_row.create_time if refund_row is not None else None
+                    ),
+                    retailer=POINTS_LOG_RETAILER,
+                    store_name=refund_store_name,
+                    transaction_amount_hkd=order.total_price or 0,
+                    base_points=0,
+                    extra_points=0,
+                    redeemed_points=earned_points,
+                )
+                db.session.add(refund_log)
+                existing_logs.append(refund_log)
+                logs_by_key[refund_key] = refund_log
+                changed = True
+
+    computed_points = max(sum(_points_delta_from_log(log) for log in existing_logs), 0)
+    if int(membership.membership_point or 0) != computed_points:
+        membership.membership_point = computed_points
+        changed = True
+
+    if changed and commit:
+        db.session.commit()
+
+    logs = sorted(
+        existing_logs,
+        key=lambda log: (log.transaction_time or log.create_time or datetime.min),
+        reverse=True,
+    )
+    return membership, logs, _build_points_summary(membership)
+
+
+def _cleanup_refunded_reviews(user, commit=False):
+    feature_tables = _order_feature_tables_state()
+    if not feature_tables['evaluate'] or not feature_tables['refund']:
+        return False
+
+    refunded_product_ids = {
+        item.product_details_uuid
+        for order in user.orders.order_by(Order.create_time.asc()).all()
+        if _is_refunded_order(order)
+        for item in order.items.order_by(OrderItem.create_time.asc()).all()
+        if item.product_details_uuid is not None
+    }
+    if not refunded_product_ids:
+        return False
+
+    reviews = (
+        Evaluate.query.filter(
+            Evaluate.user_uuid == user.user_uuid,
+            Evaluate.product_details_uuid.in_(refunded_product_ids),
+        ).all()
+    )
+    if not reviews:
+        return False
+
+    for review in reviews:
+        db.session.delete(review)
+
+    if commit:
+        db.session.commit()
+    return True
+
+
+def _build_dashboard_stamps():
+    return [
+        {
+            'title': _(stamp['title']),
+            'image': stamp['image'],
+            'date_range': stamp['date_range'],
+            'count': 0,
+        }
+        for stamp in DEFAULT_E_STAMPS
+    ]
+
+
+def _build_recent_purchase_items(user, limit=3):
+    rows = (
+        OrderItem.query.options(joinedload(OrderItem.order), joinedload(OrderItem.product))
+        .join(Order, Order.order_uuid == OrderItem.order_uuid)
+        .filter(
+            Order.user_uuid == user.user_uuid,
+            Order.order_status == 'paid',
+        )
+        .order_by(Order.create_time.desc(), OrderItem.create_time.desc())
+        .limit(limit)
+        .all()
+    )
+
+    items = []
+    for row in rows:
+        product = row.product
+        order = row.order
+        items.append(
+            {
+                'product_uuid': str(row.product_details_uuid) if row.product_details_uuid is not None else '',
+                'product_name': ((product.product_name if product else '') or _('商品')).strip(),
+                'image_url': product_image_url(product.image_path) if product and product.image_path else '',
+                'quantity': int(row.quantity or 0),
+                'line_total': float(row.line_total or 0),
+                'order_code': _order_code(order) if order is not None else '',
+                'order_created_at': order.create_time if order is not None else None,
+            }
+        )
+    return items
+
+
+def _build_product_review_cards(user):
+    reviews = (
+        Evaluate.query.options(
+            joinedload(Evaluate.product).joinedload(ProductDetail.supplier),
+        )
+        .filter(Evaluate.user_uuid == user.user_uuid)
+        .order_by(Evaluate.create_time.desc())
+        .all()
+    )
+
+    category_ids = {
+        product.product_categories_id
+        for product in (review.product for review in reviews)
+        if product is not None and product.product_categories_id is not None
+    }
+    category_names = {
+        row.product_categories_id: (row.product_categories_name or '').strip()
+        for row in ProductCategory.query.filter(ProductCategory.product_categories_id.in_(category_ids)).all()
+    } if category_ids else {}
+
+    latest_order_items = (
+        OrderItem.query.options(joinedload(OrderItem.order))
+        .join(Order, Order.order_uuid == OrderItem.order_uuid)
+        .filter(Order.user_uuid == user.user_uuid)
+        .order_by(Order.create_time.desc(), OrderItem.create_time.desc())
+        .all()
+    )
+
+    latest_order_by_product = {}
+    for item in latest_order_items:
+        latest_order_by_product.setdefault(item.product_details_uuid, item)
+
+    cards = []
+    for review in reviews:
+        product = review.product
+        product_name = _('商品')
+        category_name = ''
+        specification = ''
+        image_url = ''
+        catalog_url = ''
+
+        if product is not None:
+            supplier_name = ((product.supplier.supplier_name if product.supplier is not None else '') or '').strip()
+            base_name = (product.product_name or '').strip()
+            product_name = f'{supplier_name} {base_name}'.strip() if supplier_name else (base_name or _('商品'))
+            category_name = category_names.get(product.product_categories_id, '')
+            specification = (product.specification or '').strip()
+            image_url = product_image_url(product.image_path) if product.image_path else ''
+            if product.product_categories_id is not None:
+                catalog_url = url_for('catalog_category', category_id=product.product_categories_id)
+
+        order_item = latest_order_by_product.get(review.product_details_uuid)
+        order = order_item.order if order_item is not None else None
+
+        cards.append(
+            {
+                'product_name': product_name,
+                'category_name': category_name,
+                'specification': specification,
+                'image_url': image_url,
+                'catalog_url': catalog_url,
+                'review_text': ((review.evalate_txt or '').strip() or _('尚未填寫評論內容')),
+                'review_created_at': review.create_time,
+                'purchase_created_at': order.create_time if order is not None else None,
+                'order_code': str(order.order_uuid).split('-')[0].upper() if order is not None else '',
+                'quantity': int(order_item.quantity or 0) if order_item is not None else None,
+                'paid_price': float(order_item.line_total or 0) if order_item is not None else None,
+            }
+        )
+
+    return {
+        'cards': cards,
+        'count': len(cards),
+        'latest_review_at': reviews[0].create_time if reviews else None,
+    }
+
+
+def _display_order_status(status):
+    raw = (status or '').strip().lower()
+    if raw == 'paid':
+        return _('已付款')
+    if raw in ('refund', 'refunded', '退款'):
+        return _('退款')
+    return status or _('未知')
+
+
+def _order_feature_tables_state():
+    inspector = inspect(db.engine)
+    return {
+        'delivery': inspector.has_table('delivery'),
+        'payment_log': inspector.has_table('payment_log'),
+        'refund': inspector.has_table('refund'),
+        'evaluate': inspector.has_table('evaluate'),
+    }
+
+
 def _reg_extra_session_ok():
     """第三步：已完成郵箱驗證且 session 仍帶有註冊資料。"""
     return bool(
@@ -199,8 +586,8 @@ def _client_ip():
     return (request.remote_addr or '0.0.0.0').strip()
 
 
-def _ip_window_pending_registration_row(ip):
-    """同一 IP 在 15 分鐘內、尚未完成註冊的驗證碼記錄（若有則可複用寄送同一組碼）。"""
+def _ip_window_pending_registration_rows(ip):
+    """同一 IP 在 15 分鐘內、尚未完成註冊的驗證碼記錄。"""
     window_start = datetime.now(timezone.utc) - timedelta(minutes=REG_VERIFY_IP_COOLDOWN_MIN)
     return (
         RegistrationVerificationCode.query.filter(
@@ -209,7 +596,7 @@ def _ip_window_pending_registration_row(ip):
             RegistrationVerificationCode.created_at >= window_start,
         )
         .order_by(RegistrationVerificationCode.created_at.desc())
-        .first()
+        .all()
     )
 
 
@@ -340,6 +727,22 @@ HOME_NEW_ARRIVALS_SCAN_LIMIT = 120
 HOME_NEW_ARRIVALS_DISPLAY = 4
 HOME_PROMO_DEALS_SCAN_LIMIT = 120
 HOME_PROMO_DEALS_DISPLAY = 4
+HOME_DISCOUNT_SHELF_DISPLAY = 6
+HOME_FOCUS_RECOMMENDATIONS_DISPLAY = 6
+HOME_CASE_DEAL_SCAN_LIMIT = 240
+HOME_CASE_DEAL_DISPLAY = 6
+HOME_GENERIC_SHELF_SCAN_LIMIT = 1000
+HOME_GENERIC_SHELF_KEYS = (
+    'meow9',
+    'easter',
+    'fitness',
+    'xinjiapin',
+    'duomai',
+    'maihaozhuan',
+    'xingzhijiapin',
+    'huanqiu_xianrou',
+    'xiansong_xiande',
+)
 
 
 def _product_detail_to_promo_card(p: ProductDetail) -> dict:
@@ -357,6 +760,67 @@ def _product_detail_to_promo_card(p: ProductDetail) -> dict:
         'image_url': img,
         'price': price_f,
         'discount_price': disc_f,
+        'catalog_url': url_for('catalog_category', category_id=p.product_categories_id),
+    }
+
+
+def _product_detail_to_shelf_card(p: ProductDetail) -> dict:
+    img = product_image_url(p.image_path)
+    brand = (p.supplier.supplier_name if p.supplier is not None else '') or ''
+    brand = brand.strip()
+    pname = (p.product_name or '').strip()
+    display_name = f'{brand} {pname}'.strip() if brand else pname
+    discount_price = float(p.discount_price) if p.discount_price is not None else None
+    original_price = float(p.price)
+    return {
+        'uuid': str(p.product_categories_uuid),
+        'name': display_name or _('商品'),
+        'spec': (p.specification or '').strip(),
+        'sale_price': discount_price if discount_price is not None else original_price,
+        'original_price': original_price if discount_price is not None else None,
+        'image_url': img,
+    }
+
+
+def _is_case_deal_candidate(p: ProductDetail) -> bool:
+    haystack = ' '.join(
+        [
+            (p.product_name or '').strip(),
+            (p.specification or '').strip(),
+        ]
+    ).lower()
+    keyword_hits = ('原箱', '整箱', '箱裝', '箱装', 'case', 'carton', 'pack')
+    if any(keyword in haystack for keyword in keyword_hits):
+        return True
+    if re.search(r'\d+\s*[xX]\s*\d+\s*[xX]\s*\d+', haystack):
+        return True
+    return False
+
+
+def _format_sales_count_label(quantity: int) -> str:
+    qty = max(int(quantity or 0), 0)
+    if qty >= 1000:
+        return _('已售 %(count)sK+', count=f'{qty / 1000:.1f}'.rstrip('0').rstrip('.'))
+    return _('已售 %(count)s', count=qty)
+
+
+def _product_detail_to_focus_card(p: ProductDetail, sold_qty: int) -> dict:
+    img = product_image_url(p.image_path)
+    brand = (p.supplier.supplier_name if p.supplier is not None else '') or ''
+    brand = brand.strip()
+    pname = (p.product_name or '').strip()
+    display_name = f'{brand} {pname}'.strip() if brand else pname
+    price_f = float(p.price)
+    disc = p.discount_price
+    disc_f = float(disc) if disc is not None else None
+    return {
+        'uuid': str(p.product_categories_uuid),
+        'name': display_name or _('商品'),
+        'spec': (p.specification or '').strip(),
+        'sale_price': disc_f if disc_f is not None else price_f,
+        'original_price': price_f if disc_f is not None else None,
+        'sales_label': _format_sales_count_label(sold_qty),
+        'image_url': img,
         'catalog_url': url_for('catalog_category', category_id=p.product_categories_id),
     }
 
@@ -401,6 +865,215 @@ def build_home_promo_deals():
     k = min(HOME_PROMO_DEALS_DISPLAY, len(with_displayable))
     picked = random.sample(with_displayable, k)
     return [_product_detail_to_promo_card(p) for p in picked]
+
+
+def build_home_discount_shelf_products():
+    rows = (
+        ProductDetail.query.options(joinedload(ProductDetail.supplier))
+        .filter(
+            ProductDetail.discount_price.isnot(None),
+            ProductDetail.discount_price < ProductDetail.price,
+            ProductDetail.image_path.isnot(None),
+            ProductDetail.image_path != '',
+        )
+        .order_by(ProductDetail.create_time.desc())
+        .limit(HOME_PROMO_DEALS_SCAN_LIMIT)
+        .all()
+    )
+    with_displayable = [p for p in rows if _promo_image_will_display(p.image_path)]
+    if not with_displayable:
+        return []
+    k = min(HOME_DISCOUNT_SHELF_DISPLAY, len(with_displayable))
+    picked = random.sample(with_displayable, k)
+    cards = []
+    for p in picked:
+        cards.append(_product_detail_to_shelf_card(p))
+    return cards
+
+
+def _build_home_generic_shelf_pool():
+    rows = (
+        ProductDetail.query.options(joinedload(ProductDetail.supplier))
+        .filter(
+            ProductDetail.image_path.isnot(None),
+            ProductDetail.image_path != '',
+        )
+        .order_by(ProductDetail.create_time.desc())
+        .limit(HOME_GENERIC_SHELF_SCAN_LIMIT)
+        .all()
+    )
+    with_displayable = [p for p in rows if _promo_image_will_display(p.image_path)]
+    if not with_displayable:
+        return []
+    product_ids = [p.product_categories_uuid for p in with_displayable if p.product_categories_uuid is not None]
+
+    sales_by_product = {}
+    review_by_product = {}
+    if product_ids:
+        sales_rows = (
+            db.session.query(
+                OrderItem.product_details_uuid,
+                func.sum(OrderItem.quantity).label('sold_qty'),
+            )
+            .join(Order, Order.order_uuid == OrderItem.order_uuid)
+            .filter(
+                Order.order_status == 'paid',
+                OrderItem.product_details_uuid.in_(product_ids),
+            )
+            .group_by(OrderItem.product_details_uuid)
+            .all()
+        )
+        sales_by_product = {
+            row[0]: int(row[1] or 0)
+            for row in sales_rows
+            if row[0] is not None
+        }
+        review_rows = (
+            db.session.query(
+                Evaluate.product_details_uuid,
+                func.count(Evaluate.evaluate_uuid).label('review_count'),
+            )
+            .filter(Evaluate.product_details_uuid.in_(product_ids))
+            .group_by(Evaluate.product_details_uuid)
+            .all()
+        )
+        review_by_product = {
+            row[0]: int(row[1] or 0)
+            for row in review_rows
+            if row[0] is not None
+        }
+
+    cards = []
+    for p in with_displayable:
+        brand = (p.supplier.supplier_name if p.supplier is not None else '') or ''
+        brand = brand.strip()
+        pname = (p.product_name or '').strip()
+        display_name = f'{brand} {pname}'.strip() if brand else pname
+        discount_price = float(p.discount_price) if p.discount_price is not None else None
+        price = float(p.price)
+        sold_qty = sales_by_product.get(p.product_categories_uuid, 0)
+        review_qty = review_by_product.get(p.product_categories_uuid, 0)
+        cards.append(
+            {
+                'uuid': str(p.product_categories_uuid),
+                'name': display_name or _('商品'),
+                'spec': (p.specification or '').strip(),
+                'sale': f'{(discount_price if discount_price is not None else price):.2f}',
+                'orig': f'{price:.2f}' if discount_price is not None else '',
+                'sales': _format_sales_count_label(sold_qty) if sold_qty > 0 else _('人氣商品'),
+                'reviews': f'{review_qty}+' if review_qty > 0 else '0+',
+                'image_url': product_image_url(p.image_path),
+            }
+        )
+    return cards
+
+
+def build_home_generic_shelf_groups():
+    pool = _build_home_generic_shelf_pool()
+    groups = {key: [] for key in HOME_GENERIC_SHELF_KEYS}
+    if not pool:
+        return groups
+
+    group_size = min(HOME_DISCOUNT_SHELF_DISPLAY, len(pool))
+    previous_group_ids = set()
+
+    for key in HOME_GENERIC_SHELF_KEYS:
+        candidate_pool = [
+            card for card in pool
+            if card.get('uuid') not in previous_group_ids
+        ]
+        if len(candidate_pool) < group_size:
+            candidate_pool = list(pool)
+
+        if group_size >= len(candidate_pool):
+            group = random.sample(candidate_pool, len(candidate_pool))
+        else:
+            group = random.sample(candidate_pool, group_size)
+
+        groups[key] = group
+        previous_group_ids = {card.get('uuid') for card in group if card.get('uuid')}
+    return groups
+
+
+def build_home_case_deal_products():
+    rows = (
+        ProductDetail.query.options(joinedload(ProductDetail.supplier))
+        .filter(
+            ProductDetail.image_path.isnot(None),
+            ProductDetail.image_path != '',
+        )
+        .order_by(ProductDetail.create_time.desc())
+        .limit(HOME_CASE_DEAL_SCAN_LIMIT)
+        .all()
+    )
+    candidates = [
+        p for p in rows
+        if _promo_image_will_display(p.image_path) and _is_case_deal_candidate(p)
+    ]
+    if not candidates:
+        return []
+    k = min(HOME_CASE_DEAL_DISPLAY, len(candidates))
+    picked = random.sample(candidates, k)
+    return [_product_detail_to_shelf_card(p) for p in picked]
+
+
+def build_home_focus_recommendations():
+    sales_rows = (
+        db.session.query(
+            OrderItem.product_details_uuid,
+            func.sum(OrderItem.quantity).label('sold_qty'),
+        )
+        .join(Order, Order.order_uuid == OrderItem.order_uuid)
+        .filter(Order.order_status == 'paid')
+        .group_by(OrderItem.product_details_uuid)
+        .order_by(func.sum(OrderItem.quantity).desc(), func.max(Order.create_time).desc())
+        .limit(HOME_FOCUS_RECOMMENDATIONS_DISPLAY * 4)
+        .all()
+    )
+    sold_by_product = {
+        row[0]: int(row[1] or 0)
+        for row in sales_rows
+        if row[0] is not None
+    }
+    cards = []
+    used_product_ids = set()
+
+    if sold_by_product:
+        product_rows = (
+            ProductDetail.query.options(joinedload(ProductDetail.supplier))
+            .filter(ProductDetail.product_categories_uuid.in_(list(sold_by_product.keys())))
+            .all()
+        )
+        products_by_id = {row.product_categories_uuid: row for row in product_rows}
+
+        for product_id, sold_qty in sold_by_product.items():
+            product = products_by_id.get(product_id)
+            if product is None or not _promo_image_will_display(product.image_path):
+                continue
+            cards.append(_product_detail_to_focus_card(product, sold_qty))
+            used_product_ids.add(product_id)
+            if len(cards) >= HOME_FOCUS_RECOMMENDATIONS_DISPLAY:
+                return cards
+
+    filler_rows = (
+        ProductDetail.query.options(joinedload(ProductDetail.supplier))
+        .filter(
+            ProductDetail.image_path.isnot(None),
+            ProductDetail.image_path != '',
+        )
+        .order_by(ProductDetail.create_time.desc())
+        .limit(HOME_FOCUS_RECOMMENDATIONS_DISPLAY * 8)
+        .all()
+    )
+    filler_candidates = [
+        row for row in filler_rows
+        if row.product_categories_uuid not in used_product_ids and _promo_image_will_display(row.image_path)
+    ]
+    if filler_candidates:
+        remaining = HOME_FOCUS_RECOMMENDATIONS_DISPLAY - len(cards)
+        picked = random.sample(filler_candidates, min(remaining, len(filler_candidates)))
+        cards.extend(_product_detail_to_focus_card(product, 0) for product in picked)
+    return cards
 
 
 @app.context_processor
@@ -712,26 +1385,6 @@ def cart():
 @app.route('/cart/add', methods=['POST'])
 def add_cart():
     data = request.get_json(silent=True) or request.form
-    next_url = (data.get('next_url') or request.args.get('next') or '').strip()
-    if not next_url:
-        referrer = (request.referrer or '').strip()
-        if referrer:
-            parsed_referrer = urlparse(referrer)
-            if not parsed_referrer.netloc or parsed_referrer.netloc == request.host:
-                next_url = parsed_referrer.path or ''
-                if parsed_referrer.query:
-                    next_url += f'?{parsed_referrer.query}'
-                if parsed_referrer.fragment:
-                    next_url += f'#{parsed_referrer.fragment}'
-    if not next_url or urlparse(next_url).netloc != '':
-        next_url = url_for('index')
-
-    if current_user.is_anonymous:
-        login_url = url_for('login', next=next_url)
-        if request.is_json or request.accept_mimetypes.accept_json:
-            return jsonify({'status': 'login_required', 'login_url': login_url}), 401
-        return redirect(login_url)
-
     product_uuid = (data.get('product_uuid') or data.get('product_uuid') or '').strip()
     if not product_uuid:
         return jsonify({'status': 'error', 'message': '缺少 product_uuid'}), 400
@@ -802,10 +1455,15 @@ def checkout():
     if not cart_rows:
         flash('您的購物車目前沒有商品。')
         return redirect(url_for('cart'))
-    selected_address = current_user.addresses.order_by(UserAddress.create_time.asc()).first()
+    address_rows = current_user.addresses.order_by(UserAddress.create_time.asc()).all()
+    selected_address = next((addr for addr in address_rows if addr.is_default), None) or (address_rows[0] if address_rows else None)
     receiver_name = current_user.username
-    receiver_phone = current_user.phone_number or ''
+    receiver_phone = (current_user.phone_number or '').strip() or ((selected_address.phone_number or '').strip() if selected_address else '')
     receiver_address = selected_address.formatted_line() if selected_address else '尚未設定送貨地址'
+    has_valid_address = bool(selected_address and receiver_address.strip())
+    delivery_address_url = url_for('delivery_address', next=url_for('checkout'), open='1')
+    selected_delivery_slot = (request.form.get('delivery_slot') or 'morning').strip()
+    delivery_slot_choices = _delivery_slot_choices()
     total_price = 0.0
     items = []
     for row in cart_rows:
@@ -825,9 +1483,23 @@ def checkout():
         )
         total_price += price
     if request.method == 'POST':
-        if not receiver_phone or not receiver_address:
-            flash('請先於個人資料頁設定電話與送貨地址。')
-            return redirect(url_for('delivery_address'))
+        if not receiver_phone or not has_valid_address:
+            flash('請先填寫送貨地址與聯絡電話。')
+            return redirect(delivery_address_url)
+        if not _delivery_slot_label(selected_delivery_slot):
+            flash('請先選擇配送時間。')
+            return render_template(
+                'checkout.html.j2',
+                items=items,
+                total_price=total_price,
+                receiver_name=receiver_name,
+                receiver_phone=receiver_phone,
+                receiver_address=receiver_address,
+                has_valid_address=has_valid_address,
+                delivery_address_url=delivery_address_url,
+                delivery_slot_choices=delivery_slot_choices,
+                selected_delivery_slot=selected_delivery_slot,
+            )
         order = Order(
             user_uuid=current_user.user_uuid,
             order_status='paid',
@@ -847,9 +1519,49 @@ def checkout():
                 line_total=item['line_total'],
             )
             db.session.add(order_item)
+        feature_tables = _order_feature_tables_state()
+        if feature_tables['delivery']:
+            db.session.add(
+                Delivery(
+                    user_uuid=current_user.user_uuid,
+                    order_uuid=order.order_uuid,
+                    deliver_time=_build_delivery_time(selected_delivery_slot),
+                )
+            )
+        if feature_tables['payment_log']:
+            db.session.add(
+                PaymentLog(
+                    user_uuid=current_user.user_uuid,
+                    order_uuid=order.order_uuid,
+                    payment_methods='網上付款',
+                    price=total_price,
+                    state='paid',
+                )
+            )
+        membership = _get_or_create_membership(current_user)
+        earned_points = _calculate_earned_points(total_price)
+        if earned_points > 0:
+            db.session.add(
+                MembershipPointsLog(
+                    user_uuid=current_user.user_uuid,
+                    transaction_time=_build_points_log_timestamp(order.create_time),
+                    retailer=POINTS_LOG_RETAILER,
+                    store_name=_points_order_store_name(order),
+                    transaction_amount_hkd=total_price,
+                    base_points=earned_points,
+                    extra_points=0,
+                    redeemed_points=None,
+                )
+            )
+            membership.membership_point = int(membership.membership_point or 0) + earned_points
         Cart.query.filter_by(user_uuid=current_user.user_uuid).delete(synchronize_session=False)
         db.session.commit()
-        return render_template('order_confirmation.html.j2', order=order, items=items)
+        return render_template(
+            'order_confirmation.html.j2',
+            order=order,
+            items=items,
+            delivery_time_label=_delivery_slot_label(selected_delivery_slot),
+        )
     return render_template(
         'checkout.html.j2',
         items=items,
@@ -857,6 +1569,10 @@ def checkout():
         receiver_name=receiver_name,
         receiver_phone=receiver_phone,
         receiver_address=receiver_address,
+        has_valid_address=has_valid_address,
+        delivery_address_url=delivery_address_url,
+        delivery_slot_choices=delivery_slot_choices,
+        selected_delivery_slot=selected_delivery_slot,
     )
 
 
@@ -865,6 +1581,10 @@ def checkout():
 def index():
     home_new_arrivals = build_home_new_arrivals()
     home_promo_deals = build_home_promo_deals()
+    home_discount_shelf_products = build_home_discount_shelf_products()
+    home_generic_shelf_groups = build_home_generic_shelf_groups()
+    home_case_deal_products = build_home_case_deal_products()
+    home_focus_recommendations = build_home_focus_recommendations()
     newest_cid = (
         db.session.query(ProductDetail.product_categories_id)
         .order_by(ProductDetail.create_time.desc())
@@ -894,6 +1614,10 @@ def index():
         'home_new_view_all_url': home_new_view_all_url,
         'home_promo_deals': home_promo_deals,
         'home_promo_deals_view_all_url': home_promo_deals_view_all_url,
+        'home_discount_shelf_products': home_discount_shelf_products,
+        'home_generic_shelf_groups': home_generic_shelf_groups,
+        'home_case_deal_products': home_case_deal_products,
+        'home_focus_recommendations': home_focus_recommendations,
     }
     if current_user.is_anonymous:
         return render_template('index.html.j2', title=_('PNS 網購'), **ctx)
@@ -923,6 +1647,7 @@ def login():
         if user is None or not user.check_password(form.password.data):
             flash('使用者名稱、電子郵件或密碼不正確')
             return redirect(url_for('login'))
+        session.permanent = True
         login_user(user, remember=form.remember_me.data)
         # Migrate cart from session to database
         cart = session.get('cart', {})
@@ -967,11 +1692,17 @@ def register():
         pw_plain = form.password.data
         now = datetime.now(timezone.utc)
 
-        existing = _ip_window_pending_registration_row(ip)
-        if existing is not None and (existing.mail or '').strip().lower() != pending_mail.lower():
+        pending_rows = _ip_window_pending_registration_rows(ip)
+        existing = next(
+            (
+                row for row in pending_rows
+                if (row.mail or '').strip().lower() == pending_mail.lower()
+            ),
+            None,
+        )
+        if existing is None and len(pending_rows) >= REG_VERIFY_IP_MAX_PENDING:
             flash(
-                '此 IP 15 分鐘內已有未完成的註冊驗證，請使用原註冊信箱 '
-                f'（{_mask_email(existing.mail)}）或稍後再試。'
+                f'此 IP 15 分鐘內最多只可註冊 {REG_VERIFY_IP_MAX_PENDING} 個郵箱，請稍後再試。'
             )
             return redirect(url_for('register'))
 
@@ -1177,7 +1908,259 @@ def reset_password(token):
 @login_required
 def user(username):
     profile_user = User.query.filter_by(user_name=username).first_or_404()
-    return render_template('user.html.j2', user=profile_user)
+    membership = None
+    points_summary = None
+    dashboard_stamps = []
+    recent_purchase_items = []
+
+    if current_user.is_authenticated and profile_user == current_user:
+        membership, _, points_summary = _sync_membership_points(profile_user, commit=True)
+        dashboard_stamps = _build_dashboard_stamps()
+        recent_purchase_items = _build_recent_purchase_items(profile_user)
+
+    return render_template(
+        'user.html.j2',
+        user=profile_user,
+        membership=membership,
+        points_summary=points_summary,
+        dashboard_stamps=dashboard_stamps,
+        recent_purchase_items=recent_purchase_items,
+    )
+
+
+@app.route('/order_history', methods=['GET'])
+@login_required
+def order_history():
+    orders = current_user.orders.order_by(Order.create_time.desc()).all()
+    order_cards = []
+    feature_tables = _order_feature_tables_state()
+
+    for order in orders:
+        items = []
+        item_count = 0
+        refund_form = OrderRefundForm(prefix=f'refund-{order.order_uuid}')
+        refunded = (
+            (feature_tables['refund'] and order.refunds.count() > 0)
+            or (order.order_status or '').strip().lower() in ('refund', 'refunded', '退款')
+        )
+        delivery_time_label = ''
+        if feature_tables['delivery']:
+            delivery_row = order.deliveries.order_by(Delivery.create_time.asc()).first()
+            if delivery_row is not None:
+                delivery_time_label = _delivery_time_label(delivery_row.deliver_time)
+
+        for item in order.items.order_by(OrderItem.create_time.asc()).all():
+            qty = int(item.quantity or 0)
+            item_count += qty
+            product = item.product
+            existing_review = None
+            review_form = None
+            review_enabled = feature_tables['evaluate'] and not refunded
+            review_disabled_text = ''
+            if feature_tables['evaluate']:
+                existing_review = Evaluate.query.filter_by(
+                    user_uuid=current_user.user_uuid,
+                    product_details_uuid=item.product_details_uuid,
+                ).first()
+                review_form = ProductReviewForm(prefix=f'review-{item.order_item_uuid}')
+                if existing_review is not None:
+                    review_form.review_text.data = existing_review.evalate_txt or ''
+                if refunded:
+                    review_disabled_text = _('訂單已退款，評論已取消')
+            else:
+                review_disabled_text = _('評論功能尚未初始化')
+            items.append(
+                {
+                    'order_item_uuid': str(item.order_item_uuid),
+                    'product_uuid': str(item.product_details_uuid),
+                    'name': ((product.product_name if product else '') or _('商品')).strip(),
+                    'image_url': product_image_url(product.image_path) if product and product.image_path else '',
+                    'quantity': qty,
+                    'unit_price': float(item.unit_price or 0),
+                    'line_total': float(item.line_total or 0),
+                    'review_form': review_form,
+                    'review_enabled': review_enabled,
+                    'review_disabled_text': review_disabled_text,
+                    'review_text': '' if refunded else ((existing_review.evalate_txt or '').strip() if existing_review else ''),
+                }
+            )
+
+        order_cards.append(
+            {
+                'order': order,
+                'order_code': str(order.order_uuid).split('-')[0].upper(),
+                'item_count': item_count,
+                'line_items': items,
+                'status_label': _display_order_status(order.order_status),
+                'delivery_time_label': delivery_time_label,
+                'refund_enabled': feature_tables['refund'],
+                'can_refund': feature_tables['refund'] and not refunded,
+                'refund_form': refund_form,
+            }
+        )
+
+    return render_template(
+        'partials/info-page_orders.html.j2',
+        title='訂單紀錄',
+        order_cards=order_cards,
+    )
+
+
+@app.route('/order_history/refund/<order_uuid>', methods=['POST'])
+@login_required
+def order_refund(order_uuid):
+    feature_tables = _order_feature_tables_state()
+    if not feature_tables['refund']:
+        flash('退款功能尚未初始化，請先執行資料庫升級。')
+        return redirect(url_for('order_history'))
+
+    form = OrderRefundForm(prefix=f'refund-{order_uuid}')
+    if not form.validate_on_submit():
+        flash('退款操作無效，請再試一次。')
+        return redirect(url_for('order_history'))
+
+    try:
+        order_id = uuid.UUID(str(order_uuid))
+    except ValueError:
+        abort(404)
+
+    order = current_user.orders.filter(Order.order_uuid == order_id).first_or_404()
+    already_refunded = order.refunds.count() > 0 or (order.order_status or '').strip().lower() in ('refund', 'refunded', '退款')
+    if already_refunded:
+        flash('此訂單已退款。')
+        return redirect(url_for('order_history'))
+
+    db.session.add(Refund(order_uuid=order.order_uuid, user_uuid=current_user.user_uuid))
+    order.order_status = '退款'
+
+    if feature_tables['payment_log']:
+        payment_logs = order.payment_logs.order_by(PaymentLog.create_time.asc()).all()
+        if payment_logs:
+            for log in payment_logs:
+                log.state = 'refunded'
+        else:
+            db.session.add(
+                PaymentLog(
+                    user_uuid=current_user.user_uuid,
+                    order_uuid=order.order_uuid,
+                    payment_methods='退款',
+                    price=order.total_price,
+                    state='refunded',
+                )
+            )
+
+    if feature_tables['evaluate']:
+        reviewed_product_ids = [
+            item.product_details_uuid
+            for item in order.items.order_by(OrderItem.create_time.asc()).all()
+            if item.product_details_uuid is not None
+        ]
+        if reviewed_product_ids:
+            reviews = (
+                Evaluate.query.filter(
+                    Evaluate.user_uuid == current_user.user_uuid,
+                    Evaluate.product_details_uuid.in_(reviewed_product_ids),
+                ).all()
+            )
+            for review in reviews:
+                db.session.delete(review)
+
+    membership = _get_or_create_membership(current_user)
+    earned_points = _calculate_earned_points(order.total_price)
+    if earned_points > 0:
+        refund_store_name = _points_refund_store_name(order)
+        refund_log = current_user.points_logs.filter_by(
+            retailer=POINTS_LOG_RETAILER,
+            store_name=refund_store_name,
+        ).first()
+        if refund_log is None:
+            db.session.add(
+                MembershipPointsLog(
+                    user_uuid=current_user.user_uuid,
+                    transaction_time=datetime.utcnow(),
+                    retailer=POINTS_LOG_RETAILER,
+                    store_name=refund_store_name,
+                    transaction_amount_hkd=order.total_price or 0,
+                    base_points=0,
+                    extra_points=0,
+                    redeemed_points=earned_points,
+                )
+            )
+        membership.membership_point = max(int(membership.membership_point or 0) - earned_points, 0)
+
+    db.session.commit()
+    flash('已提交退款申請。')
+    return redirect(url_for('order_history'))
+
+
+@app.route('/order_history/review/<product_uuid>/<order_item_uuid>', methods=['POST'])
+@login_required
+def order_review(product_uuid, order_item_uuid):
+    feature_tables = _order_feature_tables_state()
+    if not feature_tables['evaluate']:
+        flash('評論功能尚未初始化，請先執行資料庫升級。')
+        return redirect(url_for('order_history'))
+
+    form = ProductReviewForm(prefix=f'review-{order_item_uuid}')
+    if not form.validate_on_submit():
+        if form.review_text.errors:
+            flash(form.review_text.errors[0])
+        else:
+            flash('評論提交失敗，請再試一次。')
+        return redirect(url_for('order_history'))
+
+    try:
+        product_id = uuid.UUID(str(product_uuid))
+        order_item_id = uuid.UUID(str(order_item_uuid))
+    except ValueError:
+        abort(404)
+
+    order_item = (
+        OrderItem.query.join(Order, Order.order_uuid == OrderItem.order_uuid)
+        .filter(
+            OrderItem.order_item_uuid == order_item_id,
+            OrderItem.product_details_uuid == product_id,
+            Order.user_uuid == current_user.user_uuid,
+        )
+        .first_or_404()
+    )
+    if _is_refunded_order(order_item.order):
+        flash('已退款訂單不能評論商品。')
+        return redirect(url_for('order_history'))
+
+    content = (form.review_text.data or '').strip()
+    review = Evaluate.query.filter_by(
+        user_uuid=current_user.user_uuid,
+        product_details_uuid=order_item.product_details_uuid,
+    ).first()
+
+    if review is None:
+        review = Evaluate(
+            product_details_uuid=order_item.product_details_uuid,
+            user_uuid=current_user.user_uuid,
+            evalate_txt=content,
+        )
+        db.session.add(review)
+    else:
+        review.evalate_txt = content
+
+    db.session.commit()
+    flash('商品評論已儲存。')
+    return redirect(url_for('order_history'))
+
+
+@app.route('/product_reviews', methods=['GET'])
+@login_required
+def product_reviews():
+    _cleanup_refunded_reviews(current_user, commit=True)
+    review_summary = _build_product_review_cards(current_user)
+    return render_template(
+        'partials/info-page_product-reviews.html.j2',
+        title='產品評價',
+        review_cards=review_summary['cards'],
+        reviewed_count=review_summary['count'],
+        latest_review_at=review_summary['latest_review_at'],
+    )
 
 
 @app.route('/edit_profile', methods=['GET', 'POST'])
@@ -1218,37 +2201,33 @@ def delivery_address():
             db.session.commit()
     form = DeliveryAddressForm()
     form.home_phone.data = (current_user.phone_number or '').strip()
+    delivery_next_url = _safe_internal_redirect_target(request.args.get('next'), 'delivery_address')
+    auto_open_modal = (request.args.get('open') or '').strip() == '1'
     return render_template(
         'partials/info-page_delivery-address.html.j2',
         title='送貨地址',
         addresses=addresses,
         form=form,
         hk_districts=HK_DISTRICTS,
+        delivery_next_url=delivery_next_url,
+        auto_open_modal=auto_open_modal,
     )
 
 
 @app.route('/membership_points', methods=['GET'])
 @login_required
 def membership_points():
-    membership = current_user.membership_row
-    if membership is None:
-        membership = Membership(user_uuid=current_user.user_uuid, membership_point=0)
-        db.session.add(membership)
-        db.session.commit()
-
-    logs = current_user.points_logs.order_by(MembershipPointsLog.transaction_time.desc()).all()
-    hkd_equivalent = int(membership.membership_point // 50)
-    expiring_points = min(membership.membership_point, 93)
-    expiry_date = datetime(2027, 10, 1)
+    membership, logs, points_summary = _sync_membership_points(current_user, commit=True)
 
     return render_template(
         'partials/info-page_membership-points.html.j2',
         title='易賞錢積分',
         membership=membership,
         points_logs=logs,
-        hkd_equivalent=hkd_equivalent,
-        expiring_points=expiring_points,
-        expiry_date=expiry_date,
+        hkd_equivalent=points_summary['hkd_equivalent'],
+        expiring_points=points_summary['expiring_points'],
+        expiry_date=points_summary['expiry_date'],
+        points_summary=points_summary,
     )
 
 
@@ -1274,6 +2253,8 @@ def my_credit_cards():
 @login_required
 def delivery_address_add():
     form = DeliveryAddressForm()
+    next_url = _safe_internal_redirect_target(request.args.get('next'), 'delivery_address')
+    retry_url = url_for('delivery_address', next=next_url, open='1')
     if form.validate_on_submit():
         unit = (form.addr_unit.data or '').strip()
         floor = (form.addr_floor.data or '').strip()
@@ -1308,15 +2289,16 @@ def delivery_address_add():
         db.session.add(addr)
         db.session.commit()
         flash('地址已儲存。')
-        return redirect(url_for('delivery_address'))
+        return redirect(next_url)
 
     flash('請檢查輸入資料。')
-    return redirect(url_for('delivery_address'))
+    return redirect(retry_url)
 
 
 @app.route('/delivery_address/set_default/<user_address_uuid>', methods=['GET'])
 @login_required
 def delivery_address_set_default(user_address_uuid):
+    next_url = _safe_internal_redirect_target(request.args.get('next'), 'delivery_address')
     # 僅允許設定為自己的地址
     addresses = current_user.addresses.all()
     target = None
@@ -1325,19 +2307,20 @@ def delivery_address_set_default(user_address_uuid):
             target = a
             break
     if target is None:
-        return redirect(url_for('delivery_address'))
+        return redirect(next_url)
 
     for a in addresses:
         a.is_default = False
     target.is_default = True
     db.session.commit()
     flash('已設定預設送貨地址。')
-    return redirect(url_for('delivery_address'))
+    return redirect(next_url)
 
 
 @app.route('/delivery_address/delete/<user_address_uuid>', methods=['GET'])
 @login_required
 def delivery_address_delete(user_address_uuid):
+    next_url = _safe_internal_redirect_target(request.args.get('next'), 'delivery_address')
     addresses = current_user.addresses.order_by(UserAddress.create_time.desc()).all()
     target = None
     for a in addresses:
@@ -1345,7 +2328,7 @@ def delivery_address_delete(user_address_uuid):
             target = a
             break
     if target is None:
-        return redirect(url_for('delivery_address'))
+        return redirect(next_url)
 
     was_default = bool(target.is_default)
     db.session.delete(target)
@@ -1359,4 +2342,4 @@ def delivery_address_delete(user_address_uuid):
 
     db.session.commit()
     flash('地址已刪除。')
-    return redirect(url_for('delivery_address'))
+    return redirect(next_url)

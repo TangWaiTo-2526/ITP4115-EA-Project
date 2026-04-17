@@ -1,4 +1,5 @@
 import os
+from datetime import timedelta
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 _root = os.path.abspath(os.path.join(basedir, '..'))
@@ -32,6 +33,8 @@ class Config(object):
     SQLALCHEMY_DATABASE_URI = os.environ.get("SQLALCHEMY_DATABASE_URI") or \
         'postgresql://postgres:postgres@localhost:5432/postgres'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    PERMANENT_SESSION_LIFETIME = timedelta(days=7)
+    REMEMBER_COOKIE_DURATION = timedelta(days=7)
     MAIL_SERVER = os.environ.get('MAIL_SERVER', 'mail.spacemail.com')
     MAIL_PORT = int(os.environ.get('MAIL_PORT', '465'))
     MAIL_USE_TLS = _env_bool('MAIL_USE_TLS', False)

@@ -1,0 +1,192 @@
+{% extends "base.html.j2" %}
+
+{% block styles %}
+    {{ super() }}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/account-layout.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/account-breadcrumb.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/account-sidebar.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/account-dashboard.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/account-orders.css') }}">
+{% endblock %}
+
+{% block app_content %}
+{% set account_breadcrumb_items = [
+    {'text': _('Home'), 'href': url_for('index')},
+    {'text': _('My account'), 'href': url_for('user', username=current_user.username)},
+    {'text': _('訂單紀錄')},
+] %}
+
+<table class="table account-layout-table-1">
+    <tr>
+        <td class="account-layout-bc-cell-1" colspan="2">
+            {% include 'partials/info-page_breadcrumb.html.j2' %}
+        </td>
+    </tr>
+    <tr>
+        <td class="account-layout-nav-cell-1" width="272">
+            {% include 'partials/info-page_sidebar.html.j2' %}
+        </td>
+        <td class="account-layout-main-1">
+            <div class="account-dash-wrap-1 account-orders-wrap-1">
+                <h1 class="account-page-title-1">{{ _('訂單紀錄') }}</h1>
+
+                {% if order_cards %}
+                    <div class="account-orders-list-1">
+                        {% for card in order_cards %}
+                            {% set order = card.order %}
+                            <section class="account-dash-block-white-1 account-orders-card-1">
+                                <div class="account-orders-head-1">
+                                    <div class="account-orders-head-main-1">
+                                        <h2 class="account-orders-code-1">
+                                            {{ _('訂單編號') }} #{{ card.order_code }}
+                                        </h2>
+                                        <p class="account-orders-head-line-1">
+                                            {{ order.create_time.strftime('%Y/%m/%d %H:%M') }}
+                                            <span aria-hidden="true">・</span>
+                                            {{ card.item_count }} {{ _('件商品') }}
+                                        </p>
+                                        <div class="account-orders-delivery-1">
+                                            <div class="account-orders-delivery-row-1">
+                                                <p class="account-orders-delivery-line-1">
+                                                    {{ _('收件人') }}：{{ order.receiver_name or '-' }}
+                                                </p>
+                                                <p class="account-orders-delivery-line-1">
+                                                    {{ _('聯絡電話') }}：{{ order.receiver_phone or '-' }}
+                                                </p>
+                                            </div>
+                                            <p class="account-orders-delivery-line-1">
+                                                {{ _('送貨地址') }}：{{ order.receiver_address_snapshot or _('尚未設定送貨地址') }}
+                                            </p>
+                                            {% if card.delivery_time_label %}
+                                                <p class="account-orders-delivery-line-1">
+                                                    {{ _('配送時間') }}：{{ card.delivery_time_label }}
+                                                </p>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="account-orders-head-side-1">
+                                        <span class="account-orders-status-1">{{ card.status_label }}</span>
+                                        <p class="account-orders-total-1">HK${{ '%.2f'|format(order.total_price|float) }}</p>
+                                        {% if card.can_refund %}
+                                            <form method="post" action="{{ url_for('order_refund', order_uuid=order.order_uuid) }}" class="account-orders-refund-form-1">
+                                                {{ card.refund_form.hidden_tag() }}
+                                                {{ card.refund_form.submit(class='account-orders-danger-btn-1') }}
+                                            </form>
+                                        {% elif not card.refund_enabled %}
+                                            <span class="account-orders-refund-note-1">{{ _('退款功能尚未初始化') }}</span>
+                                        {% else %}
+                                            <span class="account-orders-refund-note-1">{{ _('此訂單已退款') }}</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+
+                                <div class="account-orders-items-1">
+                                    {% for item in card.line_items %}
+                                        <article class="account-orders-item-1">
+                                            <div class="account-orders-item-media-1">
+                                                {% if item.image_url %}
+                                                    <img src="{{ item.image_url }}" alt="" class="account-orders-item-image-1" decoding="async">
+                                                {% else %}
+                                                    <div class="account-orders-item-placeholder-1">
+                                                        <i class="fa-solid fa-box" aria-hidden="true"></i>
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                            <div class="account-orders-item-main-1">
+                                                <div class="account-orders-item-summary-1">
+                                                    <div class="account-orders-item-total-1">
+                                                        HK${{ '%.2f'|format(item.line_total) }}
+                                                    </div>
+                                                    <div class="account-orders-item-info-1">
+                                                        <p class="account-orders-item-name-1">{{ item.name }}</p>
+                                                        <p class="account-orders-item-sub-1">
+                                                            {{ _('數量') }} × {{ item.quantity }}
+                                                            <span aria-hidden="true">・</span>
+                                                            {{ _('單價') }} HK${{ '%.2f'|format(item.unit_price) }}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                                {% if item.review_disabled_text %}
+                                                    <p class="account-orders-review-disabled-1">{{ item.review_disabled_text }}</p>
+                                                {% elif item.review_text %}
+                                                    <div class="account-orders-review-row-1">
+                                                        <p class="account-orders-review-text-1">{{ item.review_text }}</p>
+                                                        {% if item.review_enabled %}
+                                                            <div class="account-orders-item-actions-1 account-orders-item-actions-inline-1">
+                                                                <button
+                                                                    type="button"
+                                                                    class="account-orders-text-action-1 js-order-review-toggle-1"
+                                                                    data-target="review-form-{{ item.order_item_uuid }}"
+                                                                >
+                                                                    {{ _('修改評論') }}
+                                                                </button>
+                                                            </div>
+                                                        {% endif %}
+                                                    </div>
+                                                {% endif %}
+                                                {% if item.review_enabled %}
+                                                    {% if not item.review_text %}
+                                                        <div class="account-orders-item-actions-1">
+                                                            <button
+                                                                type="button"
+                                                                class="account-orders-secondary-btn-1 js-order-review-toggle-1"
+                                                                data-target="review-form-{{ item.order_item_uuid }}"
+                                                            >
+                                                                {{ _('評論商品') }}
+                                                            </button>
+                                                        </div>
+                                                    {% endif %}
+                                                    <form
+                                                        method="post"
+                                                        action="{{ url_for('order_review', product_uuid=item.product_uuid, order_item_uuid=item.order_item_uuid) }}"
+                                                        class="account-orders-review-form-1"
+                                                        id="review-form-{{ item.order_item_uuid }}"
+                                                        hidden
+                                                    >
+                                                        {{ item.review_form.hidden_tag() }}
+                                                        {{ item.review_form.review_text(class='account-orders-review-textarea-1') }}
+                                                        <div class="account-orders-review-submit-1">
+                                                            {{ item.review_form.submit(class='account-orders-secondary-btn-1') }}
+                                                        </div>
+                                                    </form>
+                                                {% endif %}
+                                            </div>
+                                        </article>
+                                    {% endfor %}
+                                </div>
+                            </section>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="account-dash-block-white-1">
+                        <div class="account-dash-panel-1 account-dash-panel-empty-1">
+                            <p>{{ _('尚未有訂單紀錄') }}</p>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </td>
+    </tr>
+</table>
+
+<script>
+(function () {
+    var buttons = document.querySelectorAll('.js-order-review-toggle-1');
+    buttons.forEach(function (button) {
+        button.addEventListener('click', function () {
+            var targetId = button.getAttribute('data-target');
+            if (!targetId) return;
+            var form = document.getElementById(targetId);
+            if (!form) return;
+            var actions = button.closest('.account-orders-item-actions-1');
+
+            form.hidden = false;
+
+            if (actions) {
+                actions.hidden = true;
+            }
+        });
+    });
+})();
+</script>
+{% endblock %}

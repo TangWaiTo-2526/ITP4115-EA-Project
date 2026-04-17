@@ -50,6 +50,10 @@ class User(UserMixin, db.Model):
     )
     cart_items = db.relationship('Cart', back_populates='user', lazy='dynamic', cascade='all, delete-orphan')
     orders = db.relationship('Order', back_populates='user', lazy='dynamic', cascade='all, delete-orphan')
+    deliveries = db.relationship('Delivery', back_populates='user', lazy='dynamic', cascade='all, delete-orphan')
+    payment_logs = db.relationship('PaymentLog', back_populates='user', lazy='dynamic', cascade='all, delete-orphan')
+    refunds = db.relationship('Refund', back_populates='user', lazy='dynamic', cascade='all, delete-orphan')
+    evaluations = db.relationship('Evaluate', back_populates='user', lazy='dynamic', cascade='all, delete-orphan')
 
     def get_id(self):
         return str(self.user_uuid)
@@ -277,6 +281,7 @@ class ProductDetail(db.Model):
     discount_price = db.Column(db.Numeric(10, 2), nullable=True)
     create_time = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     cart_entries = db.relationship('Cart', back_populates='product', lazy='dynamic', cascade='all, delete-orphan')
+    evaluations = db.relationship('Evaluate', back_populates='product', lazy='dynamic', cascade='all, delete-orphan')
 
     def __repr__(self) -> str:
         return f'<ProductDetail {self.product_name} ({self.product_categories_uuid})>'
@@ -323,6 +328,9 @@ class Order(db.Model):
 
     user = db.relationship('User', back_populates='orders')
     items = db.relationship('OrderItem', back_populates='order', lazy='dynamic', cascade='all, delete-orphan')
+    deliveries = db.relationship('Delivery', back_populates='order', lazy='dynamic', cascade='all, delete-orphan')
+    payment_logs = db.relationship('PaymentLog', back_populates='order', lazy='dynamic', cascade='all, delete-orphan')
+    refunds = db.relationship('Refund', back_populates='order', lazy='dynamic', cascade='all, delete-orphan')
 
     def __repr__(self) -> str:
         return f'<Order {self.order_uuid} user={self.user_uuid} total={self.total_price}>'
@@ -362,10 +370,23 @@ class Delivery(db.Model):
     __tablename__ = 'delivery'
 
     delivery_uuid = db.Column(postgresql.UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    user_uuid = db.Column(postgresql.UUID(as_uuid=True), nullable=False)  # Removed FK
-    order_uuid = db.Column(postgresql.UUID(as_uuid=True), nullable=False)  # Removed FK
+    user_uuid = db.Column(
+        postgresql.UUID(as_uuid=True),
+        db.ForeignKey('user.user_uuid', ondelete='CASCADE'),
+        nullable=False,
+        index=True,
+    )
+    order_uuid = db.Column(
+        postgresql.UUID(as_uuid=True),
+        db.ForeignKey('orders.order_uuid', ondelete='CASCADE'),
+        nullable=False,
+        index=True,
+    )
     deliver_time = db.Column(db.DateTime, nullable=True)
-    create_time = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    create_time = db.Column(db.DateTime, nullable=False, server_default=db.func.now())
+
+    user = db.relationship('User', back_populates='deliveries')
+    order = db.relationship('Order', back_populates='deliveries')
 
     def __repr__(self) -> str:
         return f'<Delivery {self.delivery_uuid}>'
@@ -377,12 +398,25 @@ class PaymentLog(db.Model):
     __tablename__ = 'payment_log'
 
     payment_uuid = db.Column(postgresql.UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    user_uuid = db.Column(postgresql.UUID(as_uuid=True), nullable=False)  # Removed FK
-    order_uuid = db.Column(postgresql.UUID(as_uuid=True), nullable=False)  # Removed FK
+    user_uuid = db.Column(
+        postgresql.UUID(as_uuid=True),
+        db.ForeignKey('user.user_uuid', ondelete='CASCADE'),
+        nullable=False,
+        index=True,
+    )
+    order_uuid = db.Column(
+        postgresql.UUID(as_uuid=True),
+        db.ForeignKey('orders.order_uuid', ondelete='CASCADE'),
+        nullable=False,
+        index=True,
+    )
     payment_methods = db.Column(db.String(64), nullable=False)
     price = db.Column(db.Numeric(10, 2), nullable=False)
     state = db.Column(db.String(64), nullable=False)
-    create_time = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    create_time = db.Column(db.DateTime, nullable=False, server_default=db.func.now())
+
+    user = db.relationship('User', back_populates='payment_logs')
+    order = db.relationship('Order', back_populates='payment_logs')
 
     def __repr__(self) -> str:
         return f'<PaymentLog {self.payment_uuid}>'
@@ -394,9 +428,22 @@ class Refund(db.Model):
     __tablename__ = 'refund'
 
     refund_uuid = db.Column(postgresql.UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    order_uuid = db.Column(postgresql.UUID(as_uuid=True), nullable=False)  # Removed FK
-    user_uuid = db.Column(postgresql.UUID(as_uuid=True), nullable=False)  # Removed FK
-    create_time = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    order_uuid = db.Column(
+        postgresql.UUID(as_uuid=True),
+        db.ForeignKey('orders.order_uuid', ondelete='CASCADE'),
+        nullable=False,
+        index=True,
+    )
+    user_uuid = db.Column(
+        postgresql.UUID(as_uuid=True),
+        db.ForeignKey('user.user_uuid', ondelete='CASCADE'),
+        nullable=False,
+        index=True,
+    )
+    create_time = db.Column(db.DateTime, nullable=False, server_default=db.func.now())
+
+    order = db.relationship('Order', back_populates='refunds')
+    user = db.relationship('User', back_populates='refunds')
 
     def __repr__(self) -> str:
         return f'<Refund {self.refund_uuid}>'
@@ -408,10 +455,23 @@ class Evaluate(db.Model):
     __tablename__ = 'evaluate'
 
     evaluate_uuid = db.Column(postgresql.UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    product_details_uuid = db.Column(postgresql.UUID(as_uuid=True), nullable=False)  # Removed FK
-    user_uuid = db.Column(postgresql.UUID(as_uuid=True), nullable=False)  # Removed FK
-    evaluate_txt = db.Column(db.Text, nullable=True)
-    create_time = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    product_details_uuid = db.Column(
+        postgresql.UUID(as_uuid=True),
+        db.ForeignKey('product_details.product_categories_uuid', ondelete='CASCADE'),
+        nullable=False,
+        index=True,
+    )
+    user_uuid = db.Column(
+        postgresql.UUID(as_uuid=True),
+        db.ForeignKey('user.user_uuid', ondelete='CASCADE'),
+        nullable=False,
+        index=True,
+    )
+    evalate_txt = db.Column(db.Text, nullable=True)
+    create_time = db.Column(db.DateTime, nullable=False, server_default=db.func.now())
+
+    product = db.relationship('ProductDetail', back_populates='evaluations')
+    user = db.relationship('User', back_populates='evaluations')
 
     def __repr__(self) -> str:
         return f'<Evaluate {self.evaluate_uuid}>'

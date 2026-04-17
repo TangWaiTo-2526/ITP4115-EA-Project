@@ -301,3 +301,22 @@ class DeliveryAddressForm(FlaskForm):
         d = (field.data or '').strip()
         if d and r and d not in HK_DISTRICTS.get(r, ()):
             raise ValidationError('請選擇與區域相符的地區。')
+
+
+class OrderRefundForm(FlaskForm):
+    submit = SubmitField('申請退款')
+
+
+class ProductReviewForm(FlaskForm):
+    review_text = TextAreaField(
+        '評論內容',
+        validators=[
+            DataRequired(message='請輸入評論內容'),
+            Length(max=1000, message='評論內容不可超過 1000 字'),
+        ],
+        render_kw={
+            'rows': 3,
+            'placeholder': '請輸入你對這件商品的評價',
+        },
+    )
+    submit = SubmitField('提交評論')

@@ -13,7 +13,24 @@
             <h2>收貨資料</h2>
             <p><strong>姓名：</strong>{{ receiver_name }}</p>
             <p><strong>電話：</strong>{{ receiver_phone }}</p>
-            <p><strong>地址：</strong>{{ receiver_address }}</p>
+            <p id="checkout-address-line-1"><strong>地址：</strong>{{ receiver_address }}</p>
+            <div class="checkout-delivery-slot-1">
+                <p><strong>配送時間：</strong></p>
+                <div class="checkout-delivery-slot-options-1">
+                    {% for slot in delivery_slot_choices %}
+                        <label class="checkout-delivery-slot-label-1">
+                            <input
+                                type="radio"
+                                name="delivery_slot"
+                                value="{{ slot.value }}"
+                                form="checkout-submit-form-1"
+                                {% if selected_delivery_slot == slot.value %}checked{% endif %}
+                            >
+                            <span>{{ slot.label }}</span>
+                        </label>
+                    {% endfor %}
+                </div>
+            </div>
         </div>
 
         <div class="checkout-items">
@@ -46,10 +63,67 @@
     </section>
 
     <section class="checkout-actions">
-        <form method="post">
+        <form
+            method="post"
+            id="checkout-submit-form-1"
+            data-delivery-address-url="{{ delivery_address_url }}"
+            data-missing-address="{{ 'true' if not has_valid_address else 'false' }}"
+            data-missing-phone="{{ 'true' if not receiver_phone else 'false' }}"
+        >
             <button type="submit" class="btn btn-primary">提交訂單並支付</button>
             <a class="btn btn-secondary-sm" href="{{ url_for('cart') }}">返回購物車</a>
         </form>
     </section>
 </div>
+<style>
+.checkout-delivery-slot-1 {
+    margin-top: 12px;
+}
+
+.checkout-delivery-slot-1 p {
+    margin: 0 0 8px;
+}
+
+.checkout-delivery-slot-options-1 {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.checkout-delivery-slot-label-1 {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    border-radius: 999px;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    background: #fff;
+    cursor: pointer;
+}
+</style>
+<script>
+(function () {
+    var form = document.getElementById('checkout-submit-form-1');
+    if (!form) return;
+
+    form.addEventListener('submit', function (event) {
+        var missingAddress = form.getAttribute('data-missing-address') === 'true';
+        var missingPhone = form.getAttribute('data-missing-phone') === 'true';
+        if (!missingAddress && !missingPhone) return;
+
+        event.preventDefault();
+        var deliveryAddressUrl = form.getAttribute('data-delivery-address-url');
+        var message = '請先填寫送貨資料，儲存後會返回結帳頁，然後再重新點擊「提交訂單並支付」。';
+        if (missingAddress && !missingPhone) {
+            message = '請先填寫送貨地址，儲存後會返回結帳頁，然後再重新點擊「提交訂單並支付」。';
+        } else if (!missingAddress && missingPhone) {
+            message = '請先填寫送貨聯絡電話，儲存後會返回結帳頁，然後再重新點擊「提交訂單並支付」。';
+        }
+
+        if (window.confirm(message) && deliveryAddressUrl) {
+            window.location.href = deliveryAddressUrl;
+        }
+    });
+})();
+</script>
 {% endblock %}

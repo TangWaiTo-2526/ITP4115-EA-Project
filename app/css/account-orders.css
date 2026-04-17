@@ -1,0 +1,350 @@
+.account-orders-wrap-1 {
+    max-width: 980px;
+}
+
+.account-orders-list-1 {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.account-orders-card-1 {
+    gap: 16px;
+}
+
+.account-orders-head-1 {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.account-orders-head-main-1,
+.account-orders-head-side-1 {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.account-orders-head-main-1 {
+    flex: 1;
+    min-width: 0;
+}
+
+.account-orders-head-side-1 {
+    flex-shrink: 0;
+    align-items: flex-end;
+    text-align: right;
+}
+
+.account-orders-code-1 {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 800;
+    color: rgb(30, 56, 140);
+    line-height: 1.35;
+}
+
+.account-orders-head-line-1,
+.account-orders-item-sub-1 {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.5;
+    color: #2d3748;
+}
+
+.account-orders-item-sub-1 {
+    font-size: 13px;
+    color: #718096;
+}
+
+.account-orders-status-1 {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 30px;
+    padding: 4px 12px;
+    border-radius: 999px;
+    background: rgba(63, 167, 243, 0.12);
+    color: rgb(30, 56, 140);
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.account-orders-total-1 {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 800;
+    color: #1a202c;
+}
+
+.account-orders-refund-form-1 {
+    margin-top: 6px;
+}
+
+.account-orders-danger-btn-1,
+.account-orders-secondary-btn-1 {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 38px;
+    padding: 8px 16px;
+    border-radius: 999px;
+    border: none;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 700;
+    transition: transform 0.1s ease, background 0.15s ease;
+}
+
+.account-orders-danger-btn-1 {
+    color: #fff;
+    background: #e53e3e;
+}
+
+.account-orders-danger-btn-1:hover {
+    background: #c53030;
+}
+
+.account-orders-secondary-btn-1 {
+    color: rgb(30, 56, 140);
+    background: rgba(63, 167, 243, 0.14);
+}
+
+.account-orders-secondary-btn-1:hover {
+    background: rgba(63, 167, 243, 0.22);
+}
+
+.account-orders-danger-btn-1:active,
+.account-orders-secondary-btn-1:active {
+    transform: translateY(1px);
+}
+
+.account-orders-refund-note-1 {
+    font-size: 12px;
+    font-weight: 600;
+    color: #c53030;
+}
+
+.account-orders-review-disabled-1 {
+    margin: 10px 0 0;
+    font-size: 12px;
+    color: #718096;
+}
+
+.account-orders-delivery-1 {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 0;
+}
+
+.account-orders-delivery-row-1 {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 20px;
+}
+
+.account-orders-delivery-line-1 {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.5;
+    color: #2d3748;
+    word-break: break-word;
+}
+
+.account-orders-items-1 {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.account-orders-item-1 {
+    display: grid;
+    grid-template-columns: 72px minmax(0, 1fr) auto;
+    gap: 14px;
+    align-items: center;
+    padding: 12px 0;
+}
+
+.account-orders-item-1 + .account-orders-item-1 {
+    border-top: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.account-orders-item-media-1 {
+    width: 72px;
+    height: 72px;
+}
+
+.account-orders-item-image-1,
+.account-orders-item-placeholder-1 {
+    width: 100%;
+    height: 100%;
+    border-radius: 12px;
+}
+
+.account-orders-item-image-1 {
+    display: block;
+    object-fit: cover;
+    background: #eef2f7;
+}
+
+.account-orders-item-placeholder-1 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #eef2f7;
+    color: #7b8794;
+    font-size: 20px;
+}
+
+.account-orders-item-main-1 {
+    min-width: 0;
+}
+
+.account-orders-item-summary-1 {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+        "name total"
+        "sub total";
+    column-gap: 16px;
+    row-gap: 6px;
+    align-items: center;
+}
+
+.account-orders-item-info-1 {
+    display: contents;
+}
+
+.account-orders-item-name-1 {
+    grid-area: name;
+    margin: 0;
+    font-size: 15px;
+    font-weight: 700;
+    color: #2d3748;
+}
+
+.account-orders-item-sub-1 {
+    grid-area: sub;
+}
+
+.account-orders-item-actions-1 {
+    margin-top: 10px;
+}
+
+.account-orders-review-row-1 {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 10px;
+}
+
+.account-orders-item-actions-inline-1 {
+    margin-top: 0;
+    flex-shrink: 0;
+    align-self: center;
+}
+
+.account-orders-review-text-1 {
+    margin: 0;
+    padding: 10px 12px;
+    font-size: 13px;
+    line-height: 1.5;
+    color: #2d3748;
+    background: #f8fafc;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    border-radius: 10px;
+    white-space: pre-wrap;
+    flex: 1;
+}
+
+.account-orders-text-action-1 {
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: rgb(30, 56, 140);
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.4;
+    cursor: pointer;
+}
+
+.account-orders-text-action-1:hover {
+    color: rgb(22, 44, 112);
+    text-decoration: underline;
+}
+
+.account-orders-review-form-1 {
+    margin-top: 12px;
+}
+
+.account-orders-review-textarea-1 {
+    width: 100%;
+    min-height: 92px;
+    padding: 10px 12px;
+    font-size: 14px;
+    line-height: 1.5;
+    color: #2d3748;
+    background: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 10px;
+    resize: vertical;
+}
+
+.account-orders-review-textarea-1:focus {
+    outline: none;
+    border-color: rgba(49, 130, 206, 0.45);
+    box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.15);
+}
+
+.account-orders-review-submit-1 {
+    margin-top: 10px;
+}
+
+.account-orders-item-total-1 {
+    grid-area: total;
+    align-self: center;
+    justify-self: end;
+    font-size: 16px;
+    font-weight: 800;
+    color: #1a202c;
+    text-align: right;
+    white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+    .account-orders-head-1 {
+        flex-direction: column;
+    }
+
+    .account-orders-head-side-1 {
+        align-items: flex-start;
+        text-align: left;
+    }
+
+    .account-orders-item-1 {
+        grid-template-columns: 64px minmax(0, 1fr);
+    }
+
+    .account-orders-review-row-1 {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .account-orders-item-summary-1 {
+        grid-template-columns: 1fr;
+        grid-template-areas:
+            "name"
+            "total"
+            "sub";
+        row-gap: 4px;
+    }
+
+    .account-orders-item-total-1 {
+        justify-self: start;
+        text-align: left;
+    }
+}
