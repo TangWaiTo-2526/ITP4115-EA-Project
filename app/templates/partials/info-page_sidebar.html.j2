@@ -1,4 +1,5 @@
 {# info-page_sidebar：帳戶頁左欄導航；需 current_user、user 與 request #}
+{% set review_count = current_user.evaluations.count() if current_user.is_authenticated else 0 %}
 <div class="account-sidebar-mobile-wrap-1">
     <button type="button" class="account-sidebar-mobile-toggle-1" id="account-sidebar-mobile-toggle-1" aria-expanded="false" aria-controls="account-sidebar-mobile-panel-1">
         <span class="account-sidebar-mobile-toggle-text-1">{{ _('帳戶選單') }}</span>
@@ -11,7 +12,8 @@
         <i class="fa-solid fa-eye account-sidebar-ico-1" aria-hidden="true"></i>
         <span>{{ _('帳戶概覽') }}</span>
     </a>
-    <a href="#" class="account-sidebar-link-1">
+    <a href="{{ url_for('order_history') }}"
+       class="account-sidebar-link-1{% if request.endpoint == 'order_history' %} is-active{% endif %}">
         <i class="fa-solid fa-box account-sidebar-ico-1" aria-hidden="true"></i>
         <span>{{ _('訂單紀錄') }}</span>
     </a>
@@ -29,10 +31,11 @@
         <i class="fa-solid fa-right-left account-sidebar-ico-1" aria-hidden="true"></i>
         <span>{{ _('易賞錢積分') }}</span>
     </a>
-    <a href="#" class="account-sidebar-link-1 account-sidebar-link-badge-1">
+    <a href="{{ url_for('product_reviews') }}"
+       class="account-sidebar-link-1 account-sidebar-link-badge-1{% if request.endpoint == 'product_reviews' %} is-active{% endif %}">
         <i class="fa-regular fa-thumbs-up account-sidebar-ico-1" aria-hidden="true"></i>
         <span>{{ _('產品評價') }}</span>
-        <span class="account-sidebar-badge-1" aria-label="{{ _('待評價 0') }}">0</span>
+        <span class="account-sidebar-badge-1" aria-label="{{ _('已評論 %(count)s', count=review_count) }}">{{ review_count }}</span>
     </a>
     <a href="{{ url_for('delivery_address') }}"
        class="account-sidebar-link-1{% if request.endpoint == 'delivery_address' %} is-active{% endif %}">

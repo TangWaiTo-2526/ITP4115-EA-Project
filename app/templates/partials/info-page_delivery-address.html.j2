@@ -58,9 +58,9 @@
                                 </div>
                                 <div class="delivery-address-card-actions-1">
                                     {% if not addr.is_default %}
-                                        <a class="delivery-set-default-link-1" href="{{ url_for('delivery_address_set_default', user_address_uuid=addr.user_address_uuid) }}">{{ _('設為預設') }}</a>
+                                        <a class="delivery-set-default-link-1" href="{{ url_for('delivery_address_set_default', user_address_uuid=addr.user_address_uuid, next=delivery_next_url) }}">{{ _('設為預設') }}</a>
                                     {% endif %}
-                                    <a class="delivery-delete-link-1" href="{{ url_for('delivery_address_delete', user_address_uuid=addr.user_address_uuid) }}" onclick="return confirm('{{ _('確定刪除此地址？') }}');">{{ _('刪除') }}</a>
+                                    <a class="delivery-delete-link-1" href="{{ url_for('delivery_address_delete', user_address_uuid=addr.user_address_uuid, next=delivery_next_url) }}" onclick="return confirm('{{ _('確定刪除此地址？') }}');">{{ _('刪除') }}</a>
                                 </div>
                             </div>
 
@@ -107,7 +107,7 @@
             <button type="button" class="delivery-modal-close-1" id="delivery-address-modal-close-1" aria-label="{{ _('關閉') }}">×</button>
         </div>
 
-        <form method="post" action="{{ url_for('delivery_address_add') }}" id="profile-form" novalidate>
+        <form method="post" action="{{ url_for('delivery_address_add', next=delivery_next_url) }}" id="profile-form" novalidate>
             {{ form.hidden_tag() }}
             <section class="account-profile-card-1 delivery-address-form-card-1" aria-label="{{ _('Delivery address') }}">
 
@@ -204,6 +204,9 @@
     overlay.addEventListener('click', function (e) {
         if (e.target === overlay) closeModal();
     });
+    if ({{ 'true' if auto_open_modal else 'false' }}) {
+        openModal();
+    }
 
     // 香港區域/地區聯動（複用 edit_profile 邏輯）
     var el = document.getElementById('hk-districts-json');
@@ -242,4 +245,3 @@
 })();
 </script>
 {% endblock %}
-

@@ -1,0 +1,102 @@
+{% extends "base.html.j2" %}
+
+{% block styles %}
+    {{ super() }}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/account-layout.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/account-breadcrumb.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/account-sidebar.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/account-dashboard.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/account-product-reviews.css') }}">
+{% endblock %}
+
+{% block app_content %}
+{% set account_breadcrumb_items = [
+    {'text': _('Home'), 'href': url_for('index')},
+    {'text': _('My account'), 'href': url_for('user', username=current_user.username)},
+    {'text': _('產品評價')},
+] %}
+
+<table class="table account-layout-table-1">
+    <tr>
+        <td class="account-layout-bc-cell-1" colspan="2">
+            {% include 'partials/info-page_breadcrumb.html.j2' %}
+        </td>
+    </tr>
+    <tr>
+        <td class="account-layout-nav-cell-1" width="272">
+            {% include 'partials/info-page_sidebar.html.j2' %}
+        </td>
+        <td class="account-layout-main-1">
+            <div class="account-dash-wrap-1 account-reviews-wrap-1">
+                <h1 class="account-page-title-1">{{ _('產品評價總覽') }}</h1>
+
+                {% if review_cards %}
+                    <div class="account-reviews-list-1">
+                        {% for card in review_cards %}
+                            <article class="account-reviews-card-1">
+                                <div class="account-reviews-media-1">
+                                    {% if card.image_url %}
+                                        <img src="{{ card.image_url }}" alt="" class="account-reviews-image-1" decoding="async">
+                                    {% else %}
+                                        <div class="account-reviews-image-placeholder-1">
+                                            <i class="fa-solid fa-box-open" aria-hidden="true"></i>
+                                        </div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="account-reviews-main-1">
+                                    <div class="account-reviews-card-head-1">
+                                        <div class="account-reviews-card-copy-1">
+                                            <h2 class="account-reviews-name-1">{{ card.product_name }}</h2>
+                                        </div>
+
+                                        <div class="account-reviews-card-side-1">
+                                            <p class="account-reviews-date-1">{{ _('評論日期') }}：{{ card.review_created_at.strftime('%Y/%m/%d %H:%M') }}</p>
+                                            {% if card.order_code %}
+                                                <p class="account-reviews-order-1">{{ _('最近訂單') }}：#{{ card.order_code }}</p>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+
+                                    <div class="account-reviews-meta-1">
+                                        {% if card.purchase_created_at %}
+                                            <span>{{ _('購買時間') }}：{{ card.purchase_created_at.strftime('%Y/%m/%d %H:%M') }}</span>
+                                        {% endif %}
+                                        {% if card.quantity %}
+                                            <span>{{ _('數量') }}：{{ card.quantity }}</span>
+                                        {% endif %}
+                                        {% if card.paid_price is not none %}
+                                            <span>{{ _('成交金額') }}：HK${{ '%.2f'|format(card.paid_price|float) }}</span>
+                                        {% endif %}
+                                    </div>
+
+                                    <div class="account-reviews-comment-1">
+                                        <p class="account-reviews-comment-label-1">{{ _('我的評論') }}</p>
+                                        <p class="account-reviews-comment-text-1">{{ card.review_text }}</p>
+                                    </div>
+
+                                    <div class="account-reviews-actions-1">
+                                        <a href="{{ url_for('order_history') }}" class="account-reviews-link-1">{{ _('到訂單紀錄修改評論') }}</a>
+                                        {% if card.catalog_url %}
+                                            <a href="{{ card.catalog_url }}" class="account-reviews-link-1 account-reviews-link-secondary-1">{{ _('查看同類商品') }}</a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </article>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <section class="account-dash-block-white-1 account-reviews-empty-1">
+                        <div class="account-reviews-empty-icon-1">
+                            <i class="fa-regular fa-comment-dots" aria-hidden="true"></i>
+                        </div>
+                        <h2 class="account-dash-heading-1">{{ _('尚未有產品評價') }}</h2>
+                        <p class="account-reviews-empty-text-1">{{ _('你在訂單紀錄提交過的商品評論，之後都會整理顯示在這裡。') }}</p>
+                        <a href="{{ url_for('order_history') }}" class="account-reviews-primary-btn-1">{{ _('前往訂單紀錄') }}</a>
+                    </section>
+                {% endif %}
+            </div>
+        </td>
+    </tr>
+</table>
+{% endblock %}

@@ -34,18 +34,19 @@
                         <div class="membership-points-hero-main-1">
                             <div class="membership-points-stat-1">
                                 <p class="membership-points-label-1">{{ _('積分') }}</p>
-                                <p class="membership-points-value-1">{{ membership.membership_point }}</p>
+                                <p class="membership-points-value-1">{{ points_summary.points }}</p>
                             </div>
                             <div class="membership-points-eq-1" aria-hidden="true">=</div>
                             <div class="membership-points-stat-1">
                                 <p class="membership-points-label-1">HK$</p>
-                                <p class="membership-points-value-1">{{ hkd_equivalent }}</p>
+                                <p class="membership-points-value-1">{{ '%.2f'|format(hkd_equivalent) }}</p>
                             </div>
                         </div>
                         <p class="membership-points-note-1">
                             <span class="membership-points-note-num-1">{{ expiring_points }} {{ _('積分') }}</span>
                             {{ _('將在') }}{{ expiry_date.strftime('%Y年%m月%d日') }}{{ _('到期') }}
                         </p>
+                        <p class="membership-points-note-1">{{ _('每滿 HK$10 可賺 1 分，50 分可兌換 HK$1。') }}</p>
                     </section>
 
                     <section class="membership-points-table-wrap-1" aria-label="{{ _('積分交易紀錄') }}">
@@ -91,18 +92,19 @@
                         <div class="membership-points-mobile-hero-main-1">
                             <div class="membership-points-mobile-stat-1">
                                 <p class="membership-points-mobile-label-1">{{ _('積分') }}</p>
-                                <p class="membership-points-mobile-value-1">{{ membership.membership_point }}</p>
+                                <p class="membership-points-mobile-value-1">{{ points_summary.points }}</p>
                             </div>
                             <span class="membership-points-mobile-eq-1" aria-hidden="true">=</span>
                             <div class="membership-points-mobile-stat-1">
                                 <p class="membership-points-mobile-label-1">HK$</p>
-                                <p class="membership-points-mobile-value-1">{{ hkd_equivalent }}</p>
+                                <p class="membership-points-mobile-value-1">{{ '%.2f'|format(hkd_equivalent) }}</p>
                             </div>
                         </div>
                         <p class="membership-points-mobile-note-1">
                             <span class="membership-points-mobile-note-num-1">{{ expiring_points }} {{ _('積分') }}</span>
                             {{ _('將在') }}{{ expiry_date.strftime('%Y年%m月%d日') }}{{ _('到期') }}
                         </p>
+                        <p class="membership-points-mobile-note-1">{{ _('每滿 HK$10 可賺 1 分，50 分可兌換 HK$1。') }}</p>
                     </section>
 
                     <section class="membership-points-mobile-activity-1" aria-label="{{ _('Recent Activity') }}">

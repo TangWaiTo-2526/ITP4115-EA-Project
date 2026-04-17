@@ -1,4 +1,4 @@
-{# info-page_dashboard：帳戶概覽主內容區；需變數 user（當前檢視的會員） #}
+{# info-page_dashboard：帳戶概覽主內容區；需變數 user、points_summary、dashboard_stamps、recent_purchase_items #}
 <div class="account-dash-wrap-1">
     {# 1 積分與會員卡區 #}
     <div class="account-dash-block-points-1">
@@ -11,18 +11,21 @@
                     <div class="account-dash-points-stat-1">
                         <p class="account-dash-points-label-1">{{ _('積分') }}</p>
                         <p class="account-dash-points-value-1">
-                            <span class="account-dash-points-num-1">833</span>
+                            <span class="account-dash-points-num-1">{{ points_summary.points }}</span>
                         </p>
                     </div>
                     <div class="account-dash-points-eq-1" aria-hidden="true">=</div>
                     <div class="account-dash-points-stat-1">
                         <p class="account-dash-points-label-1">HKD$</p>
                         <p class="account-dash-points-value-1">
-                            <span class="account-dash-points-num-1">$16</span>
+                            <span class="account-dash-points-num-1">${{ '%.2f'|format(points_summary.hkd_equivalent) }}</span>
                         </p>
                     </div>
                 </div>
-                <p class="account-dash-points-note-1"><span class="account-dash-points-note-num-1">{{ _('93 積分') }}</span> {{ _('將在2027年10月01日到期') }}</p>
+                <p class="account-dash-points-note-1">
+                    <span class="account-dash-points-note-num-1">{{ points_summary.expiring_points }} {{ _('積分') }}</span>
+                    {{ _('將於') }}{{ points_summary.expiry_date.strftime('%Y年%m月%d日') }}{{ _('到期') }}
+                </p>
             </div>
         </div>
         {# 會員卡示意：定位基準為 account-dash-block-points-1 #}
@@ -55,54 +58,24 @@
     <div class="account-dash-block-white-1">
         <h2 class="account-dash-heading-1">{{ _('電子印花') }}</h2>
         <div class="account-dash-stamps-1">
-            <div class="account-dash-stamp-1">
-                <img
-                    class="account-dash-stamp-ico-1"
-                    src="{{ url_for('static', filename='png/account/PNS-x-KAO-PNS-Estamp-202503-v1.avif') }}"
-                    width="40"
-                    height="40"
-                    alt=""
-                    decoding="async"
-                />
-                <span class="account-dash-stamp-title-1">{{ _('花王電子印花') }}</span>
-                <span class="account-dash-stamp-count-1 account-dash-stamp-count-zero-1">× 0</span>
-                <div class="account-dash-stamp-dates-1">
-                    <span class="account-dash-stamp-date-label-1">{{ _('派發日期:') }}</span>
-                    <span class="account-dash-stamp-date-1">2025/05/01 - 2026/03/31</span>
+            {% for stamp in dashboard_stamps %}
+                <div class="account-dash-stamp-1">
+                    <img
+                        class="account-dash-stamp-ico-1"
+                        src="{{ url_for('static', filename=stamp.image) }}"
+                        width="40"
+                        height="40"
+                        alt=""
+                        decoding="async"
+                    />
+                    <span class="account-dash-stamp-title-1">{{ stamp.title }}</span>
+                    <span class="account-dash-stamp-count-1{% if stamp.count == 0 %} account-dash-stamp-count-zero-1{% endif %}">× {{ stamp.count }}</span>
+                    <div class="account-dash-stamp-dates-1">
+                        <span class="account-dash-stamp-date-label-1">{{ _('派發日期:') }}</span>
+                        <span class="account-dash-stamp-date-1">{{ stamp.date_range }}</span>
+                    </div>
                 </div>
-            </div>
-            <div class="account-dash-stamp-1">
-                <img
-                    class="account-dash-stamp-ico-1"
-                    src="{{ url_for('static', filename='png/account/Asset-1.png') }}"
-                    width="40"
-                    height="40"
-                    alt=""
-                    decoding="async"
-                />
-                <span class="account-dash-stamp-title-1">{{ _('網購店取即日取貨') }}</span>
-                <span class="account-dash-stamp-count-1 account-dash-stamp-count-zero-1">× 0</span>
-                <div class="account-dash-stamp-dates-1">
-                    <span class="account-dash-stamp-date-label-1">{{ _('派發日期:') }}</span>
-                    <span class="account-dash-stamp-date-1">2025/11/14 - 2026/12/31</span>
-                </div>
-            </div>
-            <div class="account-dash-stamp-1">
-                <img
-                    class="account-dash-stamp-ico-1"
-                    src="{{ url_for('static', filename='png/account/Staub-x-Ballarini-Mass-eStamp-1-.avif') }}"
-                    width="40"
-                    height="40"
-                    alt=""
-                    decoding="async"
-                />
-                <span class="account-dash-stamp-title-1">{{ _('Staub 電子印花') }}</span>
-                <span class="account-dash-stamp-count-1">× 17</span>
-                <div class="account-dash-stamp-dates-1">
-                    <span class="account-dash-stamp-date-label-1">{{ _('派發日期:') }}</span>
-                    <span class="account-dash-stamp-date-1">2026/01/09 - 2026/04/23</span>
-                </div>
-            </div>
+            {% endfor %}
         </div>
     </div>
 
@@ -120,11 +93,45 @@
         <div class="account-dash-split-col-1 account-dash-split-col-white-1">
             <div class="account-dash-heading-row-1">
                 <h2 class="account-dash-heading-1">{{ _('再次購買') }}</h2>
-                <a href="#" class="account-dash-view-all-1">{{ _('查看所有') }}</a>
+                <a href="{{ url_for('order_history') }}" class="account-dash-view-all-1">{{ _('查看所有') }}</a>
             </div>
-            <div class="account-dash-panel-1 account-dash-panel-empty-1">
-                <p>{{ _('尚未有貨品') }}</p>
-            </div>
+            {% if recent_purchase_items %}
+                <div class="account-dash-repurchase-list-1">
+                    {% for item in recent_purchase_items %}
+                        <article class="account-dash-repurchase-item-1" data-product-uuid="{{ item.product_uuid }}">
+                            <div class="account-dash-repurchase-media-1">
+                                {% if item.image_url %}
+                                    <img src="{{ item.image_url }}" alt="" class="account-dash-repurchase-image-1" decoding="async">
+                                {% else %}
+                                    <div class="account-dash-repurchase-placeholder-1">
+                                        <i class="fa-solid fa-box" aria-hidden="true"></i>
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="account-dash-repurchase-main-1">
+                                <p class="account-dash-repurchase-name-1">{{ item.product_name }}</p>
+                                <div class="account-dash-repurchase-meta-row-1">
+                                    <p class="account-dash-repurchase-meta-1">HK${{ '%.2f'|format(item.line_total) }}</p>
+                                    <button type="button" class="account-dash-repurchase-cta-1" data-add-cart>{{ _('再次購買') }}</button>
+                                </div>
+                                {% if item.order_code %}
+                                    <p class="account-dash-repurchase-sub-1">
+                                        {{ _('最近訂單') }} #{{ item.order_code }}
+                                        {% if item.order_created_at %}
+                                            <span aria-hidden="true">・</span>
+                                            {{ item.order_created_at.strftime('%Y/%m/%d %H:%M') }}
+                                        {% endif %}
+                                    </p>
+                                {% endif %}
+                            </div>
+                        </article>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="account-dash-panel-1 account-dash-panel-empty-1">
+                    <p>{{ _('尚未有貨品') }}</p>
+                </div>
+            {% endif %}
         </div>
     </div>
 </div>
