@@ -55,10 +55,6 @@
         </div>
         <div class="hero-carousel-pager" id="hero-carousel-pager" aria-label="{{ _('Carousel pagination') }}"></div>
     </section>
-    {% if not current_user.is_anonymous %}
-        <h1>{{ _('Hi, %(username)s!', username=current_user.username) }}</h1>
-        <p>{{ _('You are signed in.') }}</p>
-    {% endif %}
     <div class="category-strip">
         <div class="category-strip-viewport">
             <div id="category-track" class="category-track">
@@ -193,30 +189,24 @@
         <h2 class="title" role="heading">焦点推荐</h2>
     </div>
     <div class="focus-recommendation" role="generic">
-        {% set focus_products = [
-            {'name': 'AVEENO 燕麥舒緩沐浴露', 'spec': '1L', 'sale': '135.00', 'orig': '169.00', 'sales': '已售 20K+', 'img': 'png/carousel/001.webp'},
-            {'name': '道地 極品解茶 無糖', 'spec': '250MLX6X4', 'sale': '88.00', 'orig': '108.00', 'sales': '已售 15K+', 'img': 'png/carousel/002.webp'},
-            {'name': '金龍魚 純香花生油', 'spec': '5L', 'sale': '129.90', 'orig': '149.00', 'sales': '已售 8K+', 'img': 'png/carousel/003.webp'},
-            {'name': '維他 檸檬茶', 'spec': '250MLX6', 'sale': '42.00', 'orig': '52.00', 'sales': '已售 32K+', 'img': 'png/carousel/004.webp'},
-            {'name': '出前一丁 即食麵', 'spec': '5包裝', 'sale': '28.50', 'orig': '35.00', 'sales': '已售 11K+', 'img': 'png/carousel/005.webp'},
-            {'name': '可口可樂', 'spec': '330MLX8', 'sale': '36.00', 'orig': '44.00', 'sales': '已售 25K+', 'img': 'png/carousel/006.webp'}
-        ] %}
-        {% for item in focus_products %}
-        <article class="porductContainer">
+        {% for item in home_focus_recommendations %}
+        <article class="porductContainer" data-product-uuid="{{ item.uuid }}">
             <div class="porductContainer-media">
                 <span class="porductContainer-rank" aria-label="{{ _('排名') }} {{ loop.index }}">{{ loop.index }}</span>
-                <img class="porductContainer-img" src="{{ url_for('static', filename=item.img) }}" alt="{{ item.name }}">
+                <img class="porductContainer-img" src="{{ item.image_url }}" alt="{{ item.name }}">
             </div>
             <div class="porductContainer-body">
                 <h3 class="porductContainer-name">{{ item.name }}</h3>
                 <p class="porductContainer-spec">{{ item.spec }}</p>
                 <div class="porductContainer-meta">
                     <span class="porductContainer-stars" aria-hidden="true">★★★★★</span>
-                    <span class="porductContainer-sales">{{ item.sales }}</span>
+                    <span class="porductContainer-sales">{{ item.sales_label }}</span>
                 </div>
                 <div class="porductContainer-prices">
-                    <span class="porductContainer-price-sale">${{ item.sale }}</span>
-                    <span class="porductContainer-price-original">${{ item.orig }}</span>
+                    <span class="porductContainer-price-sale">${{ '%.2f'|format(item.sale_price) }}</span>
+                    {% if item.original_price is not none %}
+                    <span class="porductContainer-price-original">${{ '%.2f'|format(item.original_price) }}</span>
+                    {% endif %}
                 </div>
                 <button type="button" class="porductContainer-cart">{{ _('加入購物車') }}</button>
             </div>
@@ -276,14 +266,6 @@
             <img src="{{ url_for('static', filename='png/g/g.jpeg') }}" alt="G 图片 4" />
         </a>
     </div>
-    {% set shelf_products = [
-        {'name': 'AVEENO 燕麥舒緩沐浴露', 'spec': '1L', 'sale': '135.00', 'orig': '169.00', 'sales': '已售 20K+', 'reviews': '99+', 'img': 'png/carousel/001.webp'},
-        {'name': '道地 極品解茶 無糖', 'spec': '250MLX6X4', 'sale': '88.00', 'orig': '108.00', 'sales': '已售 15K+', 'reviews': '120+', 'img': 'png/carousel/002.webp'},
-        {'name': '金龍魚 純香花生油', 'spec': '5L', 'sale': '129.90', 'orig': '149.00', 'sales': '已售 8K+', 'reviews': '88+', 'img': 'png/carousel/003.webp'},
-        {'name': '維他 檸檬茶', 'spec': '250MLX6', 'sale': '42.00', 'orig': '52.00', 'sales': '已售 32K+', 'reviews': '256+', 'img': 'png/carousel/004.webp'},
-        {'name': '出前一丁 即食麵', 'spec': '5包裝', 'sale': '28.50', 'orig': '35.00', 'sales': '已售 11K+', 'reviews': '64+', 'img': 'png/carousel/005.webp'},
-        {'name': '可口可樂', 'spec': '330MLX8', 'sale': '36.00', 'orig': '44.00', 'sales': '已售 25K+', 'reviews': '99+', 'img': 'png/carousel/006.webp'}
-    ] %}
     <div class="jiadimai-shelf-block" role="generic" aria-label="佳抵買與商品列表">
         <img
             class="jiadimai-image"
@@ -294,26 +276,22 @@
         />
         <div class="generic-block-896x451" role="generic" aria-label="896 x 451 block">
         <div class="generic-block-896x451-header">
-            <a class="btn btn-secondary-sm view-all-btn promo-panel-link" href="#" role="link">查看所有</a>
+            <a class="btn btn-secondary-sm view-all-btn promo-panel-link" href="{{ home_promo_deals_view_all_url }}" role="link">查看所有</a>
         </div>
         <div class="generic-block-896x451-grid" role="generic">
-            {% for item in shelf_products %}
-            <article class="porductContainer porductContainer--shelf">
+            {% for item in home_discount_shelf_products %}
+            <article class="porductContainer porductContainer--shelf" data-product-uuid="{{ item.uuid }}">
                 <div class="porductContainer-media">
-                    <img class="porductContainer-img" src="{{ url_for('static', filename=item.img) }}" alt="{{ item.name }}">
+                    <img class="porductContainer-img" src="{{ item.image_url }}" alt="{{ item.name }}">
                 </div>
                 <div class="porductContainer-body">
                     <h3 class="porductContainer-name">{{ item.name }}</h3>
                     <p class="porductContainer-spec">{{ item.spec }}</p>
-                    <div class="porductContainer-meta">
-                        <span class="porductContainer-stars" aria-hidden="true">★★★★★</span>
-                        <span class="porductContainer-reviews">({{ item.reviews }})</span>
-                        <span class="porductContainer-sales-sep" aria-hidden="true">|</span>
-                        <span class="porductContainer-sales">{{ item.sales }}</span>
-                    </div>
                     <div class="porductContainer-prices">
-                        <span class="porductContainer-price-sale">${{ item.sale }}</span>
-                        <span class="porductContainer-price-original">${{ item.orig }}</span>
+                        <span class="porductContainer-price-sale">${{ '%.2f'|format(item.sale_price) }}</span>
+                        {% if item.original_price is not none %}
+                        <span class="porductContainer-price-original">${{ '%.2f'|format(item.original_price) }}</span>
+                        {% endif %}
                     </div>
                     <button type="button" class="porductContainer-cart">{{ _('加入購物車') }}</button>
                 </div>
@@ -335,10 +313,10 @@
             <a class="btn btn-secondary-sm view-all-btn promo-panel-link" href="#" role="link">查看所有</a>
         </div>
         <div class="generic-block-896x451-grid" role="generic">
-            {% for item in shelf_products %}
+            {% for item in home_generic_shelf_groups['meow9'] %}
             <article class="porductContainer porductContainer--shelf">
                 <div class="porductContainer-media">
-                    <img class="porductContainer-img" src="{{ url_for('static', filename=item.img) }}" alt="{{ item.name }}">
+                    <img class="porductContainer-img" src="{{ item.image_url }}" alt="{{ item.name }}">
                 </div>
                 <div class="porductContainer-body">
                     <h3 class="porductContainer-name">{{ item.name }}</h3>
@@ -351,7 +329,11 @@
                     </div>
                     <div class="porductContainer-prices">
                         <span class="porductContainer-price-sale">${{ item.sale }}</span>
+                        {% if item.orig %}
+                        {% if item.orig %}
                         <span class="porductContainer-price-original">${{ item.orig }}</span>
+                        {% endif %}
+                        {% endif %}
                     </div>
                     <button type="button" class="porductContainer-cart">{{ _('加入購物車') }}</button>
                 </div>
@@ -373,10 +355,10 @@
             <a class="btn btn-secondary-sm view-all-btn promo-panel-link" href="#" role="link">查看所有</a>
         </div>
         <div class="generic-block-896x451-grid" role="generic">
-            {% for item in shelf_products %}
+            {% for item in home_generic_shelf_groups['easter'] %}
             <article class="porductContainer porductContainer--shelf">
                 <div class="porductContainer-media">
-                    <img class="porductContainer-img" src="{{ url_for('static', filename=item.img) }}" alt="{{ item.name }}">
+                    <img class="porductContainer-img" src="{{ item.image_url }}" alt="{{ item.name }}">
                 </div>
                 <div class="porductContainer-body">
                     <h3 class="porductContainer-name">{{ item.name }}</h3>
@@ -389,7 +371,9 @@
                     </div>
                     <div class="porductContainer-prices">
                         <span class="porductContainer-price-sale">${{ item.sale }}</span>
+                        {% if item.orig %}
                         <span class="porductContainer-price-original">${{ item.orig }}</span>
+                        {% endif %}
                     </div>
                     <button type="button" class="porductContainer-cart">{{ _('加入購物車') }}</button>
                 </div>
@@ -411,10 +395,10 @@
             <a class="btn btn-secondary-sm view-all-btn promo-panel-link" href="#" role="link">查看所有</a>
         </div>
         <div class="generic-block-896x451-grid" role="generic">
-            {% for item in shelf_products %}
+            {% for item in home_generic_shelf_groups['fitness'] %}
             <article class="porductContainer porductContainer--shelf">
                 <div class="porductContainer-media">
-                    <img class="porductContainer-img" src="{{ url_for('static', filename=item.img) }}" alt="{{ item.name }}">
+                    <img class="porductContainer-img" src="{{ item.image_url }}" alt="{{ item.name }}">
                 </div>
                 <div class="porductContainer-body">
                     <h3 class="porductContainer-name">{{ item.name }}</h3>
@@ -427,7 +411,9 @@
                     </div>
                     <div class="porductContainer-prices">
                         <span class="porductContainer-price-sale">${{ item.sale }}</span>
+                        {% if item.orig %}
                         <span class="porductContainer-price-original">${{ item.orig }}</span>
+                        {% endif %}
                     </div>
                     <button type="button" class="porductContainer-cart">{{ _('加入購物車') }}</button>
                 </div>
@@ -446,26 +432,22 @@
         />
         <div class="generic-block-896x451" role="generic" aria-label="原箱至抵買 商品區">
         <div class="generic-block-896x451-header">
-            <a class="btn btn-secondary-sm view-all-btn promo-panel-link" href="#" role="link">查看所有</a>
+            <a class="btn btn-secondary-sm view-all-btn promo-panel-link" href="{{ browse_url('home', 'tissue') }}" role="link">查看所有</a>
         </div>
         <div class="generic-block-896x451-grid" role="generic">
-            {% for item in shelf_products %}
-            <article class="porductContainer porductContainer--shelf">
+            {% for item in home_case_deal_products %}
+            <article class="porductContainer porductContainer--shelf" data-product-uuid="{{ item.uuid }}">
                 <div class="porductContainer-media">
-                    <img class="porductContainer-img" src="{{ url_for('static', filename=item.img) }}" alt="{{ item.name }}">
+                    <img class="porductContainer-img" src="{{ item.image_url }}" alt="{{ item.name }}">
                 </div>
                 <div class="porductContainer-body">
                     <h3 class="porductContainer-name">{{ item.name }}</h3>
                     <p class="porductContainer-spec">{{ item.spec }}</p>
-                    <div class="porductContainer-meta">
-                        <span class="porductContainer-stars" aria-hidden="true">★★★★★</span>
-                        <span class="porductContainer-reviews">({{ item.reviews }})</span>
-                        <span class="porductContainer-sales-sep" aria-hidden="true">|</span>
-                        <span class="porductContainer-sales">{{ item.sales }}</span>
-                    </div>
                     <div class="porductContainer-prices">
-                        <span class="porductContainer-price-sale">${{ item.sale }}</span>
-                        <span class="porductContainer-price-original">${{ item.orig }}</span>
+                        <span class="porductContainer-price-sale">${{ '%.2f'|format(item.sale_price) }}</span>
+                        {% if item.original_price is not none %}
+                        <span class="porductContainer-price-original">${{ '%.2f'|format(item.original_price) }}</span>
+                        {% endif %}
                     </div>
                     <button type="button" class="porductContainer-cart">{{ _('加入購物車') }}</button>
                 </div>
@@ -487,10 +469,10 @@
             <a class="btn btn-secondary-sm view-all-btn promo-panel-link" href="#" role="link">查看所有</a>
         </div>
         <div class="generic-block-896x451-grid" role="generic">
-            {% for item in shelf_products %}
+            {% for item in home_generic_shelf_groups['xinjiapin'] %}
             <article class="porductContainer porductContainer--shelf">
                 <div class="porductContainer-media">
-                    <img class="porductContainer-img" src="{{ url_for('static', filename=item.img) }}" alt="{{ item.name }}">
+                    <img class="porductContainer-img" src="{{ item.image_url }}" alt="{{ item.name }}">
                 </div>
                 <div class="porductContainer-body">
                     <h3 class="porductContainer-name">{{ item.name }}</h3>
@@ -503,7 +485,9 @@
                     </div>
                     <div class="porductContainer-prices">
                         <span class="porductContainer-price-sale">${{ item.sale }}</span>
+                        {% if item.orig %}
                         <span class="porductContainer-price-original">${{ item.orig }}</span>
+                        {% endif %}
                     </div>
                     <button type="button" class="porductContainer-cart">{{ _('加入購物車') }}</button>
                 </div>
@@ -525,10 +509,10 @@
             <a class="btn btn-secondary-sm view-all-btn promo-panel-link" href="#" role="link">查看所有</a>
         </div>
         <div class="generic-block-896x451-grid" role="generic">
-            {% for item in shelf_products %}
+            {% for item in home_generic_shelf_groups['duomai'] %}
             <article class="porductContainer porductContainer--shelf">
                 <div class="porductContainer-media">
-                    <img class="porductContainer-img" src="{{ url_for('static', filename=item.img) }}" alt="{{ item.name }}">
+                    <img class="porductContainer-img" src="{{ item.image_url }}" alt="{{ item.name }}">
                 </div>
                 <div class="porductContainer-body">
                     <h3 class="porductContainer-name">{{ item.name }}</h3>
@@ -541,7 +525,11 @@
                     </div>
                     <div class="porductContainer-prices">
                         <span class="porductContainer-price-sale">${{ item.sale }}</span>
+                        {% if item.orig %}
+                        {% if item.orig %}
                         <span class="porductContainer-price-original">${{ item.orig }}</span>
+                        {% endif %}
+                        {% endif %}
                     </div>
                     <button type="button" class="porductContainer-cart">{{ _('加入購物車') }}</button>
                 </div>
@@ -563,10 +551,10 @@
             <a class="btn btn-secondary-sm view-all-btn promo-panel-link" href="#" role="link">查看所有</a>
         </div>
         <div class="generic-block-896x451-grid" role="generic">
-            {% for item in shelf_products %}
+            {% for item in home_generic_shelf_groups['maihaozhuan'] %}
             <article class="porductContainer porductContainer--shelf">
                 <div class="porductContainer-media">
-                    <img class="porductContainer-img" src="{{ url_for('static', filename=item.img) }}" alt="{{ item.name }}">
+                    <img class="porductContainer-img" src="{{ item.image_url }}" alt="{{ item.name }}">
                 </div>
                 <div class="porductContainer-body">
                     <h3 class="porductContainer-name">{{ item.name }}</h3>
@@ -579,7 +567,9 @@
                     </div>
                     <div class="porductContainer-prices">
                         <span class="porductContainer-price-sale">${{ item.sale }}</span>
+                        {% if item.orig %}
                         <span class="porductContainer-price-original">${{ item.orig }}</span>
+                        {% endif %}
                     </div>
                     <button type="button" class="porductContainer-cart">{{ _('加入購物車') }}</button>
                 </div>
@@ -601,10 +591,10 @@
             <a class="btn btn-secondary-sm view-all-btn promo-panel-link" href="#" role="link">查看所有</a>
         </div>
         <div class="generic-block-896x451-grid" role="generic">
-            {% for item in shelf_products %}
+            {% for item in home_generic_shelf_groups['xingzhijiapin'] %}
             <article class="porductContainer porductContainer--shelf">
                 <div class="porductContainer-media">
-                    <img class="porductContainer-img" src="{{ url_for('static', filename=item.img) }}" alt="{{ item.name }}">
+                    <img class="porductContainer-img" src="{{ item.image_url }}" alt="{{ item.name }}">
                 </div>
                 <div class="porductContainer-body">
                     <h3 class="porductContainer-name">{{ item.name }}</h3>
@@ -617,7 +607,9 @@
                     </div>
                     <div class="porductContainer-prices">
                         <span class="porductContainer-price-sale">${{ item.sale }}</span>
+                        {% if item.orig %}
                         <span class="porductContainer-price-original">${{ item.orig }}</span>
+                        {% endif %}
                     </div>
                     <button type="button" class="porductContainer-cart">{{ _('加入購物車') }}</button>
                 </div>
@@ -639,10 +631,10 @@
             <a class="btn btn-secondary-sm view-all-btn promo-panel-link" href="#" role="link">查看所有</a>
         </div>
         <div class="generic-block-896x451-grid" role="generic">
-            {% for item in shelf_products %}
+            {% for item in home_generic_shelf_groups['huanqiu_xianrou'] %}
             <article class="porductContainer porductContainer--shelf">
                 <div class="porductContainer-media">
-                    <img class="porductContainer-img" src="{{ url_for('static', filename=item.img) }}" alt="{{ item.name }}">
+                    <img class="porductContainer-img" src="{{ item.image_url }}" alt="{{ item.name }}">
                 </div>
                 <div class="porductContainer-body">
                     <h3 class="porductContainer-name">{{ item.name }}</h3>
@@ -655,7 +647,9 @@
                     </div>
                     <div class="porductContainer-prices">
                         <span class="porductContainer-price-sale">${{ item.sale }}</span>
+                        {% if item.orig %}
                         <span class="porductContainer-price-original">${{ item.orig }}</span>
+                        {% endif %}
                     </div>
                     <button type="button" class="porductContainer-cart">{{ _('加入購物車') }}</button>
                 </div>
@@ -677,10 +671,10 @@
             <a class="btn btn-secondary-sm view-all-btn promo-panel-link" href="#" role="link">查看所有</a>
         </div>
         <div class="generic-block-896x451-grid" role="generic">
-            {% for item in shelf_products %}
+            {% for item in home_generic_shelf_groups['xiansong_xiande'] %}
             <article class="porductContainer porductContainer--shelf">
                 <div class="porductContainer-media">
-                    <img class="porductContainer-img" src="{{ url_for('static', filename=item.img) }}" alt="{{ item.name }}">
+                    <img class="porductContainer-img" src="{{ item.image_url }}" alt="{{ item.name }}">
                 </div>
                 <div class="porductContainer-body">
                     <h3 class="porductContainer-name">{{ item.name }}</h3>
@@ -899,6 +893,21 @@
                 });
             });
 
+            const cartToast = document.getElementById("cart-toast");
+            let toastTimer = null;
+
+            function showCartToast(message) {
+                if (!cartToast) return;
+                cartToast.textContent = message;
+                cartToast.classList.add("is-visible");
+                if (toastTimer) {
+                    clearTimeout(toastTimer);
+                }
+                toastTimer = setTimeout(() => {
+                    cartToast.classList.remove("is-visible");
+                }, 1500);
+            }
+
             const qtyControls = document.querySelectorAll(".promo-qty-control");
             qtyControls.forEach((control) => {
                 const valueNode = control.querySelector("[data-qty-value]");
@@ -917,7 +926,21 @@
                 });
             });
 
+            const addButtons = document.querySelectorAll("[data-add-cart]");
+            addButtons.forEach((button) => {
+                button.addEventListener("click", () => {
+                    const productCard = button.closest(".promo-product");
+                    const qtyNode = productCard ? productCard.querySelector("[data-qty-value]") : null;
+                    const qty = qtyNode ? qtyNode.textContent : "1";
+                    showCartToast("成功加入购物车 x" + qty);
+                });
+            });
+
+            document.querySelectorAll(".porductContainer-cart").forEach((button) => {
+                button.addEventListener("click", () => {
+                    showCartToast("成功加入购物车 x1");
+                });
+            });
         })();
     </script>
 {% endblock %}
-
