@@ -1,5 +1,5 @@
 {# info-page_breadcrumb：需先於 include 處設定 account_breadcrumb_items：列表，每項為 { 'text': str, 'href': 可選 }；無 href 表示當前頁 #}
-<nav class="account-bc-nav-1" aria-label="breadcrumb">
+<nav class="account-bc-nav-1" aria-label="{{ _('Breadcrumb') }}">
     <div class="account-bc-inner-1">
         {% for item in account_breadcrumb_items %}
             {% if not loop.first %}

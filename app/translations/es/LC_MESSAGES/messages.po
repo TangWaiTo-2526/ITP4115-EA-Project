@@ -205,3 +205,272 @@ msgstr ""
 msgid "Unfollow"
 msgstr ""
 
+#: templates/base.html.j2
+msgid "⭐購物滿$399即享免費送貨；滿$100即可免費店取！"
+msgstr "⭐ Envío gratis en compras superiores a $399; recogida gratuita en tienda a partir de $100."
+
+#: templates/base.html.j2
+msgid "下載PNS App"
+msgstr "Descargar la app de PNS"
+
+#: templates/base.html.j2
+msgid "易賞錢會員獎賞"
+msgstr "Recompensas para miembros de MoneyBack"
+
+#: templates/base.html.j2
+msgid "店舖一覽"
+msgstr "Localizador de tiendas"
+
+#: templates/base.html.j2
+msgid "主選單"
+msgstr "Menú principal"
+
+#: templates/base.html.j2
+msgid "食品及飲品"
+msgstr "Alimentos y bebidas"
+
+#: templates/base.html.j2
+msgid "母嬰"
+msgstr "Bebés y maternidad"
+
+#: templates/base.html.j2
+msgid "個人護理、健康"
+msgstr "Cuidado personal y salud"
+
+#: templates/base.html.j2
+msgid "家居生活"
+msgstr "Hogar y vida diaria"
+
+#: templates/base.html.j2
+msgid "寵物區"
+msgstr "Mascotas"
+
+#: templates/base.html.j2
+msgid "獨家產品"
+msgstr "Productos exclusivos"
+
+#: templates/base.html.j2
+msgid "豐澤"
+msgstr "Fortress"
+
+#: templates/base.html.j2
+msgid "屈臣氏酒窖"
+msgstr "Watson's Wine"
+
+#: templates/base.html.j2
+msgid "屈臣氏旗艦店"
+msgstr "Tienda insignia de Watsons"
+
+#: templates/base.html.j2
+msgid "母嬰分類"
+msgstr "Categorías de bebés y maternidad"
+
+#: templates/base.html.j2
+msgid "食品分類"
+msgstr "Categorías de alimentos"
+
+#: templates/base.html.j2
+msgid "個人護理健康分類"
+msgstr "Categorías de cuidado personal y salud"
+
+#: templates/base.html.j2
+msgid "家居生活分類"
+msgstr "Categorías del hogar"
+
+#: templates/base.html.j2
+msgid "寵物分類"
+msgstr "Categorías de mascotas"
+
+#: templates/base.html.j2 templates/partials/info-page_dashboard.html.j2
+msgid "查看所有"
+msgstr "Ver todo"
+
+#: templates/base.html.j2
+msgid "熱選品牌"
+msgstr "Marcas destacadas"
+
+#: templates/base.html.j2
+msgid "母嬰分類資料尚未載入。請確認已執行資料庫遷移並還原分類與商品資料。"
+msgstr "Los datos de categorías de bebés y maternidad aún no se han cargado. Asegúrate de haber ejecutado las migraciones de base de datos y restaurado los datos de categorías y productos."
+
+#: templates/base.html.j2
+msgid "食品及飲品分類資料尚未載入。請確認已執行資料庫遷移並還原分類與商品資料，且根分類名稱為「食品及飲品」。"
+msgstr "Los datos de categorías de alimentos y bebidas aún no se han cargado. Asegúrate de haber ejecutado las migraciones de base de datos, restaurado los datos de categorías y productos, y de que la categoría raíz se llame \"食品及飲品\"."
+
+#: templates/base.html.j2
+msgid "易賞錢 App"
+msgstr "App MoneyBack"
+
+#: templates/base.html.j2
+msgid "會員可直接使用登記電郵或電話登錄，立即註冊儲積分換禮品！"
+msgstr "Los miembros pueden iniciar sesión directamente con el correo electrónico o teléfono registrados. ¡Regístrate ahora para acumular puntos y canjear regalos!"
+
+#: templates/base.html.j2
+msgid "全新體驗 立即下載"
+msgstr "Una experiencia totalmente nueva, descárgala ahora"
+
+#: templates/base.html.j2
+msgid "關於我們"
+msgstr "Sobre nosotros"
+
+#: templates/base.html.j2
+msgid "關於百佳"
+msgstr "Sobre PARKnSHOP"
+
+#: templates/base.html.j2
+msgid "企業資訊"
+msgstr "Información corporativa"
+
+#: templates/base.html.j2
+msgid "百佳品質檢定部"
+msgstr "Departamento de control de calidad de PARKnSHOP"
+
+#: templates/base.html.j2
+msgid "可持續發展"
+msgstr "Sostenibilidad"
+
+#: templates/base.html.j2
+msgid "加入我們"
+msgstr "Únete a nosotros"
+
+#: templates/base.html.j2
+msgid "加入成為合作夥伴"
+msgstr "Hazte socio colaborador"
+
+#: templates/base.html.j2
+msgid "網上購物"
+msgstr "Compra en línea"
+
+#: templates/base.html.j2
+msgid "網上購物流程"
+msgstr "Guía de compra en línea"
+
+#: templates/base.html.j2
+msgid "易賞錢"
+msgstr "MoneyBack"
+
+#: templates/base.html.j2
+msgid "店鋪一覽"
+msgstr "Localizador de tiendas"
+
+#: templates/base.html.j2
+msgid "退款/退換政策"
+msgstr "Política de reembolso / cambio"
+
+#: templates/base.html.j2
+msgid "送貨服務"
+msgstr "Servicio de entrega"
+
+#: templates/base.html.j2
+msgid "客戶服務"
+msgstr "Atención al cliente"
+
+#: templates/base.html.j2
+msgid "聯絡我們"
+msgstr "Contáctanos"
+
+#: templates/base.html.j2
+msgid "常見問題"
+msgstr "Preguntas frecuentes"
+
+#: templates/base.html.j2
+msgid "門市有關"
+msgstr "Información sobre tiendas"
+
+#: templates/base.html.j2
+msgid "根據香港法律，不得在業務過程中，向未成年人(18歲以下人士)售賣或供應令人醺醉的酒類。本網站發售之酒類產品酒精濃度 最高為53%%。"
+msgstr "Según la ley de Hong Kong, no se puede vender ni suministrar bebidas alcohólicas embriagantes a menores de edad (menores de 18 años) en el curso de una actividad comercial. El mayor grado alcohólico de las bebidas alcohólicas vendidas en este sitio web es del 53%%."
+
+#: templates/base.html.j2
+msgid "©2026 PNS.HK Online Store. 版權所有"
+msgstr "©2026 Tienda en línea PNS.HK. Todos los derechos reservados."
+
+#: templates/base.html.j2
+msgid "使用條款"
+msgstr "Términos de uso"
+
+#: templates/base.html.j2
+msgid "私隱政策"
+msgstr "Política de privacidad"
+
+#: templates/base.html.j2
+msgid "免責聲明及通知"
+msgstr "Descargo de responsabilidad y avisos"
+
+#: templates/base.html.j2
+msgid "Order history"
+msgstr "Historial de pedidos"
+
+#: templates/base.html.j2
+msgid "Buy again"
+msgstr "Comprar de nuevo"
+
+#: templates/base.html.j2
+msgid "Account"
+msgstr "Cuenta"
+
+#: templates/base.html.j2
+msgid "Header actions"
+msgstr "Acciones del encabezado"
+
+#: templates/base.html.j2
+msgid "Favorites"
+msgstr "Favoritos"
+
+#: templates/base.html.j2
+msgid "Shopping cart"
+msgstr "Carrito de compras"
+
+#: templates/partials/info-page_sidebar.html.j2
+msgid "帳戶選單"
+msgstr "Menú de la cuenta"
+
+#: templates/partials/info-page_sidebar.html.j2
+msgid "帳戶概覽"
+msgstr "Resumen de la cuenta"
+
+#: templates/partials/info-page_sidebar.html.j2
+msgid "訂單紀錄"
+msgstr "Historial de pedidos"
+
+#: templates/partials/info-page_sidebar.html.j2
+msgid "我的清單"
+msgstr "Mi lista"
+
+#: templates/partials/info-page_sidebar.html.j2
+msgid "電子優惠券／電子禮券"
+msgstr "Cupones digitales / vales regalo electrónicos"
+
+#: templates/partials/info-page_sidebar.html.j2
+msgid "易賞錢積分"
+msgstr "Puntos MoneyBack"
+
+#: templates/partials/info-page_sidebar.html.j2
+msgid "產品評價"
+msgstr "Reseñas de productos"
+
+#, python-format
+#: templates/partials/info-page_sidebar.html.j2
+msgid "已評論 %(count)s"
+msgstr "%(count)s reseñados"
+
+#: templates/partials/info-page_sidebar.html.j2
+msgid "送貨地址"
+msgstr "Dirección de entrega"
+
+#: templates/partials/info-page_sidebar.html.j2
+msgid "我的信用卡"
+msgstr "Mis tarjetas de crédito"
+
+#: templates/partials/info-page_sidebar.html.j2
+msgid "我的個人資料"
+msgstr "Mi perfil"
+
+#: templates/partials/info-page_sidebar.html.j2
+msgid "登出"
+msgstr "Cerrar sesión"
+
+#: templates/partials/info-page_breadcrumb.html.j2
+msgid "Breadcrumb"
+msgstr "Ruta de navegación"
+

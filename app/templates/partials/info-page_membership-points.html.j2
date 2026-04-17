@@ -44,7 +44,7 @@
                         </div>
                         <p class="membership-points-note-1">
                             <span class="membership-points-note-num-1">{{ expiring_points }} {{ _('積分') }}</span>
-                            {{ _('將在') }}{{ expiry_date.strftime('%Y年%m月%d日') }}{{ _('到期') }}
+                            {{ _('將在') }}{{ format_account_date(expiry_date) }}{{ _('到期') }}
                         </p>
                         <p class="membership-points-note-1">{{ _('每滿 HK$10 可賺 1 分，50 分可兌換 HK$1。') }}</p>
                     </section>
@@ -66,11 +66,11 @@
                                 {% if points_logs %}
                                     {% for row in points_logs %}
                                         <tr>
-                                            <td>{{ row.transaction_time.strftime('%Y年%m月%d日 %H:%M') }}</td>
+                                            <td>{{ format_account_datetime(row.transaction_time) }}</td>
                                             <td>{{ row.base_points }}</td>
                                             <td>{{ row.extra_points }}</td>
-                                            <td>{{ row.retailer }}</td>
-                                            <td>{{ row.store_name }}</td>
+                                            <td>{{ translate_points_retailer(row.retailer) }}</td>
+                                            <td>{{ translate_points_store_name(row.store_name) }}</td>
                                             <td>{{ '%.2f'|format(row.transaction_amount_hkd|float) }}</td>
                                             <td>{{ row.redeemed_points if row.redeemed_points is not none else _('N/A') }}</td>
                                         </tr>
@@ -102,7 +102,7 @@
                         </div>
                         <p class="membership-points-mobile-note-1">
                             <span class="membership-points-mobile-note-num-1">{{ expiring_points }} {{ _('積分') }}</span>
-                            {{ _('將在') }}{{ expiry_date.strftime('%Y年%m月%d日') }}{{ _('到期') }}
+                            {{ _('將在') }}{{ format_account_date(expiry_date) }}{{ _('到期') }}
                         </p>
                         <p class="membership-points-mobile-note-1">{{ _('每滿 HK$10 可賺 1 分，50 分可兌換 HK$1。') }}</p>
                     </section>
@@ -122,8 +122,8 @@
                                                 <i class="fa-solid fa-receipt" aria-hidden="true"></i>
                                             </div>
                                             <div class="membership-points-mobile-item-meta-1">
-                                                <p class="membership-points-mobile-item-retailer-1">{{ row.retailer }}</p>
-                                                <p class="membership-points-mobile-item-sub-1">{{ row.transaction_time.strftime('%Y/%m/%d %H:%M') }} ・ {{ row.store_name }}</p>
+                                                <p class="membership-points-mobile-item-retailer-1">{{ translate_points_retailer(row.retailer) }}</p>
+                                                <p class="membership-points-mobile-item-sub-1">{{ format_account_datetime(row.transaction_time) }} ・ {{ translate_points_store_name(row.store_name) }}</p>
                                                 <p class="membership-points-mobile-item-amount-1">{{ _('交易 HK$') }} {{ '%.2f'|format(row.transaction_amount_hkd|float) }}</p>
                                             </div>
                                         </div>

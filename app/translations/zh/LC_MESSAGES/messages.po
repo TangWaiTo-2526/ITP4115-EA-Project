@@ -277,3 +277,248 @@ msgstr "訂單紀錄"
 msgid "Buy again"
 msgstr "再次購買"
 
+#: templates/base.html.j2
+msgid "⭐購物滿$399即享免費送貨；滿$100即可免費店取！"
+msgstr "⭐購物滿$399即享免費送貨；滿$100即可免費店取！"
+
+#: templates/base.html.j2
+msgid "下載PNS App"
+msgstr "下載PNS App"
+
+#: templates/base.html.j2
+msgid "易賞錢會員獎賞"
+msgstr "易賞錢會員獎賞"
+
+#: templates/base.html.j2
+msgid "店舖一覽"
+msgstr "店舖一覽"
+
+#: templates/base.html.j2
+msgid "主選單"
+msgstr "主選單"
+
+#: templates/base.html.j2
+msgid "食品及飲品"
+msgstr "食品及飲品"
+
+#: templates/base.html.j2
+msgid "母嬰"
+msgstr "母嬰"
+
+#: templates/base.html.j2
+msgid "個人護理、健康"
+msgstr "個人護理、健康"
+
+#: templates/base.html.j2
+msgid "家居生活"
+msgstr "家居生活"
+
+#: templates/base.html.j2
+msgid "寵物區"
+msgstr "寵物區"
+
+#: templates/base.html.j2
+msgid "獨家產品"
+msgstr "獨家產品"
+
+#: templates/base.html.j2
+msgid "豐澤"
+msgstr "豐澤"
+
+#: templates/base.html.j2
+msgid "屈臣氏酒窖"
+msgstr "屈臣氏酒窖"
+
+#: templates/base.html.j2
+msgid "屈臣氏旗艦店"
+msgstr "屈臣氏旗艦店"
+
+#: templates/base.html.j2
+msgid "母嬰分類"
+msgstr "母嬰分類"
+
+#: templates/base.html.j2
+msgid "食品分類"
+msgstr "食品分類"
+
+#: templates/base.html.j2
+msgid "個人護理健康分類"
+msgstr "個人護理健康分類"
+
+#: templates/base.html.j2
+msgid "家居生活分類"
+msgstr "家居生活分類"
+
+#: templates/base.html.j2
+msgid "寵物分類"
+msgstr "寵物分類"
+
+#: templates/base.html.j2 templates/partials/info-page_dashboard.html.j2
+msgid "查看所有"
+msgstr "查看所有"
+
+#: templates/base.html.j2
+msgid "熱選品牌"
+msgstr "熱選品牌"
+
+#: templates/base.html.j2
+msgid "母嬰分類資料尚未載入。請確認已執行資料庫遷移並還原分類與商品資料。"
+msgstr "母嬰分類資料尚未載入。請確認已執行資料庫遷移並還原分類與商品資料。"
+
+#: templates/base.html.j2
+msgid "食品及飲品分類資料尚未載入。請確認已執行資料庫遷移並還原分類與商品資料，且根分類名稱為「食品及飲品」。"
+msgstr "食品及飲品分類資料尚未載入。請確認已執行資料庫遷移並還原分類與商品資料，且根分類名稱為「食品及飲品」。"
+
+#: templates/base.html.j2
+msgid "易賞錢 App"
+msgstr "易賞錢 App"
+
+#: templates/base.html.j2
+msgid "會員可直接使用登記電郵或電話登錄，立即註冊儲積分換禮品！"
+msgstr "會員可直接使用登記電郵或電話登錄，立即註冊儲積分換禮品！"
+
+#: templates/base.html.j2
+msgid "全新體驗 立即下載"
+msgstr "全新體驗 立即下載"
+
+#: templates/base.html.j2
+msgid "關於我們"
+msgstr "關於我們"
+
+#: templates/base.html.j2
+msgid "關於百佳"
+msgstr "關於百佳"
+
+#: templates/base.html.j2
+msgid "企業資訊"
+msgstr "企業資訊"
+
+#: templates/base.html.j2
+msgid "百佳品質檢定部"
+msgstr "百佳品質檢定部"
+
+#: templates/base.html.j2
+msgid "可持續發展"
+msgstr "可持續發展"
+
+#: templates/base.html.j2
+msgid "加入我們"
+msgstr "加入我們"
+
+#: templates/base.html.j2
+msgid "加入成為合作夥伴"
+msgstr "加入成為合作夥伴"
+
+#: templates/base.html.j2
+msgid "網上購物"
+msgstr "網上購物"
+
+#: templates/base.html.j2
+msgid "網上購物流程"
+msgstr "網上購物流程"
+
+#: templates/base.html.j2
+msgid "易賞錢"
+msgstr "易賞錢"
+
+#: templates/base.html.j2
+msgid "店鋪一覽"
+msgstr "店鋪一覽"
+
+#: templates/base.html.j2
+msgid "退款/退換政策"
+msgstr "退款/退換政策"
+
+#: templates/base.html.j2
+msgid "送貨服務"
+msgstr "送貨服務"
+
+#: templates/base.html.j2
+msgid "客戶服務"
+msgstr "客戶服務"
+
+#: templates/base.html.j2
+msgid "聯絡我們"
+msgstr "聯絡我們"
+
+#: templates/base.html.j2
+msgid "常見問題"
+msgstr "常見問題"
+
+#: templates/base.html.j2
+msgid "門市有關"
+msgstr "門市有關"
+
+#: templates/base.html.j2
+msgid "根據香港法律，不得在業務過程中，向未成年人(18歲以下人士)售賣或供應令人醺醉的酒類。本網站發售之酒類產品酒精濃度 最高為53%%。"
+msgstr "根據香港法律，不得在業務過程中，向未成年人(18歲以下人士)售賣或供應令人醺醉的酒類。本網站發售之酒類產品酒精濃度 最高為53%%。"
+
+#: templates/base.html.j2
+msgid "©2026 PNS.HK Online Store. 版權所有"
+msgstr "©2026 PNS.HK Online Store. 版權所有"
+
+#: templates/base.html.j2
+msgid "使用條款"
+msgstr "使用條款"
+
+#: templates/base.html.j2
+msgid "私隱政策"
+msgstr "私隱政策"
+
+#: templates/base.html.j2
+msgid "免責聲明及通知"
+msgstr "免責聲明及通知"
+
+#: templates/partials/info-page_sidebar.html.j2
+msgid "帳戶選單"
+msgstr "帳戶選單"
+
+#: templates/partials/info-page_sidebar.html.j2
+msgid "帳戶概覽"
+msgstr "帳戶概覽"
+
+#: templates/partials/info-page_sidebar.html.j2
+msgid "訂單紀錄"
+msgstr "訂單紀錄"
+
+#: templates/partials/info-page_sidebar.html.j2
+msgid "我的清單"
+msgstr "我的清單"
+
+#: templates/partials/info-page_sidebar.html.j2
+msgid "電子優惠券／電子禮券"
+msgstr "電子優惠券／電子禮券"
+
+#: templates/partials/info-page_sidebar.html.j2
+msgid "易賞錢積分"
+msgstr "易賞錢積分"
+
+#: templates/partials/info-page_sidebar.html.j2
+msgid "產品評價"
+msgstr "產品評價"
+
+#, python-format
+#: templates/partials/info-page_sidebar.html.j2
+msgid "已評論 %(count)s"
+msgstr "已評論 %(count)s"
+
+#: templates/partials/info-page_sidebar.html.j2
+msgid "送貨地址"
+msgstr "送貨地址"
+
+#: templates/partials/info-page_sidebar.html.j2
+msgid "我的信用卡"
+msgstr "我的信用卡"
+
+#: templates/partials/info-page_sidebar.html.j2
+msgid "我的個人資料"
+msgstr "我的個人資料"
+
+#: templates/partials/info-page_sidebar.html.j2
+msgid "登出"
+msgstr "登出"
+
+#: templates/partials/info-page_breadcrumb.html.j2
+msgid "Breadcrumb"
+msgstr "導覽路徑"
+

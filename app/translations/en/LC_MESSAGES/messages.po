@@ -205,3 +205,728 @@ msgstr ""
 msgid "Unfollow"
 msgstr ""
 
+#: templates/base.html.j2
+msgid "⭐購物滿$399即享免費送貨；滿$100即可免費店取！"
+msgstr "⭐ Free delivery for orders over $399; free store pickup for orders over $100!"
+
+#: templates/base.html.j2
+msgid "下載PNS App"
+msgstr "Download PNS App"
+
+#: templates/base.html.j2
+msgid "易賞錢會員獎賞"
+msgstr "MoneyBack Member Rewards"
+
+#: templates/base.html.j2
+msgid "店舖一覽"
+msgstr "Store Locator"
+
+#: templates/base.html.j2
+msgid "主選單"
+msgstr "Main menu"
+
+#: templates/base.html.j2
+msgid "食品及飲品"
+msgstr "Food & Drinks"
+
+#: templates/base.html.j2
+msgid "母嬰"
+msgstr "Baby & Maternity"
+
+#: templates/base.html.j2
+msgid "個人護理、健康"
+msgstr "Personal Care & Health"
+
+#: templates/base.html.j2
+msgid "家居生活"
+msgstr "Home Living"
+
+#: templates/base.html.j2
+msgid "寵物區"
+msgstr "Pet Zone"
+
+#: templates/base.html.j2
+msgid "獨家產品"
+msgstr "Exclusive Products"
+
+#: templates/base.html.j2
+msgid "豐澤"
+msgstr "Fortress"
+
+#: templates/base.html.j2
+msgid "屈臣氏酒窖"
+msgstr "Watson's Wine"
+
+#: templates/base.html.j2
+msgid "屈臣氏旗艦店"
+msgstr "Watsons Flagship Store"
+
+#: templates/base.html.j2
+msgid "母嬰分類"
+msgstr "Baby & Maternity Categories"
+
+#: templates/base.html.j2
+msgid "食品分類"
+msgstr "Food Categories"
+
+#: templates/base.html.j2
+msgid "個人護理健康分類"
+msgstr "Personal Care & Health Categories"
+
+#: templates/base.html.j2
+msgid "家居生活分類"
+msgstr "Home Living Categories"
+
+#: templates/base.html.j2
+msgid "寵物分類"
+msgstr "Pet Categories"
+
+#: templates/base.html.j2 templates/partials/info-page_dashboard.html.j2
+msgid "查看所有"
+msgstr "View all"
+
+#: templates/base.html.j2
+msgid "熱選品牌"
+msgstr "Popular brands"
+
+#: templates/base.html.j2
+msgid "母嬰分類資料尚未載入。請確認已執行資料庫遷移並還原分類與商品資料。"
+msgstr "Baby & maternity category data has not been loaded yet. Please ensure database migrations have been run and category/product data has been restored."
+
+#: templates/base.html.j2
+msgid "食品及飲品分類資料尚未載入。請確認已執行資料庫遷移並還原分類與商品資料，且根分類名稱為「食品及飲品」。"
+msgstr "Food & drinks category data has not been loaded yet. Please ensure database migrations have been run, category/product data has been restored, and the root category name is \"食品及飲品\"."
+
+#: templates/base.html.j2
+msgid "易賞錢 App"
+msgstr "MoneyBack App"
+
+#: templates/base.html.j2
+msgid "會員可直接使用登記電郵或電話登錄，立即註冊儲積分換禮品！"
+msgstr "Members can sign in directly using their registered email or phone number. Register now to earn points and redeem gifts!"
+
+#: templates/base.html.j2
+msgid "全新體驗 立即下載"
+msgstr "A brand new experience, download now"
+
+#: templates/base.html.j2
+msgid "關於我們"
+msgstr "About us"
+
+#: templates/base.html.j2
+msgid "關於百佳"
+msgstr "About PARKnSHOP"
+
+#: templates/base.html.j2
+msgid "企業資訊"
+msgstr "Corporate information"
+
+#: templates/base.html.j2
+msgid "百佳品質檢定部"
+msgstr "PARKnSHOP Quality Assurance Department"
+
+#: templates/base.html.j2
+msgid "可持續發展"
+msgstr "Sustainability"
+
+#: templates/base.html.j2
+msgid "加入我們"
+msgstr "Join us"
+
+#: templates/base.html.j2
+msgid "加入成為合作夥伴"
+msgstr "Become a partner"
+
+#: templates/base.html.j2
+msgid "網上購物"
+msgstr "Online shopping"
+
+#: templates/base.html.j2
+msgid "網上購物流程"
+msgstr "Online shopping guide"
+
+#: templates/base.html.j2
+msgid "易賞錢"
+msgstr "MoneyBack"
+
+#: templates/base.html.j2
+msgid "店鋪一覽"
+msgstr "Store Locator"
+
+#: templates/base.html.j2
+msgid "退款/退換政策"
+msgstr "Refund / exchange policy"
+
+#: templates/base.html.j2
+msgid "送貨服務"
+msgstr "Delivery service"
+
+#: templates/base.html.j2
+msgid "客戶服務"
+msgstr "Customer service"
+
+#: templates/base.html.j2
+msgid "聯絡我們"
+msgstr "Contact us"
+
+#: templates/base.html.j2
+msgid "常見問題"
+msgstr "FAQ"
+
+#: templates/base.html.j2
+msgid "門市有關"
+msgstr "Store-related information"
+
+#: templates/base.html.j2
+msgid "根據香港法律，不得在業務過程中，向未成年人(18歲以下人士)售賣或供應令人醺醉的酒類。本網站發售之酒類產品酒精濃度 最高為53%%。"
+msgstr "Under Hong Kong law, intoxicating liquor must not be sold or supplied to a minor (under 18) in the course of business. The highest alcohol by volume for the alcoholic beverages sold on this website is 53%%."
+
+#: templates/base.html.j2
+msgid "©2026 PNS.HK Online Store. 版權所有"
+msgstr "©2026 PNS.HK Online Store. All rights reserved."
+
+#: templates/base.html.j2
+msgid "使用條款"
+msgstr "Terms of use"
+
+#: templates/base.html.j2
+msgid "私隱政策"
+msgstr "Privacy policy"
+
+#: templates/base.html.j2
+msgid "免責聲明及通知"
+msgstr "Disclaimer and notice"
+
+#: templates/base.html.j2
+msgid "Order history"
+msgstr "Order history"
+
+#: templates/base.html.j2
+msgid "Buy again"
+msgstr "Buy again"
+
+#: templates/base.html.j2
+msgid "Account"
+msgstr "Account"
+
+#: templates/base.html.j2
+msgid "Header actions"
+msgstr "Header actions"
+
+#: templates/base.html.j2
+msgid "Favorites"
+msgstr "Favorites"
+
+#: templates/base.html.j2
+msgid "Shopping cart"
+msgstr "Shopping cart"
+
+#: templates/partials/info-page_sidebar.html.j2
+msgid "帳戶選單"
+msgstr "Account menu"
+
+#: templates/partials/info-page_sidebar.html.j2
+msgid "帳戶概覽"
+msgstr "Account overview"
+
+#: templates/partials/info-page_sidebar.html.j2
+msgid "訂單紀錄"
+msgstr "Order history"
+
+#: templates/partials/info-page_sidebar.html.j2
+msgid "我的清單"
+msgstr "My list"
+
+#: templates/partials/info-page_sidebar.html.j2
+msgid "電子優惠券／電子禮券"
+msgstr "Digital coupons / e-gift vouchers"
+
+#: templates/partials/info-page_sidebar.html.j2
+msgid "易賞錢積分"
+msgstr "MoneyBack points"
+
+#: templates/partials/info-page_sidebar.html.j2
+msgid "產品評價"
+msgstr "Product reviews"
+
+#, python-format
+#: templates/partials/info-page_sidebar.html.j2
+msgid "已評論 %(count)s"
+msgstr "%(count)s reviewed"
+
+#: templates/partials/info-page_sidebar.html.j2
+msgid "送貨地址"
+msgstr "Delivery address"
+
+#: templates/partials/info-page_sidebar.html.j2
+msgid "我的信用卡"
+msgstr "My credit cards"
+
+#: templates/partials/info-page_sidebar.html.j2
+msgid "我的個人資料"
+msgstr "My profile"
+
+#: templates/partials/info-page_sidebar.html.j2
+msgid "登出"
+msgstr "Log out"
+
+#: templates/partials/info-page_breadcrumb.html.j2
+msgid "Breadcrumb"
+msgstr "Breadcrumb"
+
+msgid "您好，"
+msgstr "Hello, "
+
+msgid "積分"
+msgstr "Points"
+
+msgid "將於"
+msgstr " expiring on "
+
+msgid "將在"
+msgstr " expiring on "
+
+msgid "到期"
+msgstr ""
+
+msgid "尚未有電子優惠券／電子禮券"
+msgstr "No digital coupons or e-gift vouchers yet"
+
+msgid "電子印花"
+msgstr "E-stamps"
+
+msgid "派發日期:"
+msgstr "Issue date:"
+
+msgid "返貨通知"
+msgstr "Back-in-stock notifications"
+
+msgid "尚未有貨品"
+msgstr "No items yet"
+
+msgid "再次購買"
+msgstr "Buy again"
+
+msgid "最近訂單"
+msgstr "Recent order"
+
+msgid "積分查詢"
+msgstr "Points balance"
+
+msgid "積分總覽"
+msgstr "Points overview"
+
+msgid "每滿 HK$10 可賺 1 分，50 分可兌換 HK$1。"
+msgstr "Earn 1 point for every HK$10 spent. 50 points can be redeemed for HK$1."
+
+msgid "積分交易紀錄"
+msgstr "Points transaction history"
+
+msgid "交易日期"
+msgstr "Transaction date"
+
+msgid "基本積分"
+msgstr "Base points"
+
+msgid "額外積分"
+msgstr "Bonus points"
+
+msgid "零售商"
+msgstr "Retailer"
+
+msgid "門市／描述"
+msgstr "Store / description"
+
+msgid "交易金額 HK$"
+msgstr "Transaction amount HK$"
+
+msgid "已兌換積分"
+msgstr "Redeemed points"
+
+msgid "N/A"
+msgstr "N/A"
+
+msgid "尚未有積分交易紀錄"
+msgstr "No points transaction history yet"
+
+msgid "積分總覽（行動版）"
+msgstr "Points overview (mobile)"
+
+msgid "Recent Activity"
+msgstr "Recent Activity"
+
+msgid "交易 HK$"
+msgstr "Spent HK$"
+
+msgid "points"
+msgstr "points"
+
+msgid "訂單編號"
+msgstr "Order number"
+
+msgid "件商品"
+msgstr "items"
+
+msgid "收件人"
+msgstr "Recipient"
+
+msgid "聯絡電話"
+msgstr "Contact phone"
+
+msgid "尚未設定送貨地址"
+msgstr "Delivery address not set"
+
+msgid "配送時間"
+msgstr "Delivery time"
+
+msgid "退款功能尚未初始化"
+msgstr "Refund feature is not initialized"
+
+msgid "此訂單已退款"
+msgstr "This order has been refunded"
+
+msgid "數量"
+msgstr "Quantity"
+
+msgid "單價"
+msgstr "Unit price"
+
+msgid "修改評論"
+msgstr "Edit review"
+
+msgid "評論商品"
+msgstr "Review product"
+
+msgid "尚未有訂單紀錄"
+msgstr "No order history yet"
+
+msgid "產品評價總覽"
+msgstr "Product review overview"
+
+msgid "評論日期"
+msgstr "Review date"
+
+msgid "購買時間"
+msgstr "Purchase time"
+
+msgid "成交金額"
+msgstr "Paid amount"
+
+msgid "我的評論"
+msgstr "My review"
+
+msgid "到訂單紀錄修改評論"
+msgstr "Edit review in order history"
+
+msgid "查看同類商品"
+msgstr "View similar products"
+
+msgid "尚未有產品評價"
+msgstr "No product reviews yet"
+
+msgid "你在訂單紀錄提交過的商品評論，之後都會整理顯示在這裡。"
+msgstr "Reviews you submitted from order history will be shown here."
+
+msgid "前往訂單紀錄"
+msgstr "Go to order history"
+
+msgid "新增送貨地址"
+msgstr "Add delivery address"
+
+msgid "新增地址"
+msgstr "Add address"
+
+msgid "點擊後新增／填寫送貨地址"
+msgstr "Click to add or fill in a delivery address"
+
+msgid "預設"
+msgstr "Default"
+
+msgid "設為預設"
+msgstr "Set as default"
+
+msgid "確定刪除此地址？"
+msgstr "Delete this address?"
+
+msgid "刪除"
+msgstr "Delete"
+
+msgid "手提：+852"
+msgstr "Mobile: +852"
+
+msgid "住宅：+852"
+msgstr "Home: +852"
+
+msgid "尚未有送貨地址"
+msgstr "No delivery address yet"
+
+msgid "關閉"
+msgstr "Close"
+
+msgid "請選擇"
+msgstr "Please select"
+
+msgid "選填"
+msgstr "Optional"
+
+msgid "網購信用卡"
+msgstr "Online shopping credit cards"
+
+msgid "暫時還沒有可用的信用卡"
+msgstr "No available credit cards yet"
+
+msgid "電子券"
+msgstr "E-vouchers"
+
+msgid "電子優惠券"
+msgstr "Digital coupons"
+
+msgid "暫時還沒有電子優惠券"
+msgstr "No digital coupons yet"
+
+msgid "電子禮券"
+msgstr "E-gift vouchers"
+
+msgid "暫時還沒有電子禮券"
+msgstr "No e-gift vouchers yet"
+
+msgid "商品"
+msgstr "Product"
+
+msgid "尚未填寫評論內容"
+msgstr "No review content provided"
+
+msgid "已付款"
+msgstr "Paid"
+
+msgid "退款"
+msgstr "Refunded"
+
+msgid "未知"
+msgstr "Unknown"
+
+msgid "網上訂單 #"
+msgstr "Online order #"
+
+msgid "訂單退款 #"
+msgstr "Order refund #"
+
+msgid "訂單已退款，評論已取消"
+msgstr "Order refunded; review unavailable"
+
+msgid "評論功能尚未初始化"
+msgstr "Review feature is not initialized"
+
+msgid "退款功能尚未初始化，請先執行資料庫升級。"
+msgstr "Refund feature is not initialized. Please run the database migration first."
+
+msgid "退款操作無效，請再試一次。"
+msgstr "Invalid refund request. Please try again."
+
+msgid "此訂單已退款。"
+msgstr "This order has already been refunded."
+
+msgid "已提交退款申請。"
+msgstr "Refund request submitted."
+
+msgid "評論功能尚未初始化，請先執行資料庫升級。"
+msgstr "Review feature is not initialized. Please run the database migration first."
+
+msgid "評論提交失敗，請再試一次。"
+msgstr "Failed to submit review. Please try again."
+
+msgid "已退款訂單不能評論商品。"
+msgstr "Refunded orders cannot be reviewed."
+
+msgid "商品評論已儲存。"
+msgstr "Product review saved."
+
+msgid "資料已儲存。"
+msgstr "Changes saved."
+
+msgid "個人資料"
+msgstr "Personal profile"
+
+msgid "地址已儲存。"
+msgstr "Address saved."
+
+msgid "請檢查輸入資料。"
+msgstr "Please check your input."
+
+msgid "已設定預設送貨地址。"
+msgstr "Default delivery address set."
+
+msgid "地址已刪除。"
+msgstr "Address deleted."
+
+msgid "稱謂"
+msgstr "Salutation"
+
+msgid "先生"
+msgstr "Mr."
+
+msgid "女士"
+msgstr "Ms."
+
+msgid "博士"
+msgstr "Dr."
+
+msgid "姓名"
+msgstr "Full name"
+
+msgid "請填寫姓名"
+msgstr "Please enter your name."
+
+msgid "生日"
+msgstr "Birthday"
+
+msgid "國籍"
+msgstr "Nationality"
+
+msgid "手提電話號碼"
+msgstr "Mobile phone number"
+
+msgid "請輸入 8 位數字香港手提電話號碼"
+msgstr "Please enter an 8-digit Hong Kong mobile number."
+
+msgid "住宅電話號碼"
+msgstr "Home phone number"
+
+msgid "送貨地址聯絡用（存於收貨地址）"
+msgstr "Used for delivery contact and stored with the delivery address"
+
+msgid "電郵"
+msgstr "Email"
+
+msgid "請填寫電郵"
+msgstr "Please enter an email address."
+
+msgid "請輸入有效的電郵地址"
+msgstr "Please enter a valid email address."
+
+msgid "通訊語言"
+msgstr "Communication language"
+
+msgid "繁體"
+msgstr "Traditional Chinese"
+
+msgid "English"
+msgstr "English"
+
+msgid "單位"
+msgstr "Unit"
+
+msgid "例如：03號／A室"
+msgstr "e.g. Unit 03 / Flat A"
+
+msgid "樓層"
+msgstr "Floor"
+
+msgid "例如：9樓"
+msgstr "e.g. 9/F"
+
+msgid "大廈、屋苑或街道"
+msgstr "Building, estate or street"
+
+msgid "區域"
+msgstr "Region"
+
+msgid "地區"
+msgstr "District"
+
+msgid "我不希望接受有關最新的優惠、促銷、折扣或任何類似的訊息。"
+msgstr "I do not wish to receive the latest offers, promotions, discounts, or similar messages."
+
+msgid "百佳"
+msgstr "PARKnSHOP"
+
+msgid "屈臣氏"
+msgstr "Watsons"
+
+msgid "易賞錢合作伙伴"
+msgstr "MoneyBack partners"
+
+msgid "儲存"
+msgstr "Save"
+
+msgid "此姓名／使用者名稱已被使用，請換一個。"
+msgstr "This name / username is already in use. Please choose another one."
+
+msgid "此電郵已被註冊，請換一個。"
+msgstr "This email address has already been registered. Please choose another one."
+
+msgid "請選擇與區域相符的地區。"
+msgstr "Please choose a district that matches the selected region."
+
+msgid "申請退款"
+msgstr "Request refund"
+
+msgid "評論內容"
+msgstr "Review content"
+
+msgid "請輸入評論內容"
+msgstr "Please enter review content."
+
+msgid "評論內容不可超過 1000 字"
+msgstr "Review content must not exceed 1000 characters."
+
+msgid "請輸入你對這件商品的評價"
+msgstr "Please enter your review of this product."
+
+msgid "提交評論"
+msgstr "Submit review"
+
+msgid "My account"
+msgstr "My account"
+
+msgid "Contact method"
+msgstr "Contact method"
+
+msgid "Direct marketing info will be sent to your phone via instant messaging apps, e.g. WhatsApp."
+msgstr "Direct marketing info will be sent to your phone via instant messaging apps, e.g. WhatsApp."
+
+msgid "Personal profile"
+msgstr "Personal profile"
+
+msgid "Password"
+msgstr "Password"
+
+msgid "I am interested in receiving promotions from the following brands:"
+msgstr "I am interested in receiving promotions from the following brands:"
+
+msgid "住宅電話號碼：+852"
+msgstr "Home phone number: +852"
+
+msgid "尚未設定預設送貨地址"
+msgstr "No default delivery address has been set yet"
+
+#, python-format
+msgid "已售 %(count)sK+"
+msgstr "%(count)sK+ sold"
+
+#, python-format
+msgid "已售 %(count)s"
+msgstr "%(count)s sold"
+
+msgid "人氣商品"
+msgstr "Popular item"
+
+msgid "首頁"
+msgstr "Home"
+
+msgid "全部"
+msgstr "All"
+
+#, python-format
+msgid "目前篩選：%(brand)s（可在此切換其他品牌）"
+msgstr "Current filter: %(brand)s (switch brands here)"
+
+msgid "分類"
+msgstr "Category"
+
+msgid "品牌"
+msgstr "Brand"
+
+msgid "PNS 網購"
+msgstr "PNS Online Store"
+

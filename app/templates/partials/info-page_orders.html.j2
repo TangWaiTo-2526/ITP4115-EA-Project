@@ -41,7 +41,7 @@
                                             {{ _('訂單編號') }} #{{ card.order_code }}
                                         </h2>
                                         <p class="account-orders-head-line-1">
-                                            {{ order.create_time.strftime('%Y/%m/%d %H:%M') }}
+                                            {{ format_account_datetime(order.create_time) }}
                                             <span aria-hidden="true">・</span>
                                             {{ card.item_count }} {{ _('件商品') }}
                                         </p>

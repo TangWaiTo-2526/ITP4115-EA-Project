@@ -25,22 +25,23 @@ moment = Moment(app)
 
 
 def get_locale():
-    # 優先辨識瀏覽器語言：中文語系做明確分流
+    # 依瀏覽器語言偏好順序逐一判斷；不要因為後面出現中文就覆蓋前面的英文偏好
     accepted = [lang.lower() for lang, _q in request.accept_languages]
     for lang in accepted:
-        if not lang.startswith('zh'):
-            continue
-        # 簡中：zh-CN / zh-SG / zh-Hans
-        if ('hans' in lang) or lang.startswith('zh-cn') or lang.startswith('zh-sg'):
-            return 'zh_Hans'
-        # 其餘中文（zh / zh-TW / zh-HK / zh-MO / zh-Hant）統一走繁中 catalog（zh）
-        return 'zh'
+        if lang.startswith('en'):
+            return 'en'
+        if lang.startswith('es'):
+            return 'es'
+        if lang.startswith('zh'):
+            # 簡中：zh-CN / zh-SG / zh-Hans
+            if ('hans' in lang) or lang.startswith('zh-cn') or lang.startswith('zh-sg'):
+                return 'zh_Hans'
+            # 其餘中文（zh / zh-TW / zh-HK / zh-MO / zh-Hant）統一走繁中 catalog（zh）
+            return 'zh'
 
-    # 其餘語言：保留西語；其餘預設繁中（本站主體為中文介面）
+    # 其餘語言：依支援語系直接回傳；不支援時才預設繁中
     match = request.accept_languages.best_match(app.config['LANGUAGES']) or 'zh'
-    if match == 'es':
-        return 'es'
-    if match in ('zh', 'zh_Hans'):
+    if match in ('en', 'es', 'zh', 'zh_Hans'):
         return match
     return 'zh'
 

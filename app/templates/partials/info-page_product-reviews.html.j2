@@ -51,7 +51,7 @@
                                         </div>
 
                                         <div class="account-reviews-card-side-1">
-                                            <p class="account-reviews-date-1">{{ _('評論日期') }}：{{ card.review_created_at.strftime('%Y/%m/%d %H:%M') }}</p>
+                                            <p class="account-reviews-date-1">{{ _('評論日期') }}：{{ format_account_datetime(card.review_created_at) }}</p>
                                             {% if card.order_code %}
                                                 <p class="account-reviews-order-1">{{ _('最近訂單') }}：#{{ card.order_code }}</p>
                                             {% endif %}
@@ -60,7 +60,7 @@
 
                                     <div class="account-reviews-meta-1">
                                         {% if card.purchase_created_at %}
-                                            <span>{{ _('購買時間') }}：{{ card.purchase_created_at.strftime('%Y/%m/%d %H:%M') }}</span>
+                                            <span>{{ _('購買時間') }}：{{ format_account_datetime(card.purchase_created_at) }}</span>
                                         {% endif %}
                                         {% if card.quantity %}
                                             <span>{{ _('數量') }}：{{ card.quantity }}</span>

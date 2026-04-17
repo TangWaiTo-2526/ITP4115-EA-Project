@@ -27,7 +27,7 @@ from flask import (
     jsonify,
 )
 from flask_login import login_user, logout_user, current_user, login_required
-from flask_babel import _, get_locale
+from flask_babel import _, get_locale, format_date, format_datetime
 from app import app, db
 from app.forms import (
     LoginForm,
@@ -125,10 +125,7 @@ def _populate_edit_profile_form(form, user):
         form.addr_building_street.data = addr.building_street or ''
         r = (addr.region or '').strip()
         form.addr_region.data = r
-        if r in HK_DISTRICTS:
-            form.addr_district.choices = [('', '請選擇')] + [(d, d) for d in HK_DISTRICTS[r]]
-        else:
-            form.addr_district.choices = [('', '請選擇')]
+        form.addr_district.choices = _localized_district_choices(r)
         form.addr_district.data = addr.district or ''
     else:
         form.home_phone.data = ''
@@ -136,7 +133,7 @@ def _populate_edit_profile_form(form, user):
         form.addr_floor.data = ''
         form.addr_building_street.data = ''
         form.addr_region.data = ''
-        form.addr_district.choices = [('', '請選擇')]
+        form.addr_district.choices = _localized_district_choices('')
         form.addr_district.data = ''
 
 
@@ -675,6 +672,40 @@ def browse_url(section, slug):
     return url_for('category_browse', section=section, slug=slug)
 
 
+def _localized_district_choices(region):
+    if region in HK_DISTRICTS:
+        return [('', _('請選擇'))] + [(d, d) for d in HK_DISTRICTS[region]]
+    return [('', _('請選擇'))]
+
+
+def _format_account_date(value):
+    if value is None:
+        return ''
+    return format_date(value, format='medium')
+
+
+def _format_account_datetime(value):
+    if value is None:
+        return ''
+    return format_datetime(value, format='short')
+
+
+def _translate_points_retailer(value):
+    text = (value or '').strip()
+    if text == POINTS_LOG_RETAILER:
+        return _('易賞錢')
+    return text
+
+
+def _translate_points_store_name(value):
+    text = (value or '').strip()
+    if text.startswith(POINTS_LOG_ORDER_PREFIX):
+        return f"{_('網上訂單 #')}{text[len(POINTS_LOG_ORDER_PREFIX):]}"
+    if text.startswith(POINTS_LOG_REFUND_PREFIX):
+        return f"{_('訂單退款 #')}{text[len(POINTS_LOG_REFUND_PREFIX):]}"
+    return text
+
+
 @app.context_processor
 def inject_cart_count():
     cart_count = 0
@@ -685,6 +716,16 @@ def inject_cart_count():
         cart_items = session.get('cart', {})
         cart_count = sum(cart_items.values())
     return {'cart_count': cart_count}
+
+
+@app.context_processor
+def inject_account_i18n_helpers():
+    return {
+        'format_account_date': _format_account_date,
+        'format_account_datetime': _format_account_datetime,
+        'translate_points_retailer': _translate_points_retailer,
+        'translate_points_store_name': _translate_points_store_name,
+    }
 
 
 @app.template_global()
@@ -2001,7 +2042,7 @@ def order_history():
 
     return render_template(
         'partials/info-page_orders.html.j2',
-        title='訂單紀錄',
+        title=_('訂單紀錄'),
         order_cards=order_cards,
     )
 
@@ -2011,12 +2052,12 @@ def order_history():
 def order_refund(order_uuid):
     feature_tables = _order_feature_tables_state()
     if not feature_tables['refund']:
-        flash('退款功能尚未初始化，請先執行資料庫升級。')
+        flash(_('退款功能尚未初始化，請先執行資料庫升級。'))
         return redirect(url_for('order_history'))
 
     form = OrderRefundForm(prefix=f'refund-{order_uuid}')
     if not form.validate_on_submit():
-        flash('退款操作無效，請再試一次。')
+        flash(_('退款操作無效，請再試一次。'))
         return redirect(url_for('order_history'))
 
     try:
@@ -2027,7 +2068,7 @@ def order_refund(order_uuid):
     order = current_user.orders.filter(Order.order_uuid == order_id).first_or_404()
     already_refunded = order.refunds.count() > 0 or (order.order_status or '').strip().lower() in ('refund', 'refunded', '退款')
     if already_refunded:
-        flash('此訂單已退款。')
+        flash(_('此訂單已退款。'))
         return redirect(url_for('order_history'))
 
     db.session.add(Refund(order_uuid=order.order_uuid, user_uuid=current_user.user_uuid))
@@ -2089,7 +2130,7 @@ def order_refund(order_uuid):
         membership.membership_point = max(int(membership.membership_point or 0) - earned_points, 0)
 
     db.session.commit()
-    flash('已提交退款申請。')
+    flash(_('已提交退款申請。'))
     return redirect(url_for('order_history'))
 
 
@@ -2098,7 +2139,7 @@ def order_refund(order_uuid):
 def order_review(product_uuid, order_item_uuid):
     feature_tables = _order_feature_tables_state()
     if not feature_tables['evaluate']:
-        flash('評論功能尚未初始化，請先執行資料庫升級。')
+        flash(_('評論功能尚未初始化，請先執行資料庫升級。'))
         return redirect(url_for('order_history'))
 
     form = ProductReviewForm(prefix=f'review-{order_item_uuid}')
@@ -2106,7 +2147,7 @@ def order_review(product_uuid, order_item_uuid):
         if form.review_text.errors:
             flash(form.review_text.errors[0])
         else:
-            flash('評論提交失敗，請再試一次。')
+            flash(_('評論提交失敗，請再試一次。'))
         return redirect(url_for('order_history'))
 
     try:
@@ -2125,7 +2166,7 @@ def order_review(product_uuid, order_item_uuid):
         .first_or_404()
     )
     if _is_refunded_order(order_item.order):
-        flash('已退款訂單不能評論商品。')
+        flash(_('已退款訂單不能評論商品。'))
         return redirect(url_for('order_history'))
 
     content = (form.review_text.data or '').strip()
@@ -2145,7 +2186,7 @@ def order_review(product_uuid, order_item_uuid):
         review.evalate_txt = content
 
     db.session.commit()
-    flash('商品評論已儲存。')
+    flash(_('商品評論已儲存。'))
     return redirect(url_for('order_history'))
 
 
@@ -2156,7 +2197,7 @@ def product_reviews():
     review_summary = _build_product_review_cards(current_user)
     return render_template(
         'partials/info-page_product-reviews.html.j2',
-        title='產品評價',
+        title=_('產品評價'),
         review_cards=review_summary['cards'],
         reviewed_count=review_summary['count'],
         latest_review_at=review_summary['latest_review_at'],
@@ -2169,18 +2210,17 @@ def edit_profile():
     form = EditProfileForm(current_user.user_name, current_user.mail)
     if request.method == 'POST':
         reg = (request.form.get('addr_region') or '').strip()
-        if reg in HK_DISTRICTS:
-            form.addr_district.choices = [('', '請選擇')] + [(d, d) for d in HK_DISTRICTS[reg]]
+        form.addr_district.choices = _localized_district_choices(reg)
     if form.validate_on_submit():
         _save_profile_and_address(form, current_user)
         db.session.commit()
-        flash('資料已儲存。')
+        flash(_('資料已儲存。'))
         return redirect(url_for('edit_profile'))
     if request.method == 'GET':
         _populate_edit_profile_form(form, current_user)
     return render_template(
         'partials/info-page_edit-profile.html.j2',
-        title='個人資料',
+        title=_('個人資料'),
         form=form,
         hk_districts=HK_DISTRICTS,
         addresses=current_user.addresses.order_by(UserAddress.create_time.desc()).all(),
@@ -2205,7 +2245,7 @@ def delivery_address():
     auto_open_modal = (request.args.get('open') or '').strip() == '1'
     return render_template(
         'partials/info-page_delivery-address.html.j2',
-        title='送貨地址',
+        title=_('送貨地址'),
         addresses=addresses,
         form=form,
         hk_districts=HK_DISTRICTS,
@@ -2221,7 +2261,7 @@ def membership_points():
 
     return render_template(
         'partials/info-page_membership-points.html.j2',
-        title='易賞錢積分',
+        title=_('易賞錢積分'),
         membership=membership,
         points_logs=logs,
         hkd_equivalent=points_summary['hkd_equivalent'],
@@ -2236,7 +2276,7 @@ def membership_points():
 def digital_coupons():
     return render_template(
         'partials/info-page_digital-coupons.html.j2',
-        title='電子優惠券／電子禮券',
+        title=_('電子優惠券／電子禮券'),
     )
 
 
@@ -2245,7 +2285,7 @@ def digital_coupons():
 def my_credit_cards():
     return render_template(
         'partials/info-page_credit-cards.html.j2',
-        title='我的信用卡',
+        title=_('我的信用卡'),
     )
 
 
@@ -2288,10 +2328,10 @@ def delivery_address_add():
 
         db.session.add(addr)
         db.session.commit()
-        flash('地址已儲存。')
+        flash(_('地址已儲存。'))
         return redirect(next_url)
 
-    flash('請檢查輸入資料。')
+    flash(_('請檢查輸入資料。'))
     return redirect(retry_url)
 
 
@@ -2313,7 +2353,7 @@ def delivery_address_set_default(user_address_uuid):
         a.is_default = False
     target.is_default = True
     db.session.commit()
-    flash('已設定預設送貨地址。')
+    flash(_('已設定預設送貨地址。'))
     return redirect(next_url)
 
 
@@ -2341,5 +2381,5 @@ def delivery_address_delete(user_address_uuid):
         remaining[0].is_default = True
 
     db.session.commit()
-    flash('地址已刪除。')
+    flash(_('地址已刪除。'))
     return redirect(next_url)
