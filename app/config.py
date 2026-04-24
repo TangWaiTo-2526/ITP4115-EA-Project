@@ -28,6 +28,13 @@ def _env_bool(name, default):
     return v.strip().lower() in ('1', 'true', 'yes', 'on')
 
 
+def _env_list(name, default=None):
+    v = os.environ.get(name)
+    if v is None:
+        return list(default or [])
+    return [item.strip() for item in v.split(',') if item.strip()]
+
+
 class Config(object):
     SECRET_KEY = os.environ.get("SECRET_KEY") or "you-will-never-guess"
     SQLALCHEMY_DATABASE_URI = os.environ.get("SQLALCHEMY_DATABASE_URI") or \
@@ -43,4 +50,5 @@ class Config(object):
     MAIL_PASSWORD = _env_password('MAIL_PASSWORD')
     MAIL_DEFAULT_SENDER = os.environ.get('MAIL_DEFAULT_SENDER', 'pns@vtcit.top')
     ADMINS = [MAIL_DEFAULT_SENDER]
+    ADMIN_USER_IDS = _env_list('ADMIN_USER_IDS', ['Rimon12'])
     LANGUAGES = ['en', 'es', 'zh', 'zh_Hans']

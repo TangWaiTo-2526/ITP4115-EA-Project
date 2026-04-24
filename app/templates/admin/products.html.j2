@@ -1,0 +1,71 @@
+{% extends "admin/base.html.j2" %}
+
+{% block admin_title %}{{ _('商品管理') }}{% endblock %}
+
+{% block admin_content %}
+    <div class="admin-summary-row-1">
+        <div class="admin-summary-card-1">
+            <span class="admin-summary-label-1">{{ _('目前顯示商品') }}</span>
+            <strong class="admin-summary-value-1">{{ products|length }}</strong>
+        </div>
+        <p class="admin-hint-1">{{ _('最多顯示最近 300 件商品。') }}</p>
+    </div>
+
+    <div class="admin-table-wrap-1">
+        <table class="admin-table-1 admin-product-table-1">
+            <thead>
+                <tr>
+                    <th>{{ _('商品') }}</th>
+                    <th>{{ _('分類') }}</th>
+                    <th>{{ _('供應商') }}</th>
+                    <th>{{ _('價格') }}</th>
+                    <th>{{ _('建立時間') }}</th>
+                    <th>{{ _('操作') }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for product in products %}
+                    <tr>
+                        <td>
+                            <div class="admin-product-cell-1">
+                                {% if product.image_path %}
+                                    <img class="admin-product-img-1" src="{{ product_image_url(product.image_path) }}" alt="" loading="lazy">
+                                {% else %}
+                                    <div class="admin-product-img-placeholder-1"><i class="fa-solid fa-box" aria-hidden="true"></i></div>
+                                {% endif %}
+                                <div>
+                                    <div class="admin-main-text-1">{{ product.product_name }}</div>
+                                    <div class="admin-muted-1">{{ product.specification or '-' }}</div>
+                                    <div class="admin-muted-1">#{{ product.product_categories_uuid }}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>{{ product.category.product_categories_name if product.category else '-' }}</td>
+                        <td>{{ product.supplier.supplier_name if product.supplier else '-' }}</td>
+                        <td>
+                            {% if product.discount_price is not none %}
+                                <span class="admin-price-sale-1">HK${{ '%.2f'|format(product.discount_price|float) }}</span>
+                                <span class="admin-price-old-1">HK${{ '%.2f'|format(product.price|float) }}</span>
+                            {% else %}
+                                HK${{ '%.2f'|format(product.price|float) }}
+                            {% endif %}
+                        </td>
+                        <td>{{ product.create_time.strftime('%Y/%m/%d %H:%M') if product.create_time else '-' }}</td>
+                        <td>
+                            <form method="post" action="{{ url_for('admin_product_delete', product_uuid=product.product_categories_uuid) }}" class="admin-delete-form-1">
+                                {{ delete_form.hidden_tag() }}
+                                <button type="submit" class="admin-delete-btn-1" onclick="return confirm('{{ _('確定刪除此商品？相關購物車、訂單明細及評價資料也可能一併刪除。') }}');">
+                                    {{ _('刪除') }}
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="6" class="admin-empty-1">{{ _('尚未有商品') }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

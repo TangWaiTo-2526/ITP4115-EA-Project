@@ -320,3 +320,56 @@ class ProductReviewForm(FlaskForm):
         },
     )
     submit = SubmitField('提交評論')
+
+
+class AdminDeleteForm(FlaskForm):
+    submit = SubmitField('刪除')
+
+
+class AdminCreateUserForm(FlaskForm):
+    username = StringField(
+        '使用者名稱',
+        validators=[DataRequired(message='請填寫使用者名稱')],
+    )
+    email = StringField(
+        '電子郵件',
+        validators=[
+            DataRequired(message='請填寫電子郵件'),
+            Email(message='請輸入有效的電子郵件地址'),
+        ],
+    )
+    phone = StringField(
+        '電話號碼',
+        validators=[
+            DataRequired(message='請填寫電話號碼'),
+            Regexp(r'^\d{8}$', message='請輸入 8 位數字香港電話號碼'),
+        ],
+        render_kw={'maxlength': 8, 'inputmode': 'numeric', 'autocomplete': 'tel'},
+    )
+    password = PasswordField(
+        '密碼',
+        validators=[DataRequired(message='請填寫密碼')],
+    )
+    password2 = PasswordField(
+        '確認密碼',
+        validators=[
+            DataRequired(message='請再次輸入密碼'),
+            EqualTo('password', message='兩次輸入的密碼必須相同'),
+        ],
+    )
+    address = TextAreaField(
+        '地址',
+        validators=[Optional(), Length(max=1024, message='地址不能超過 1024 字')],
+        render_kw={'rows': 3, 'placeholder': '選填：收貨或聯絡地址'},
+    )
+    submit = SubmitField('新增用戶')
+
+    def validate_username(self, username):
+        candidate = (username.data or '').strip()
+        if User.query.filter_by(user_name=candidate).first() is not None:
+            raise ValidationError('此使用者名稱已被使用，請換一個。')
+
+    def validate_email(self, email):
+        candidate = (email.data or '').strip().lower()
+        if User.query.filter(func.lower(User.mail) == candidate).first() is not None:
+            raise ValidationError('此電子郵件已被註冊，請換一個。')

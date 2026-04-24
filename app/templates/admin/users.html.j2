@@ -1,0 +1,142 @@
+{% extends "admin/base.html.j2" %}
+
+{% block admin_title %}{{ _('用戶管理') }}{% endblock %}
+
+{% block admin_content %}
+    <div class="admin-summary-row-1">
+        <div class="admin-summary-card-1">
+            <span class="admin-summary-label-1">{{ _('用戶總數') }}</span>
+            <strong class="admin-summary-value-1">{{ users|length }}</strong>
+        </div>
+        <button type="button" class="admin-primary-btn-1" id="admin-add-user-open-1">
+            <i class="fa-solid fa-user-plus" aria-hidden="true"></i>
+            <span>{{ _('新增用戶') }}</span>
+        </button>
+    </div>
+
+    <div class="admin-table-wrap-1">
+        <table class="admin-table-1">
+            <thead>
+                <tr>
+                    <th>{{ _('用戶名稱') }}</th>
+                    <th>{{ _('電郵') }}</th>
+                    <th>{{ _('電話') }}</th>
+                    <th>{{ _('註冊時間') }}</th>
+                    <th>{{ _('操作') }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in users %}
+                    {% set is_admin_row = row.user_name in admin_user_ids or row.mail in admin_user_ids or row.get_id() in admin_user_ids %}
+                    <tr>
+                        <td>
+                            <div class="admin-main-text-1">{{ row.user_name }}</div>
+                            <div class="admin-muted-1">#{{ row.user_uuid }}</div>
+                            {% if is_admin_row %}<span class="admin-badge-1">{{ _('管理員') }}</span>{% endif %}
+                        </td>
+                        <td>{{ row.mail }}</td>
+                        <td>{{ row.phone_number or '-' }}</td>
+                        <td>{{ row.create_time.strftime('%Y/%m/%d %H:%M') if row.create_time else '-' }}</td>
+                        <td>
+                            {% if row.user_uuid == current_user.user_uuid %}
+                                <span class="admin-disabled-1">{{ _('目前登入') }}</span>
+                            {% elif is_admin_row %}
+                                <span class="admin-disabled-1">{{ _('不可刪除') }}</span>
+                            {% else %}
+                                <form method="post" action="{{ url_for('admin_user_delete', user_uuid=row.user_uuid) }}" class="admin-delete-form-1">
+                                    {{ delete_form.hidden_tag() }}
+                                    <button type="submit" class="admin-delete-btn-1" onclick="return confirm('{{ _('確定刪除此用戶？相關訂單、地址、積分記錄等資料也會一併刪除。') }}');">
+                                        {{ _('刪除') }}
+                                    </button>
+                                </form>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="5" class="admin-empty-1">{{ _('尚未有用戶') }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="admin-modal-backdrop-1" id="admin-add-user-modal-1" aria-hidden="true">
+        <div class="admin-modal-card-1" role="dialog" aria-modal="true" aria-labelledby="admin-add-user-title-1">
+            <div class="admin-modal-head-1">
+                <div>
+                    <p class="admin-kicker-1">{{ _('Quick create') }}</p>
+                    <h2 class="admin-modal-title-1" id="admin-add-user-title-1">{{ _('新增用戶') }}</h2>
+                </div>
+                <button type="button" class="admin-modal-close-1" id="admin-add-user-close-1" aria-label="{{ _('關閉') }}">×</button>
+            </div>
+
+            <form method="post" action="{{ url_for('admin_user_add') }}" class="admin-create-form-1" novalidate>
+                {{ create_user_form.hidden_tag() }}
+                <div class="admin-form-grid-1">
+                    <label class="admin-field-1">
+                        <span>{{ _('使用者名稱') }} <em>*</em></span>
+                        {{ create_user_form.username(class_='admin-input-1', autocomplete='username') }}
+                    </label>
+                    <label class="admin-field-1">
+                        <span>{{ _('電子郵件') }} <em>*</em></span>
+                        {{ create_user_form.email(class_='admin-input-1', autocomplete='email') }}
+                    </label>
+                    <label class="admin-field-1">
+                        <span>{{ _('電話號碼') }} <em>*</em></span>
+                        {{ create_user_form.phone(class_='admin-input-1') }}
+                    </label>
+                    <label class="admin-field-1">
+                        <span>{{ _('密碼') }} <em>*</em></span>
+                        {{ create_user_form.password(class_='admin-input-1', autocomplete='new-password') }}
+                    </label>
+                    <label class="admin-field-1">
+                        <span>{{ _('確認密碼') }} <em>*</em></span>
+                        {{ create_user_form.password2(class_='admin-input-1', autocomplete='new-password') }}
+                    </label>
+                    <label class="admin-field-1 admin-field-full-1">
+                        <span>{{ _('地址') }}</span>
+                        {{ create_user_form.address(class_='admin-input-1 admin-textarea-1') }}
+                    </label>
+                </div>
+                <p class="admin-form-note-1">{{ _('此功能會由管理員直接建立帳戶，不需要郵箱驗證碼。') }}</p>
+                <div class="admin-modal-actions-1">
+                    <button type="button" class="admin-secondary-btn-1" id="admin-add-user-cancel-1">{{ _('取消') }}</button>
+                    <button type="submit" class="admin-primary-btn-1">{{ _('新增用戶') }}</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+    (function () {
+        var modal = document.getElementById('admin-add-user-modal-1');
+        var openBtn = document.getElementById('admin-add-user-open-1');
+        var closeBtn = document.getElementById('admin-add-user-close-1');
+        var cancelBtn = document.getElementById('admin-add-user-cancel-1');
+        if (!modal || !openBtn) return;
+
+        function setOpen(open) {
+            modal.classList.toggle('is-open', open);
+            modal.setAttribute('aria-hidden', open ? 'false' : 'true');
+            document.body.classList.toggle('admin-modal-lock-1', open);
+            if (open) {
+                var first = modal.querySelector('input, textarea, button');
+                if (first) first.focus();
+            } else {
+                openBtn.focus();
+            }
+        }
+
+        openBtn.addEventListener('click', function () { setOpen(true); });
+        if (closeBtn) closeBtn.addEventListener('click', function () { setOpen(false); });
+        if (cancelBtn) cancelBtn.addEventListener('click', function () { setOpen(false); });
+        modal.addEventListener('click', function (e) {
+            if (e.target === modal) setOpen(false);
+        });
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape' && modal.classList.contains('is-open')) setOpen(false);
+        });
+    })();
+    </script>
+{% endblock %}

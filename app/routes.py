@@ -41,6 +41,8 @@ from app.forms import (
     ResetPasswordForm,
     OrderRefundForm,
     ProductReviewForm,
+    AdminDeleteForm,
+    AdminCreateUserForm,
 )
 from app.models import (
     User,
@@ -276,6 +278,32 @@ def _safe_internal_redirect_target(value, fallback_endpoint='index'):
     if not target.startswith('/') or target.startswith('//'):
         return url_for(fallback_endpoint)
     return target
+
+
+def _admin_user_ids():
+    return {str(v).strip() for v in current_app.config.get('ADMIN_USER_IDS', []) if str(v).strip()}
+
+
+def _user_admin_identifiers(user):
+    if user is None or not getattr(user, 'is_authenticated', False):
+        return set()
+    identifiers = {
+        str(user.get_id()),
+        str(user.user_uuid),
+        (user.user_name or '').strip(),
+        (user.mail or '').strip(),
+    }
+    return {v for v in identifiers if v}
+
+
+def _is_admin_user(user=None):
+    user = user if user is not None else current_user
+    return bool(_admin_user_ids() & _user_admin_identifiers(user))
+
+
+def _require_admin():
+    if not _is_admin_user():
+        abort(403)
 
 
 def _delivery_slot_label(slot):
@@ -684,7 +712,7 @@ def inject_cart_count():
         # For anonymous users, count items in session
         cart_items = session.get('cart', {})
         cart_count = sum(cart_items.values())
-    return {'cart_count': cart_count}
+    return {'cart_count': cart_count, 'current_user_is_admin': _is_admin_user()}
 
 
 @app.template_global()
@@ -1926,6 +1954,135 @@ def user(username):
         dashboard_stamps=dashboard_stamps,
         recent_purchase_items=recent_purchase_items,
     )
+
+
+@app.route('/admin', methods=['GET'])
+@login_required
+def admin_dashboard():
+    _require_admin()
+    return redirect(url_for('admin_users'))
+
+
+@app.route('/admin/users', methods=['GET'])
+@login_required
+def admin_users():
+    _require_admin()
+    users = User.query.order_by(User.create_time.desc()).all()
+    return render_template(
+        'admin/users.html.j2',
+        title='管理員頁面 - 用戶管理',
+        users=users,
+        admin_user_ids=_admin_user_ids(),
+        delete_form=AdminDeleteForm(),
+        create_user_form=AdminCreateUserForm(),
+    )
+
+
+@app.route('/admin/users/add', methods=['POST'])
+@login_required
+def admin_user_add():
+    _require_admin()
+    form = AdminCreateUserForm()
+    if not form.validate_on_submit():
+        for field_errors in form.errors.values():
+            if field_errors:
+                flash(field_errors[0])
+                break
+        else:
+            flash('新增用戶失敗，請檢查輸入資料。')
+        return redirect(url_for('admin_users'))
+
+    user = User(
+        user_name=(form.username.data or '').strip(),
+        mail=(form.email.data or '').strip(),
+        phone_number=(form.phone.data or '').strip(),
+    )
+    user.set_password(form.password.data)
+    db.session.add(user)
+    db.session.flush()
+
+    address_text = (form.address.data or '').strip()
+    if address_text:
+        db.session.add(
+            UserAddress(
+                user_uuid=user.user_uuid,
+                user_address=address_text,
+                phone_number=user.phone_number,
+                is_default=True,
+            )
+        )
+    db.session.add(Membership(user_uuid=user.user_uuid, membership_point=0))
+    db.session.commit()
+    flash(f'已新增用戶：{user.user_name}')
+    return redirect(url_for('admin_users'))
+
+
+@app.route('/admin/users/delete/<user_uuid>', methods=['POST'])
+@login_required
+def admin_user_delete(user_uuid):
+    _require_admin()
+    form = AdminDeleteForm()
+    if not form.validate_on_submit():
+        flash('刪除操作無效，請再試一次。')
+        return redirect(url_for('admin_users'))
+    try:
+        target_uuid = uuid.UUID(str(user_uuid))
+    except ValueError:
+        abort(404)
+    target = db.session.get(User, target_uuid)
+    if target is None:
+        abort(404)
+    if target.user_uuid == current_user.user_uuid:
+        flash('不能刪除目前登入中的管理員帳戶。')
+        return redirect(url_for('admin_users'))
+    if _is_admin_user(target):
+        flash('不能刪除管理員帳戶。')
+        return redirect(url_for('admin_users'))
+    target_name = target.user_name
+    db.session.delete(target)
+    db.session.commit()
+    flash(f'已刪除用戶：{target_name}')
+    return redirect(url_for('admin_users'))
+
+
+@app.route('/admin/products', methods=['GET'])
+@login_required
+def admin_products():
+    _require_admin()
+    products = (
+        ProductDetail.query.options(joinedload(ProductDetail.supplier), joinedload(ProductDetail.category))
+        .order_by(ProductDetail.create_time.desc())
+        .limit(300)
+        .all()
+    )
+    return render_template(
+        'admin/products.html.j2',
+        title='管理員頁面 - 商品管理',
+        products=products,
+        delete_form=AdminDeleteForm(),
+    )
+
+
+@app.route('/admin/products/delete/<product_uuid>', methods=['POST'])
+@login_required
+def admin_product_delete(product_uuid):
+    _require_admin()
+    form = AdminDeleteForm()
+    if not form.validate_on_submit():
+        flash('刪除操作無效，請再試一次。')
+        return redirect(url_for('admin_products'))
+    try:
+        target_uuid = uuid.UUID(str(product_uuid))
+    except ValueError:
+        abort(404)
+    product = db.session.get(ProductDetail, target_uuid)
+    if product is None:
+        abort(404)
+    product_name = product.product_name
+    db.session.delete(product)
+    db.session.commit()
+    flash(f'已刪除商品：{product_name}')
+    return redirect(url_for('admin_products'))
 
 
 @app.route('/order_history', methods=['GET'])

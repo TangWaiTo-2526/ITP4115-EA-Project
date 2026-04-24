@@ -1,0 +1,62 @@
+{# 管理員頁左欄導航；需 request #}
+<div class="account-sidebar-mobile-wrap-1">
+    <button type="button" class="account-sidebar-mobile-toggle-1" id="admin-sidebar-mobile-toggle-1" aria-expanded="false" aria-controls="admin-sidebar-mobile-panel-1">
+        <span class="account-sidebar-mobile-toggle-text-1">{{ _('管理員選單') }}</span>
+        <i class="fa-solid fa-chevron-down account-sidebar-mobile-toggle-ico-1" aria-hidden="true"></i>
+    </button>
+
+    <nav class="account-sidebar-1" id="admin-sidebar-mobile-panel-1" aria-label="{{ _('管理員選單') }}">
+        <a href="{{ url_for('admin_users') }}"
+           class="account-sidebar-link-1{% if request.endpoint in ('admin_dashboard', 'admin_users') %} is-active{% endif %}">
+            <i class="fa-solid fa-users account-sidebar-ico-1" aria-hidden="true"></i>
+            <span>{{ _('用戶管理') }}</span>
+        </a>
+        <a href="{{ url_for('admin_products') }}"
+           class="account-sidebar-link-1{% if request.endpoint == 'admin_products' %} is-active{% endif %}">
+            <i class="fa-solid fa-boxes-stacked account-sidebar-ico-1" aria-hidden="true"></i>
+            <span>{{ _('商品管理') }}</span>
+        </a>
+        <a href="{{ url_for('user', username=current_user.username) }}" class="account-sidebar-link-1">
+            <i class="fa-regular fa-user account-sidebar-ico-1" aria-hidden="true"></i>
+            <span>{{ _('返回我的帳戶') }}</span>
+        </a>
+        <a href="{{ url_for('logout') }}" class="account-sidebar-link-1 account-sidebar-link-logout-1">
+            <i class="fa-solid fa-arrow-right-from-bracket account-sidebar-ico-1" aria-hidden="true"></i>
+            <span>{{ _('登出') }}</span>
+        </a>
+    </nav>
+</div>
+
+<script>
+(function () {
+    var toggle = document.getElementById('admin-sidebar-mobile-toggle-1');
+    var panel = document.getElementById('admin-sidebar-mobile-panel-1');
+    var wrap = toggle && toggle.closest('.account-sidebar-mobile-wrap-1');
+    if (!toggle || !panel || !wrap) return;
+
+    function isMobile() {
+        return window.matchMedia && window.matchMedia('(max-width: 900px)').matches;
+    }
+
+    function setOpen(open) {
+        toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+        panel.classList.toggle('is-open', open);
+    }
+
+    toggle.addEventListener('click', function (e) {
+        e.stopPropagation();
+        setOpen(toggle.getAttribute('aria-expanded') !== 'true');
+    });
+
+    document.addEventListener('click', function (e) {
+        if (!isMobile()) return;
+        if (!wrap.contains(e.target)) setOpen(false);
+    });
+
+    window.addEventListener('resize', function () {
+        setOpen(!isMobile());
+    });
+
+    setOpen(window.matchMedia && window.matchMedia('(min-width: 901px)').matches);
+})();
+</script>
