@@ -1,4 +1,5 @@
 
+## Once Codespaces is launched, the initialization process will begin automatically. After a brief moment, flask run will execute on its own
 
 # 開發快速提醒
 
